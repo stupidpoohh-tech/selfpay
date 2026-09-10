@@ -7,19 +7,24 @@
 
   var GRAPHS = {};
 
+  /* 이동 관계는 여기서 따로 적지 않는다.
+   * shot.js 의 히트박스를 그대로 읽어 만들기 때문에 프로토타입과 항상 같다.
+   * 여기 남는 것은 노드 위치와 이름뿐이다. */
+
   /* ── 현재 ───────────────────────────────────── */
   GRAPHS.current = {
-    world: { w: 1130, h: 800 },
+    world: { w: 1420, h: 1060 },
     frames: [
-      { x: 16,  y: 84,  w: 518, h: 620, label: '진입' },
-      { x: 576, y: 214, w: 238, h: 512, label: '메인 · 하단 탭' },
-      { x: 856, y: 8,   w: 238, h: 740, label: '서비스 · 상세' }
+      { x: 16,   y: 84,  w: 518, h: 700, label: '진입' },
+      { x: 576,  y: 200, w: 238, h: 560, label: '메인 · 하단 탭' },
+      { x: 856,  y: 8,   w: 238, h: 1010, label: '서비스 · 상세' },
+      { x: 1136, y: 80,  w: 238, h: 420, label: '인쇄 흐름' }
     ],
     nodes: [
-      { id: 'index',   x: 40,  y: 300, name: '로그인',        file: 'login.html',         state: 'full', start: true },
-      { id: 'guest',   x: 320, y: 120, name: '비회원 이용',   file: 'guest.html',         state: 'full' },
-      { id: 'signup',  x: 320, y: 470, name: '회원가입',      file: 'signup.html',        state: 'empty' },
-      { id: 'findpw',  x: 320, y: 590, name: '비밀번호 찾기', file: 'find-password.html', state: 'empty' },
+      { id: 'index',   x: 40,  y: 320, name: '로그인',        file: 'login.html',         state: 'full', start: true },
+      { id: 'guest',   x: 320, y: 140, name: '비회원 이용',   file: 'guest.html',         state: 'full' },
+      { id: 'signup',  x: 320, y: 510, name: '회원가입',      file: 'signup.html',        state: 'empty' },
+      { id: 'findpw',  x: 320, y: 630, name: '비밀번호 찾기', file: 'find-password.html', state: 'empty' },
 
       { id: 'home',     x: 600, y: 250, name: '홈',        file: 'home.html',     state: 'full' },
       { id: 'history',  x: 600, y: 430, name: '작업 이력', file: 'history.html',  state: 'full' },
@@ -27,113 +32,100 @@
 
       { id: 'noti',    x: 880, y: 40,  name: '알림', file: 'notifications.html', state: 'full' },
       { id: 'print',   x: 880, y: 160, name: '인쇄', file: 'print.html', state: 'full', note: '파일 선택' },
-      { id: 'copy',    x: 880, y: 280, name: '복사', file: 'copy.html',  state: 'full', note: '복합기 연결' },
-      { id: 'scan',    x: 880, y: 400, name: '스캔', file: 'scan.html',  state: 'full', note: '복합기 연결' },
-      { id: 'fax',     x: 880, y: 520, name: '팩스', file: 'fax.html',   state: 'full', note: '복합기 연결' },
-      { id: 'profile', x: 880, y: 640, name: '수정', file: 'profile.html', state: 'empty' }
-    ],
-    edges: [
-      { from: 'index', to: 'guest',  label: '비회원으로 이용하기' },
-      { from: 'index', to: 'home',   label: '로그인 · 간편 로그인' },
-      { from: 'index', to: 'signup', label: '회원가입' },
-      { from: 'index', to: 'findpw', label: '비밀번호 찾기' },
-      { from: 'guest', to: 'home',   label: '바로 시작하기' },
+      { id: 'copy',    x: 880, y: 530, name: '복사', file: 'copy.html',  state: 'full', note: '복합기 연결' },
+      { id: 'scan',    x: 880, y: 650, name: '스캔', file: 'scan.html',  state: 'full', note: '복합기 연결' },
+      { id: 'fax',     x: 880, y: 770, name: '팩스', file: 'fax.html',   state: 'full', note: '복합기 연결' },
+      { id: 'profile', x: 880, y: 890, name: '수정', file: 'profile.html', state: 'empty' },
 
-      { from: 'home', to: 'noti',     label: '알림' },
-      { from: 'home', to: 'print',    label: '인쇄' },
-      { from: 'home', to: 'copy',     label: '복사' },
-      { from: 'home', to: 'scan',     label: '스캔' },
-      { from: 'home', to: 'fax',      label: '팩스' },
-      { from: 'home', to: 'history',  label: '이력 · 전체보기' },
-      { from: 'home', to: 'settings', label: '내 정보' },
-      { from: 'settings', to: 'profile', label: '수정' },
-
-      { from: 'home',     to: 'history',  label: '하단 탭', kind: 'tab' },
-      { from: 'history',  to: 'settings', label: '하단 탭', kind: 'tab' },
-
-      { from: 'guest',    to: 'index',    label: '로그인 화면으로', kind: 'back' },
-      { from: 'signup',   to: 'index',    label: '뒤로', kind: 'back' },
-      { from: 'findpw',   to: 'index',    label: '뒤로', kind: 'back' },
-      { from: 'noti',     to: 'home',     label: '뒤로', kind: 'back' },
-      { from: 'print',    to: 'home',     label: '뒤로', kind: 'back' },
-      { from: 'copy',     to: 'home',     label: '뒤로', kind: 'back' },
-      { from: 'scan',     to: 'home',     label: '뒤로', kind: 'back' },
-      { from: 'fax',      to: 'home',     label: '뒤로', kind: 'back' },
-      { from: 'profile',  to: 'settings', label: '뒤로', kind: 'back' },
-      { from: 'settings', to: 'index',    label: '로그아웃', kind: 'back' }
+      { id: 'print-confirm', x: 1160, y: 120, name: '파일 확인', file: 'print-confirm.html', state: 'full' },
+      { id: 'print-options', x: 1160, y: 240, name: '인쇄옵션',  file: 'print-options.html', state: 'full', note: '시트' },
+      { id: 'print-amount',  x: 1160, y: 360, name: '금액 확인', file: 'print-amount.html',  state: 'full' }
     ]
   };
 
   /* ── 제안 (홈이 첫 화면) ─────────────────────── */
   GRAPHS.proposal = {
-    world: { w: 1200, h: 1080 },
+    world: { w: 1200, h: 1260 },
     frames: [
-      { x: 40,  y: 254, w: 300, h: 440, label: '메인 · 하단 탭' },
-      { x: 366, y: 6,   w: 238, h: 850, label: '서비스 · 상세' },
-      { x: 646, y: 374, w: 520, h: 640, label: '계정' }
+      { x: 40,  y: 214, w: 300, h: 460, label: '메인 · 하단 탭' },
+      { x: 40,  y: 694, w: 300, h: 500, label: '설정 아래 안내' },
+      { x: 366, y: 6,   w: 238, h: 840, label: '서비스 · 작업' },
+      { x: 646, y: 654, w: 518, h: 540, label: '계정' }
     ],
     nodes: [
-      { id: 'home',     x: 110, y: 300, name: '홈',        file: 'index.html',    state: 'full', start: true, note: '첫 진입 · 스크린샷' },
-      { id: 'history',  x: 110, y: 450, name: '작업 이력', file: 'history.html',  state: 'full', note: '스크린샷' },
-      { id: 'settings', x: 110, y: 600, name: '설정',      file: 'settings.html', state: 'full', note: '스크린샷' },
+      { id: 'home',     x: 110, y: 260, name: '홈',        file: 'index.html',    state: 'full', start: true, note: '첫 진입' },
+      { id: 'history',  x: 110, y: 410, name: '작업 이력', file: 'history.html',  state: 'full' },
+      { id: 'settings', x: 110, y: 560, name: '설정',      file: 'settings.html', state: 'full' },
 
-      { id: 'print', x: 390, y: 30,  name: '인쇄', file: 'print.html', state: 'full', note: '스크린샷' },
-      { id: 'copy',  x: 390, y: 150, name: '복사', file: 'copy.html',  state: 'full', note: '스크린샷' },
-      { id: 'scan',  x: 390, y: 270, name: '스캔', file: 'scan.html',  state: 'full', note: '스크린샷' },
-      { id: 'fax',   x: 390, y: 390, name: '팩스', file: 'fax.html',   state: 'full', note: '스크린샷' },
-      { id: 'noti',  x: 390, y: 510, name: '알림', file: 'notifications.html', state: 'full', note: '스크린샷' },
-      { id: 'paper', x: 390, y: 760, name: '용지 선택', file: 'paper.html', state: 'empty' },
+      { id: 'print',          x: 390, y: 30,  name: '인쇄',           file: 'print.html',          state: 'full', note: '파일 선택' },
+      { id: 'print-checkout', x: 390, y: 150, name: '파일 확인 및 결제', file: 'print-checkout.html', state: 'full' },
+      { id: 'copy',  x: 390, y: 300, name: '복사', file: 'copy.html',  state: 'full', note: '복합기 연결' },
+      { id: 'scan',  x: 390, y: 420, name: '스캔', file: 'scan.html',  state: 'full', note: '복합기 연결' },
+      { id: 'fax',   x: 390, y: 540, name: '팩스', file: 'fax.html',   state: 'full', note: '복합기 연결' },
+      { id: 'noti',  x: 390, y: 660, name: '알림', file: 'notifications.html', state: 'full' },
 
-      { id: 'login', x: 670, y: 600, name: '로그인', file: 'login.html', state: 'full', note: '스크린샷' },
+      { id: 'cost',         x: 110, y: 730,  name: '요금 안내', file: 'cost.html',         state: 'full' },
+      { id: 'payments',     x: 110, y: 850,  name: '결제 내역', file: 'payments.html',     state: 'full' },
+      { id: 'refund',       x: 110, y: 970,  name: '환불 안내', file: 'refund.html',       state: 'full' },
+      { id: 'troubleshoot', x: 110, y: 1090, name: '문제 해결', file: 'troubleshoot.html', state: 'full' },
 
-      { id: 'guest',   x: 950, y: 420, name: '비회원 이용',   file: 'guest.html',         state: 'full', note: '스크린샷' },
-      { id: 'signup',  x: 950, y: 540, name: '회원가입',      file: 'signup.html',        state: 'empty' },
-      { id: 'findpw',  x: 950, y: 660, name: '비밀번호 찾기', file: 'find-password.html', state: 'empty' },
-      { id: 'help',    x: 950, y: 780, name: '도움말',        file: 'help.html',          state: 'empty' },
-      { id: 'support', x: 950, y: 900, name: '고객센터',      file: 'support.html',       state: 'empty' }
-    ],
-    edges: [
-      { from: 'home', to: 'print',    label: '인쇄' },
-      { from: 'home', to: 'copy',     label: '복사' },
-      { from: 'home', to: 'scan',     label: '스캔' },
-      { from: 'home', to: 'fax',      label: '팩스' },
-      { from: 'home', to: 'noti',     label: '알림' },
-      { from: 'home', to: 'history',  label: '전체보기 · 진행중 작업' },
-      { from: 'home', to: 'settings', label: '내 정보' },
-
-      { from: 'history',  to: 'home',  label: '홈에서 작업 시작' },
-      { from: 'settings', to: 'paper', label: '용지' },
-      { from: 'settings', to: 'login', label: '로그인 · 로그아웃' },
-
-      { from: 'login', to: 'home',    label: '로그인 · 간편 로그인', rail: 0 },
-      { from: 'login', to: 'guest',   label: '비회원으로 이용하기' },
-      { from: 'login', to: 'signup',  label: '회원가입' },
-      { from: 'login', to: 'findpw',  label: '비밀번호 찾기' },
-      { from: 'login', to: 'help',    label: '도움말' },
-      { from: 'login', to: 'support', label: '고객센터' },
-      { from: 'guest', to: 'home',    label: '바로 시작하기', rail: 1 },
-
-      { from: 'home',    to: 'history',  label: '하단 탭', kind: 'tab' },
-      { from: 'history', to: 'settings', label: '하단 탭', kind: 'tab' },
-
-      { from: 'print',   to: 'home',     label: '하단 탭', kind: 'back' },
-      { from: 'copy',    to: 'home',     label: '하단 탭', kind: 'back' },
-      { from: 'scan',    to: 'home',     label: '하단 탭', kind: 'back' },
-      { from: 'fax',     to: 'home',     label: '하단 탭', kind: 'back' },
-      { from: 'noti',    to: 'home',     label: '뒤로', kind: 'back' },
-      { from: 'paper',   to: 'settings', label: '뒤로', kind: 'back' },
-      { from: 'guest',   to: 'login',    label: '로그인 화면으로', kind: 'back' },
-      { from: 'signup',  to: 'login',    label: '뒤로', kind: 'back' },
-      { from: 'findpw',  to: 'login',    label: '뒤로', kind: 'back' },
-      { from: 'help',    to: 'login',    label: '뒤로', kind: 'back' },
-      { from: 'support', to: 'login',    label: '뒤로', kind: 'back' }
+      { id: 'login',   x: 670, y: 700,  name: '로그인',        file: 'login.html',         state: 'full' },
+      { id: 'signup',  x: 950, y: 700,  name: '회원가입',      file: 'signup.html',        state: 'empty' },
+      { id: 'findpw',  x: 950, y: 820,  name: '비밀번호 찾기', file: 'find-password.html', state: 'empty' },
+      { id: 'help',    x: 950, y: 940,  name: '도움말',        file: 'help.html',          state: 'empty' },
+      { id: 'support', x: 950, y: 1060, name: '고객센터',      file: 'support.html',       state: 'empty' }
     ]
   };
+
+  /* ── 이동 관계를 히트박스에서 만든다 ─────────── */
+  var BACK_NAMES = { '뒤로': 1, '로그인 화면으로': 1, '로그아웃': 1, '작업 취소': 1 };
+  var TAB_NAMES = { '홈': 1, '이력': 1, '설정': 1 };
+  var BAR_NAMES = { '알림': 1, '내 정보': 1 };
+  var MAIN_IDS = { home: 1, history: 1, settings: 1, index: 1 };
+
+  function buildEdges(graph, hitmap) {
+    var fileTo = {}, homeId = null;
+    graph.nodes.forEach(function (n) {
+      fileTo[n.file] = n.id;
+      if (n.start) homeId = n.id;
+    });
+
+    var seen = {}, edges = [];
+    function add(from, to, label, kind) {
+      if (!from || !to || from === to) return;
+      var k = from + '>' + to + '>' + (kind || 'go');
+      if (seen[k]) return;
+      seen[k] = 1;
+      edges.push({ from: from, to: to, label: label, kind: kind });
+    }
+
+    Object.keys(hitmap).forEach(function (key) {
+      var from = fileTo[key + '.html'] || fileTo[key === 'index' ? 'index.html' : ''];
+      if (!from) return;
+
+      (hitmap[key].hits || []).forEach(function (h) {
+        if (!h.to) return;                       /* 복합기 연결처럼 이동이 아닌 것 */
+        var to = fileTo[h.to];
+        if (!to) return;
+
+        /* 어느 화면에나 있는 앱바·하단 탭은 선이 너무 많아진다.
+         * 메인 세 화면에서만 그대로 그리고, 작업 화면에서는 '하단 탭' 하나로 접는다 */
+        if (TAB_NAMES[h.name] || BAR_NAMES[h.name]) {
+          if (MAIN_IDS[from]) add(from, to, h.name, BAR_NAMES[h.name] ? undefined : 'tab');
+          else add(from, homeId, '하단 탭', 'back');
+          return;
+        }
+        add(from, to, h.name, BACK_NAMES[h.name] ? 'back' : undefined);
+      });
+    });
+    return edges;
+  }
 
   var TAG = { full: '화면 있음', partial: '일부', empty: '비어 있음' };
 
   var IS_PROPOSAL = /\/proposal\//.test(location.pathname);
   var G = IS_PROPOSAL ? GRAPHS.proposal : GRAPHS.current;
+  G.edges = buildEdges(G, IS_PROPOSAL ? w.SPShot.PROPOSAL : w.SPShot.CURRENT);
   var WORLD_W = G.world.w, WORLD_H = G.world.h;
 
   var byId = {};

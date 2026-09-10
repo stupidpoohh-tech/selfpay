@@ -263,8 +263,7 @@
     var d = s[side];
     if (!d) return '';
 
-    /* 프로토타입 페이지가 있는 화면은 shot.js 히트박스를 그대로 쓰고,
-     * 페이지가 없는 화면(요금 안내 등)은 screens.js 의 navTo 로 잇는다 */
+    /* 화면 사이 이동 좌표는 shot.js 히트박스 한 곳에서만 가져온다 */
     var list = [];
     var shot = w.SPShot;
     var map = shot && (side === 'proposal' ? shot.PROPOSAL : shot.CURRENT);
@@ -278,11 +277,6 @@
         if (hit) list.push({ l: h.l, t: h.t, w: h.w, h: h.h, i: hit.index });
       });
     }
-    (d.navTo || []).forEach(function (h) {
-      var i = SCREENS.map(function (x) { return x.id; }).indexOf(h.screen);
-      if (i >= 0) list.push({ l: h.l, t: h.t, w: h.w, h: h.h, i: i });
-    });
-
     var seen = {};
     var boxes = list.map(function (h) {
       if (h.i === state.index) return '';
@@ -371,9 +365,7 @@
         goTo(+b.getAttribute('data-go'));
       });
     });
-    el.stage.querySelectorAll('.fstep__shot img[data-zoom]').forEach(function (im) {
-      im.addEventListener('click', function () { openZoom(im.getAttribute('data-zoom')); });
-    });
+    bindZoomShots(el.stage);
     el.stage.querySelectorAll('.shotbox').forEach(function (box) {
       box.addEventListener('click', function (e) {
         if (e.target.closest('.anno__box')) return;   /* 표시 영역은 선택용 */
@@ -386,6 +378,13 @@
     bindNotes();
     bindMobile();
     syncAnno();
+  }
+
+  /* 흐름 항목의 작은 스크린샷도 눌러서 원본 크기로 본다 */
+  function bindZoomShots(root) {
+    root.querySelectorAll('.fstep__shot img[data-zoom]').forEach(function (im) {
+      im.addEventListener('click', function () { openZoom(im.getAttribute('data-zoom')); });
+    });
   }
 
   /* 화면 위 표시 영역에 직접 올리거나 눌러도 같은 변경점이 강조된다 */
@@ -452,11 +451,15 @@
   }
 
   /* ── 프로토타입 보기 ───────────────────────── */
+  /* 고른 쪽에 페이지가 없으면 반대쪽을 대신 보여 주지 않는다.
+   * AS-IS 와 TO-BE 의 있고 없음이 섞이면 안 된다. */
+  function protoSideData(s) {
+    return s[state.protoSide === 'current' ? 'current' : 'proposal'] || null;
+  }
+
   function protoPage(s) {
-    var want = state.protoSide === 'current' ? 'current' : 'proposal';
-    var other = want === 'current' ? 'proposal' : 'current';
-    var d = s[want] && s[want].page ? s[want] : (s[other] && s[other].page ? s[other] : null);
-    return d ? d.page : null;
+    var d = protoSideData(s);
+    return d && d.page ? d.page : null;
   }
 
   function protoUrl(s) {
@@ -468,10 +471,21 @@
     var s = screen();
     var url = protoUrl(s);
     if (!url) {
-      var msg = s.kind === 'flow'
-        ? '<b>눌러 볼 화면이 아닙니다</b><span>이 항목은 화면이 아니라 흐름 비교용 항목입니다. ' +
-          '비교 보기에서 확인해 주세요.</span>'
-        : '<b>프로토타입 화면 없음</b><span>이 화면은 아직 눌러 볼 수 있는 페이지가 없습니다.</span>';
+      var d = protoSideData(s);
+      var isCur = state.protoSide === 'current';
+      var msg;
+      if (d && d.removed) {
+        msg = '<b>' + (isCur ? 'AS-IS' : 'TO-BE') + '에서 제거된 화면</b><span>' + d.removed + '</span>';
+      } else if (!d) {
+        msg = '<b>' + (isCur ? 'AS-IS' : 'TO-BE') + '에 없는 화면</b>' +
+          '<span>' + (isCur ? '현재 서비스에는 없고 TO-BE에서 새로 제안된 화면입니다.'
+                            : '아직 제안 시안이 없는 화면입니다.') + '</span>';
+      } else if (s.kind === 'flow') {
+        msg = '<b>눌러 볼 화면이 아닙니다</b><span>이 항목은 화면이 아니라 흐름 비교용 항목입니다. ' +
+          '비교 보기에서 확인해 주세요.</span>';
+      } else {
+        msg = '<b>프로토타입 화면 없음</b><span>이 화면은 아직 눌러 볼 수 있는 페이지가 없습니다.</span>';
+      }
       el.stage.innerHTML = '<div class="proto"><div class="proto__stage">' +
         '<div class="pane__none">' + msg + '</div></div></div>';
       return;
@@ -512,9 +526,9 @@
     var frame = document.getElementById('protoFrame');
     if (!stage || !frame) return;
     var s = screen();
-    var want = state.protoSide === 'current' ? 'current' : 'proposal';
-    var side = s[want] && s[want].img ? s[want] : (s.proposal || s.current);
-    var src = side.img;
+    var side = protoSideData(s);
+    var src = (side && side.img) || (s.proposal || s.current || {}).img;
+    if (!src) return;
     ratio(src, function (r) {
       var box = stage.getBoundingClientRect();
       var pad = 18;
@@ -575,6 +589,7 @@
     var q = new URLSearchParams();
     q.set('screen', s.id);
     if (state.mode !== 'compare') q.set('mode', state.mode);
+    if (el.entryModal && !el.entryModal.hidden) q.set('entry', '1');
     if (DEBUG) q.set('debug', 'hits');
     history.replaceState(null, '', '?' + q.toString());
   }
@@ -594,9 +609,11 @@
     if (!ENTRY) return;
     el.entryBody.innerHTML = '<div class="cmp cmp--entry">' +
       paneHtml(ENTRY, 'current') + paneHtml(ENTRY, 'proposal') + notesHtml(ENTRY) + '</div>';
+    bindZoomShots(el.entryBody);
     el.entryModal.hidden = false;
     document.body.classList.add('modal-open');
     el.entryClose.focus();
+    syncUrl();
   }
 
   function closeEntry() {
@@ -604,7 +621,10 @@
     el.entryBody.innerHTML = '';
     document.body.classList.remove('modal-open');
     el.entryBtn.focus();
+    syncUrl();
   }
+
+  function entryOpen() { return !el.entryModal.hidden; }
 
   /* ── 이벤트 ────────────────────────────────── */
   el.tabs2.addEventListener('click', function (e) {
@@ -655,6 +675,8 @@
     }
     if (e.target.closest('input,textarea')) return;
     if (e.target.closest('.note')) return;      /* 목록 안에서는 좌우키를 넘기지 않는다 */
+    /* 팝업이나 원본 보기가 열려 있으면 뒤 화면을 건드리지 않는다 */
+    if (entryOpen() || el.zoom.classList.contains('is-on')) return;
     if (e.key === 'ArrowLeft') move(-1);
     if (e.key === 'ArrowRight') move(1);
   });
@@ -678,5 +700,6 @@
   }
 
   draw();
-  if (!params.get('screen') && params.get('mode') !== 'proto') openEntry();
+  /* 주소에 화면 지정이 없거나 entry=1 이면 첫 진입 팝업으로 시작한다 */
+  if (params.get('entry') === '1' || (!params.get('screen') && params.get('mode') !== 'proto')) openEntry();
 })(window);

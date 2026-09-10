@@ -8,15 +8,27 @@ AS-IS(현재)와 TO-BE(제안) 화면을 한 화면에서 나란히 놓고 검�
 ## 화면 구성
 
 ```
-[상단]  무인과금 서비스 UI/UX 개선          비교 보기 | 프로토타입 보기   화면 맵
-[선택]  ‹  홈 · 인쇄 · 복사 · 스캔 · 팩스 · 작업 이력 · 설정 · 로그인 · 비회원 · 알림  ›   1 / 10
+[상단]  무인과금 서비스 UI/UX 개선            비교 보기 | 프로토타입 보기    화면 맵
+[선택]  첫 진입 | 홈 · 로그인 · 인쇄 · 복사·스캔·팩스 · 설정 · 알림 · 이력   현재: 홈  ‹ 1 / 18 ›
 [본문]  AS-IS 스크린샷 | TO-BE 스크린샷 | 개선 사항 노트
 ```
+
+상단에서 고를 수 있는 것은 대표 화면 일곱 개입니다. 딸린 화면(인쇄 아래 파일확인·인쇄옵션·
+금액확인, 설정 아래 요금 안내·결제 내역·환불 안내·문제 해결 등)을 보고 있어도 상단에서는
+대표 화면이 선택된 것으로 보이고 옆에 지금 화면 이름이 붙습니다. 이전·다음 이동도 이 묶음
+순서를 따릅니다. 묶음은 `assets/js/screens.js` 의 `groups` 에 있습니다.
+
+`첫 진입` 은 화면 비교가 아니라 진입 순서 비교라 팝업으로 뜹니다. 주소에 화면 지정이 없으면
+들어올 때 바로 열리고, 닫으면 홈 비교가 보입니다. 팝업이 열린 상태는 주소에 `entry=1` 로
+남아서 새로 고쳐도 그대로입니다.
 
 - 스크린샷은 원본 비율을 유지한 채 뷰포트 높이에 맞춰 축소됩니다. 두 장이 같은 높이로 보이고,
   화면을 보기 위한 세로 스크롤이 생기지 않습니다.
 - 스크린샷을 누르면 원본 크기로 봅니다. 다시 누르거나 Esc로 닫습니다.
-- 좌우 방향키로도 화면을 넘길 수 있습니다.
+- 좌우 방향키로도 화면을 넘길 수 있습니다. 팝업이나 원본 보기가 열려 있으면 뒤 화면은
+  움직이지 않고, Esc 는 위에 열린 것부터 닫습니다.
+- 비교 화면 안의 버튼 자리를 누르면 그 화면 비교로 옮겨 갑니다. 좌표는 프로토타입에서 쓰는
+  `assets/js/shot.js` 히트박스를 그대로 다시 씁니다.
 - 주소에 현재 화면이 남습니다. 예: `?screen=print`
 
 ### 모바일
@@ -31,7 +43,25 @@ AS-IS / TO-BE 탭으로 한 장씩 보고, 그 아래에 개선 노트가 붙습
 | **프로토타입 보기** | 화면 하나를 가운데 놓고, 스크린샷 안의 버튼을 눌러 이동 |
 
 프로토타입 보기는 기존 화면 페이지를 그대로 불러옵니다(`?embed=1`). 화면 안에서 이동하면
-위쪽 화면 목록도 따라 움직입니다. 기본값은 TO-BE이고, 작은 컨트롤로 AS-IS 프로토타입도 볼 수 있습니다.
+위쪽 화면 목록도 따라 움직입니다. Cloudflare Pages 가 `.html` 을 뗀 주소로 돌려줘도 같은
+화면으로 알아봅니다. 기본값은 TO-BE이고, 작은 컨트롤로 AS-IS 프로토타입도 볼 수 있습니다.
+
+고른 쪽에 페이지가 없으면 반대쪽을 대신 보여 주지 않습니다. AS-IS 에만 있는 화면, TO-BE 에서
+제거된 화면, 흐름 비교용 항목은 각각 그 사실을 그대로 적습니다.
+
+### 눌러 볼 수 있는 흐름
+
+| 흐름 | 경로 |
+| --- | --- |
+| 인쇄 (TO-BE) | 홈 → 인쇄 → 파일 선택 → 파일 확인 및 결제 (결제 진입 직전) |
+| 인쇄 (AS-IS) | 홈 → 인쇄 → 파일 확인 → 인쇄옵션 → 금액 확인 |
+| 복합기 연결 | 홈 → 복사·스캔·팩스 → QR 스캔 / 사진에서 선택 / 시리얼번호 입력 → 연결됨 |
+| 설정 | 홈 → 설정 → 요금 안내 · 결제 내역 · 환불 안내 · 문제 해결 |
+| 이력 | 홈 → 이력 → 영수증 보기 · 환불 요청 · 결제하기 |
+| 알림 | 홈 → 알림 → 영수증 보기 · 작업 상세 |
+
+복합기 연결은 카메라나 QR 인식을 하지 않습니다. 연결된 상태만 화면 위에 보여 줍니다.
+인쇄·복사·스캔·팩스처럼 작업이 진행 중인 화면에서 하단 탭으로 나가면 한 번 확인합니다.
 
 ## 변경점
 
@@ -99,9 +129,15 @@ AS-IS · TO-BE 위에 함께 표시됩니다.
 public/
   index.html             UX Review Board (첫 화면)
   login.html, home.html, history.html, settings.html, guest.html,
-  notifications.html, print.html, copy.html, scan.html, fax.html   현재 화면
+  notifications.html, print.html, print-confirm.html, print-options.html,
+  print-amount.html, copy.html, scan.html, fax.html                현재 화면
   signup.html, find-password.html, profile.html                    스크린샷 없는 자리
-  proposal/…                                                       제안 화면 (같은 구성)
+  proposal/index.html, login.html, history.html, settings.html,
+  notifications.html, print.html, print-checkout.html, copy.html,
+  scan.html, fax.html, cost.html, payments.html, refund.html,
+  troubleshoot.html                                                제안 화면
+  proposal/signup.html, find-password.html, help.html, support.html
+                                                                   스크린샷 없는 자리
   shots/                 현재 화면 스크린샷
   proposal/shots/        제안 화면 스크린샷
                          (한쪽에만 있는 화면은 그 면만 두면 된다. 비교 화면에서
@@ -111,8 +147,9 @@ public/
   assets/js/annotate.js  변경점 레이어 렌더러 (유형별 표시·연결선)
   assets/js/board.js     보드 동작
   assets/js/shot.js      화면별 히트박스 좌표
-  assets/js/map.js       화면 맵의 노드·연결선
+  assets/js/map.js       화면 맵의 노드 위치 (연결선은 shot.js 에서 만든다)
   assets/js/app.js       화면 사이 이동 (data-go)
+tools/smoke.js           핵심 경로 점검
   assets/css/board.css   보드 스타일
   assets/css/shot.css    스크린샷 화면과 히트박스
   assets/css/app.css     공통 토큰, 빈자리 화면
@@ -128,23 +165,30 @@ python3 -m http.server 8000 --directory public
 # http://localhost:8000
 ```
 
+## 점검
+
+```bash
+python3 -m http.server 8000 --directory public
+node tools/smoke.js http://localhost:8000
+```
+
+인쇄·복합기 연결·설정 하위 이동, 첫 진입 팝업과 키보드, AS-IS / TO-BE 가 서로를 대신하지
+않는지, 화면 맵이 그려지는지, 모바일 폭에서 가로로 넘치지 않는지를 봅니다. Playwright 가
+필요하고, 실패한 항목만 `FAIL` 로 찍습니다.
+
 ## Cloudflare Pages 배포
 
-빌드 없이 `public` 을 그대로 올립니다.
+빌드 없이 `public` 을 그대로 올립니다. `main` 에 push 하면 GitHub Actions
+(`.github/workflows/deploy.yml`)가 `wrangler pages deploy public --project-name=selfpay` 를
+실행합니다. Secrets 에 `CLOUDFLARE_API_TOKEN` 과 `CLOUDFLARE_ACCOUNT_ID` 가 필요합니다.
 
-- 대시보드 연결: Workers & Pages → Create → Pages → Connect to Git,
-  Build command 비움, Build output directory `public`
+작업은 `claude/cloudflare-shell-page-ew8iwd` 에서 하고, 배포할 때 `main` 으로 옮깁니다.
+
 - CLI: `npm install && npx wrangler login && npm run deploy`
-- GitHub Actions: `.github/workflows/deploy.yml`, Secrets 에
-  `CLOUDFLARE_API_TOKEN` 과 `CLOUDFLARE_ACCOUNT_ID` 필요
-
-> **확인 필요** — 이 저장소의 기본 브랜치는 `claude/cloudflare-shell-page-ew8iwd` 이고
-> `main` 브랜치는 없습니다. 워크플로는 `main` push 에만 반응하므로 지금 상태에서는
-> Actions 배포가 실행되지 않습니다. 대시보드 연결로 배포 중이라면 그쪽 기준 브랜치를
-> 확인해 주세요. 배포 방식은 이번 작업에서 바꾸지 않았습니다.
 
 ## 아직 없는 것
 
-- 변경점 데이터가 아직 없는 화면: 인쇄, 복사, 스캔, 팩스, 작업 이력, 설정, 로그인, 비회원, 알림
-- 스크린샷이 없는 화면: 회원가입, 비밀번호 찾기, 수정 / 제안 쪽은 도움말, 고객센터, 용지 선택 추가
+- 목적지 화면이 없어 눌러도 넘어가지 않는 버튼: 결제하기(결제 화면 없음), 미리보기,
+  작업 취소, 문의하기, 결제 내역의 각 항목, 요금 안내의 용지·옵션 행
+- 스크린샷이 없는 화면: 회원가입, 비밀번호 찾기, 수정 / 제안 쪽은 도움말, 고객센터
 - 입력·결제·복합기 통신 등 실제 동작. 화면은 이미지입니다.

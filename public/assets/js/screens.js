@@ -234,8 +234,8 @@ window.REVIEW = {
     },
     {
       id: 'print-confirm', label: '파일확인',
-      current:  { img: 'shots/print-confirm.png' },
-      proposal: { img: 'proposal/shots/print-checkout.png' },
+      current:  { img: 'shots/print-confirm.png',                    page: 'print-confirm.html' },
+      proposal: { img: 'proposal/shots/print-checkout.png', page: 'proposal/print-checkout.html' },
       changes: [
         {
           id: 'steps', type: 'restructure', shortLabel: '단계 축소',
@@ -272,8 +272,8 @@ window.REVIEW = {
     },
     {
       id: 'print-options', label: '인쇄옵션',
-      current:  { img: 'shots/print-options.png' },
-      proposal: { img: 'proposal/shots/print-checkout.png' },
+      current:  { img: 'shots/print-options.png',                    page: 'print-options.html' },
+      proposal: { img: 'proposal/shots/print-checkout.png', page: 'proposal/print-checkout.html' },
       changes: [
         {
           id: 'sheet', type: 'move', shortLabel: '이동',
@@ -308,8 +308,8 @@ window.REVIEW = {
     },
     {
       id: 'print-amount', label: '금액확인',
-      current:  { img: 'shots/print-amount.png' },
-      proposal: { img: 'proposal/shots/print-checkout.png' },
+      current:  { img: 'shots/print-amount.png',                    page: 'print-amount.html' },
+      proposal: { img: 'proposal/shots/print-checkout.png', page: 'proposal/print-checkout.html' },
       changes: [
         {
           id: 'merge', type: 'merge', shortLabel: '통합',
@@ -411,16 +411,8 @@ window.REVIEW = {
     {
       id: 'settings', label: '설정',
       current:  { img: 'shots/settings.png', page: 'settings.html' },
-      proposal: {
-        img: 'proposal/shots/settings.png', page: 'proposal/settings.html',
-        /* 이 네 화면은 아직 프로토타입 페이지가 없어 비교 보드 안에서만 잇는다 */
-        navTo: [
-          { l: 6.0,  t: 51.4, w: 88.0, h: 5.0, screen: 'cost' },
-          { l: 6.0,  t: 56.5, w: 88.0, h: 5.0, screen: 'refund' },
-          { l: 4.6,  t: 64.2, w: 90.8, h: 7.6, screen: 'payments' },
-          { l: 4.6,  t: 73.6, w: 90.8, h: 7.6, screen: 'troubleshoot' }
-        ]
-      },
+      /* 하위 네 화면으로 가는 좌표는 shot.js 히트박스 하나만 쓴다 */
+      proposal: { img: 'proposal/shots/settings.png', page: 'proposal/settings.html' },
       changes: [
         {
           id: 'menu', type: 'restructure', shortLabel: '재구성',
@@ -526,7 +518,7 @@ window.REVIEW = {
         ]
       },
       proposal: {
-        page: 'proposal/index.html',
+        removed: 'TO-BE에서는 이 화면을 거치지 않고 서비스 선택 후 바로 작업 화면으로 갑니다.',
         summary: '2단계',
         title: '바로 작업 화면으로',
         steps: [
@@ -609,7 +601,7 @@ window.REVIEW = {
     },
     {
       id: 'cost', label: '요금 안내',
-      proposal: { img: 'proposal/shots/cost.png' },
+      proposal: { img: 'proposal/shots/cost.png', page: 'proposal/cost.html' },
       changes: [
         {
           id: 'rate', type: 'add', shortLabel: '신규',
@@ -639,7 +631,7 @@ window.REVIEW = {
     },
     {
       id: 'payments', label: '결제 내역',
-      proposal: { img: 'proposal/shots/payments.png' },
+      proposal: { img: 'proposal/shots/payments.png', page: 'proposal/payments.html' },
       changes: [
         {
           id: 'list', type: 'add', shortLabel: '신규',
@@ -677,7 +669,7 @@ window.REVIEW = {
     },
     {
       id: 'refund', label: '환불 안내',
-      proposal: { img: 'proposal/shots/refund.png' },
+      proposal: { img: 'proposal/shots/refund.png', page: 'proposal/refund.html' },
       changes: [
         {
           id: 'rule', type: 'add', shortLabel: '신규',
@@ -706,7 +698,7 @@ window.REVIEW = {
     },
     {
       id: 'troubleshoot', label: '문제 해결',
-      proposal: { img: 'proposal/shots/troubleshoot.png' },
+      proposal: { img: 'proposal/shots/troubleshoot.png', page: 'proposal/troubleshoot.html' },
       changes: [
         {
           id: 'kinds', type: 'add', shortLabel: '신규',

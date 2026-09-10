@@ -17,6 +17,14 @@
   ];
   var CUR_BACK = { l: 1.5, t: 1.2, w: 11.0, h: 3.4, to: 'home.html', name: '뒤로' };
 
+  /* 작업이 진행 중인 화면에서 하단 탭으로 나갈 때는 한 번 확인한다 */
+  var TASK_LEAVE = '진행 중인 작업을 그만두고 이동할까요?';
+  function taskTab(tab) {
+    return tab.map(function (h) {
+      return { l: h.l, t: h.t, w: h.w, h: h.h, to: h.to, name: h.name, confirm: TASK_LEAVE };
+    });
+  }
+
   var CURRENT = {
     login: {
       img: 'shots/index.png', alt: '로그인',
@@ -51,23 +59,67 @@
     },
     history: {
       img: 'shots/history.png', alt: '작업 이력',
-      hits: [].concat(CUR_TAB)
+      hits: [
+        { l: 11.5, t: 27.2, w: 73.0, h: 5.0, to: 'print-amount.html', name: '금액확인 단계로 이동' },
+        { l: 11.5, t: 83.8, w: 73.0, h: 5.0, to: 'print-amount.html', name: '금액확인 단계로 이동' }
+      ].concat(CUR_TAB)
     },
     print: {
       img: 'shots/print.png', alt: '인쇄 · 파일 선택',
-      hits: [CUR_BACK]
+      hits: [
+        CUR_BACK,
+        { l: 6.0, t: 19.6, w: 88.0, h: 12.4, to: 'print-confirm.html', name: '파일 선택' },
+        { l: 6.0, t: 91.8, w: 88.0, h: 6.6, to: 'print-confirm.html', name: '파일을 선택하세요' }
+      ]
+    },
+    'print-confirm': {
+      img: 'shots/print-confirm.png', alt: '인쇄 · 파일 확인',
+      hits: [
+        { l: 1.5, t: 1.2, w: 11.0, h: 3.4, to: 'print.html', name: '뒤로' },
+        { l: 72.5, t: 26.3, w: 22.0, h: 5.2, to: 'print-options.html', name: '인쇄옵션' },
+        { l: 6.0, t: 91.8, w: 88.0, h: 6.6, to: 'print-amount.html', name: '금액 확인' }
+      ]
+    },
+    'print-options': {
+      img: 'shots/print-options.png', alt: '인쇄 · 인쇄옵션',
+      hits: [
+        { l: 1.5, t: 1.2, w: 11.0, h: 3.4, to: 'print-confirm.html', name: '뒤로' },
+        { l: 6.0, t: 91.8, w: 88.0, h: 6.6, to: 'print-confirm.html', name: '확인' }
+      ]
+    },
+    'print-amount': {
+      img: 'shots/print-amount.png', alt: '인쇄 · 금액 확인',
+      hits: [
+        { l: 1.5, t: 1.2, w: 11.0, h: 3.4, to: 'print-confirm.html', name: '뒤로' },
+        { l: 5.0, t: 93.5, w: 90.0, h: 5.2, to: 'home.html', name: '작업 취소', confirm: TASK_LEAVE }
+      ]
     },
     copy: {
       img: 'shots/copy.png', alt: '복사 · 복합기 연결',
-      hits: [CUR_BACK]
+      connect: '무인과금 복합기 A01',
+      hits: [
+        CUR_BACK,
+        { l: 6.5, t: 35.3, w: 87.0, h: 56.5, act: 'connect', name: 'QR 스캔' },
+        { l: 33.0, t: 92.6, w: 34.0, h: 5.0, act: 'connect', name: '시리얼번호 직접 입력' }
+      ]
     },
     scan: {
       img: 'shots/scan.png', alt: '스캔 · 복합기 연결',
-      hits: [CUR_BACK]
+      connect: '무인과금 복합기 A01',
+      hits: [
+        CUR_BACK,
+        { l: 6.5, t: 35.3, w: 87.0, h: 56.5, act: 'connect', name: 'QR 스캔' },
+        { l: 33.0, t: 92.6, w: 34.0, h: 5.0, act: 'connect', name: '시리얼번호 직접 입력' }
+      ]
     },
     fax: {
       img: 'shots/fax.png', alt: '팩스 · 복합기 연결',
-      hits: [CUR_BACK]
+      connect: '무인과금 복합기 A01',
+      hits: [
+        CUR_BACK,
+        { l: 6.5, t: 35.3, w: 87.0, h: 56.5, act: 'connect', name: 'QR 스캔' },
+        { l: 33.0, t: 92.6, w: 34.0, h: 5.0, act: 'connect', name: '시리얼번호 직접 입력' }
+      ]
     },
     guest: {
       img: 'shots/guest.png', alt: '비회원 이용',
@@ -79,7 +131,10 @@
     },
     notifications: {
       img: 'shots/notifications.png', alt: '알림',
-      hits: [CUR_BACK]
+      hits: [
+        CUR_BACK,
+        { l: 55.0, t: 25.2, w: 35.0, h: 5.2, to: 'history.html', name: '작업 이력' }
+      ]
     }
   };
 
@@ -115,7 +170,7 @@
         { l: 7.0,  t: 62.7, w: 86.0, h: 5.5, to: 'index.html',         name: '카카오로 시작하기' },
         { l: 7.0,  t: 69.1, w: 86.0, h: 5.5, to: 'index.html',         name: '네이버로 시작하기' },
         { l: 7.0,  t: 75.4, w: 86.0, h: 5.5, to: 'index.html',         name: 'Google로 시작하기' },
-        { l: 7.0,  t: 82.5, w: 86.0, h: 5.5, to: 'guest.html',         name: '비회원으로 이용하기' },
+        { l: 7.0,  t: 82.5, w: 86.0, h: 5.5, to: 'index.html',         name: '비회원으로 이용하기' },
         { l: 47.5, t: 95.4, w: 10.0, h: 2.2, to: 'signup.html',        name: '회원가입' },
         { l: 62.0, t: 95.4, w: 10.0, h: 2.2, to: 'support.html',       name: '고객센터' }
       ]
@@ -123,45 +178,83 @@
     settings: {
       img: 'shots/settings.png', alt: '설정',
       hits: P_APPBAR.concat([
-        { l: 73.0, t: 23.7, w: 20.0, h: 4.4, to: 'login.html', name: '로그인' },
-        { l: 4.6,  t: 82.5, w: 91.2, h: 4.7, to: 'login.html', name: '로그아웃' }
+        { l: 73.0, t: 23.7, w: 20.0, h: 4.4, to: 'login.html',        name: '로그인' },
+        { l: 6.0,  t: 51.4, w: 88.0, h: 5.0, to: 'cost.html',         name: '요금 안내' },
+        { l: 6.0,  t: 56.5, w: 88.0, h: 5.0, to: 'refund.html',       name: '환불 안내' },
+        { l: 4.6,  t: 64.2, w: 90.8, h: 7.6, to: 'payments.html',     name: '결제 내역' },
+        { l: 4.6,  t: 73.6, w: 90.8, h: 7.6, to: 'troubleshoot.html', name: '문제 해결' },
+        { l: 4.6,  t: 82.5, w: 91.2, h: 4.7, to: 'login.html',        name: '로그아웃' }
       ], P_TAB)
     },
     history: {
       img: 'shots/history.png', alt: '작업 이력',
-      /* 교체된 이미지에는 빈 상태 CTA가 없다. 그 자리는 결제대기 카드 영역이다 */
-      hits: P_APPBAR.concat(P_TAB)
-    },
-    guest: {
-      img: 'shots/guest.png', alt: '비회원 이용',
+      /* 상태마다 가장 중요한 행동만 목적지를 잇는다. 취소·상세는 갈 화면이 없어 비워 둔다 */
       hits: P_APPBAR.concat([
-        { l: 4.3, t: 81.9, w: 91.4, h: 5.0, to: 'index.html', name: '바로 시작하기' },
-        { l: 4.3, t: 88.3, w: 91.4, h: 5.0, to: 'login.html', name: '로그인 화면으로' }
-      ])
+        { l: 5.5,  t: 48.4, w: 43.0, h: 5.0, to: 'payments.html',       name: '영수증 보기' },
+        { l: 50.0, t: 48.4, w: 44.5, h: 5.0, to: 'refund.html',         name: '환불 요청' },
+        { l: 4.5,  t: 76.0, w: 91.0, h: 5.4, to: 'print-checkout.html', name: '결제하기' }
+      ], P_TAB)
     },
     notifications: {
       img: 'shots/notifications.png', alt: '알림',
       hits: [
-        { l: 4.4, t: 6.0, w: 9.0, h: 4.8, to: 'index.html', name: '뒤로' }
-      ]
+        { l: 4.4,  t: 6.0,  w: 9.0,  h: 4.8,  to: 'index.html',    name: '뒤로' },
+        { l: 8.0,  t: 43.2, w: 40.0, h: 6.4,  to: 'payments.html', name: '영수증 보기' },
+        { l: 52.0, t: 43.2, w: 40.5, h: 6.4,  to: 'history.html',  name: '작업 상세' },
+        { l: 4.5,  t: 52.8, w: 91.0, h: 18.5, to: 'refund.html',   name: '환불 완료 알림' }
+      ].concat(P_TAB)
     },
     print: {
       img: 'shots/print.png', alt: '인쇄 · 파일 선택',
-      hits: P_APPBAR.concat(P_TAB)
+      hits: P_APPBAR.concat([
+        { l: 76.0, t: 27.4, w: 20.0, h: 4.2,  to: 'cost.html',           name: '요금표 보기' },
+        { l: 5.0,  t: 46.0, w: 90.0, h: 24.0, to: 'print-checkout.html', name: '파일 선택' },
+        { l: 4.0,  t: 83.4, w: 92.0, h: 5.6,  to: 'print-checkout.html', name: '파일 업로드하기' }
+      ], taskTab(P_TAB))
+    },
+    'print-checkout': {
+      img: 'shots/print-checkout.png', alt: '파일 확인 및 결제',
+      hits: P_APPBAR.concat([
+        { l: 73.0, t: 29.3, w: 23.0, h: 4.2, to: 'print.html', name: '다른 파일 선택' }
+      ], taskTab(P_TAB))
     },
     copy: {
       img: 'shots/copy.png', alt: '복사 · 복합기 연결',
-      hits: P_APPBAR.concat(P_TAB)
+      connect: '무인과금 복합기 A01',
+      hits: P_APPBAR.concat([
+        { l: 5.5,  t: 43.3, w: 89.0, h: 22.0, act: 'connect', name: 'QR 스캔' },
+        { l: 8.0,  t: 65.4, w: 40.0, h: 5.6,  act: 'connect', name: '사진에서 선택' },
+        { l: 52.0, t: 65.4, w: 40.5, h: 5.6,  act: 'connect', name: '시리얼번호 직접 입력' }
+      ], taskTab(P_TAB))
     },
     scan: {
       img: 'shots/scan.png', alt: '스캔 · 복합기 연결',
-      hits: P_APPBAR.concat(P_TAB)
+      connect: '무인과금 복합기 A01',
+      hits: P_APPBAR.concat([
+        { l: 5.5,  t: 43.3, w: 89.0, h: 22.0, act: 'connect', name: 'QR 스캔' },
+        { l: 8.0,  t: 65.4, w: 40.0, h: 5.6,  act: 'connect', name: '사진에서 선택' },
+        { l: 52.0, t: 65.4, w: 40.5, h: 5.6,  act: 'connect', name: '시리얼번호 직접 입력' }
+      ], taskTab(P_TAB))
     },
     fax: {
       img: 'shots/fax.png', alt: '팩스 · 복합기 연결',
-      hits: P_APPBAR.concat(P_TAB)
+      connect: '무인과금 복합기 A01',
+      hits: P_APPBAR.concat([
+        { l: 5.5,  t: 43.3, w: 89.0, h: 22.0, act: 'connect', name: 'QR 스캔' },
+        { l: 8.0,  t: 65.4, w: 40.0, h: 5.6,  act: 'connect', name: '사진에서 선택' },
+        { l: 52.0, t: 65.4, w: 40.5, h: 5.6,  act: 'connect', name: '시리얼번호 직접 입력' }
+      ], taskTab(P_TAB))
     }
   };
+
+  /* 설정 아래 안내 화면들. 되돌아가기 말고는 갈 곳이 없어 뒤로만 둔다 */
+  var INFO_ALT = { cost: '요금 안내', payments: '결제 내역', refund: '환불 안내', troubleshoot: '문제 해결' };
+  Object.keys(INFO_ALT).forEach(function (id) {
+    PROPOSAL[id] = {
+      img: 'shots/' + id + '.png', alt: INFO_ALT[id],
+      hits: [{ l: 4.4, t: 5.4, w: 9.0, h: 4.8, to: 'settings.html', name: '뒤로' }]
+    };
+  });
 
   var SCREENS = IS_PROPOSAL ? PROPOSAL : CURRENT;
 
@@ -207,18 +300,81 @@
     box.appendChild(img);
 
     s.hits.forEach(function (h) {
-      var a = document.createElement('a');
+      /* 이동이 아닌 것(복합기 연결)은 버튼으로 둔다 */
+      var a = document.createElement(h.to ? 'a' : 'button');
       a.className = 'hit';
-      a.href = h.to + SUFFIX;
+      if (h.to) a.href = h.to + SUFFIX;
+      else a.type = 'button';
       a.style.cssText = 'left:' + h.l + '%;top:' + h.t + '%;width:' + h.w + '%;height:' + h.h + '%';
       a.setAttribute('data-name', h.name);
       a.setAttribute('aria-label', h.name);
+
+      if (h.act === 'connect') {
+        a.addEventListener('click', function (e) {
+          e.preventDefault();
+          connected(box, s);
+        });
+      } else if (h.confirm) {
+        /* 작업이 진행 중인 화면에서는 작업을 먼저 두고, 나갈지 한 번 묻는다 */
+        a.addEventListener('click', function (e) {
+          e.preventDefault();
+          ask(box, h.confirm, h.to + SUFFIX);
+        });
+      }
       box.appendChild(a);
     });
 
     document.body.insertBefore(wrap, document.body.firstChild);
   }
 
+  /* ── 화면 위에 잠깐 뜨는 판 ─────────────────── */
+  function panel(box, html) {
+    close(box);
+    var p = document.createElement('div');
+    p.className = 'sheet';
+    p.innerHTML = '<div class="sheet__box" role="dialog" aria-modal="true">' + html + '</div>';
+    p.addEventListener('click', function (e) { if (e.target === p) close(box); });
+    box.appendChild(p);
+    var first = p.querySelector('button, a');
+    if (first) first.focus();
+    return p;
+  }
+
+  function close(box) {
+    var old = box.querySelector('.sheet');
+    if (old) old.remove();
+  }
+
+  /* 복합기 연결 — 실제 카메라나 QR 인식은 하지 않는다. 연결된 상태만 보여 준다 */
+  function connected(box, s) {
+    var p = panel(box,
+      '<b class="sheet__title">복합기에 연결되었습니다</b>' +
+      '<span class="sheet__body">' + s.connect + '</span>' +
+      '<span class="sheet__note">연결 다음 단계는 아직 시안이 없습니다.</span>' +
+      '<div class="sheet__row">' +
+        '<button type="button" class="sheet__btn sheet__btn--main" data-close>확인</button>' +
+      '</div>');
+    p.querySelector('[data-close]').addEventListener('click', function () { close(box); });
+  }
+
+  function ask(box, text, href) {
+    var p = panel(box,
+      '<b class="sheet__title">' + text + '</b>' +
+      '<span class="sheet__note">진행 중인 내용은 저장되지 않습니다.</span>' +
+      '<div class="sheet__row">' +
+        '<button type="button" class="sheet__btn" data-sheet-stay>작업 계속</button>' +
+        '<button type="button" class="sheet__btn sheet__btn--main" data-sheet-go>이동</button>' +
+      '</div>');
+    p.querySelector('[data-sheet-stay]').addEventListener('click', function () { close(box); });
+    p.querySelector('[data-sheet-go]').addEventListener('click', function () { location.href = href; });
+  }
+
   /* 비교 보드에서도 이 좌표를 그대로 써서 화면 사이 이동을 만든다 */
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Escape') return;
+    var box = document.querySelector('.shot');
+    if (box && box.querySelector('.sheet')) { close(box); e.stopPropagation(); }
+  });
+
   w.SPShot = { render: render, screens: SCREENS, CURRENT: CURRENT, PROPOSAL: PROPOSAL };
 })(window);
