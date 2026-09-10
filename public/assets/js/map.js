@@ -62,6 +62,15 @@
 
   var TAG = { full: '화면 있음', partial: '일부', empty: '비어 있음' };
 
+  /* 제안 쪽 맵은 같은 자리·같은 연결을 비워 둔 상태로 보여 준다. */
+  var IS_PROPOSAL = /\/proposal\//.test(location.pathname);
+  if (IS_PROPOSAL) {
+    NODES.forEach(function (n) {
+      n.state = 'empty';
+      n.note = '제안 화면 자리';
+    });
+  }
+
   var byId = {};
   NODES.forEach(function (n) { byId[n.id] = n; });
 

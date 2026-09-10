@@ -72,16 +72,51 @@
     if (go) location.href = go.getAttribute('data-go');
   });
 
-  /* 우측 하단 화면 맵 버튼. 맵 자신을 뺀 모든 화면에 붙는다. */
-  function addMapButton() {
-    if (/map\.html$/.test(location.pathname)) return;
-    var b = document.createElement('button');
+  /* ── 화면 밖 도구: 현재/제안 토글, 화면 맵 버튼 ──
+   * 앱 셸이 아니라 브라우저 화면 모서리에 붙는다. */
+  function isProposal() { return /\/proposal\//.test(location.pathname); }
+
+  function fileName() {
+    var f = location.pathname.split('/').pop();
+    return f || 'index.html';
+  }
+
+  /* 같은 이름의 반대편 화면 */
+  function otherVariantHref() {
+    return isProposal() ? '../' + fileName() : 'proposal/' + fileName();
+  }
+
+  function addTools() {
+    var onMap = /map\.html$/.test(location.pathname);
+    var tabbar = document.querySelector('.tabbar');
     var cta = document.querySelector('.cta:not([hidden])');
-    b.className = 'mapfab' + (document.querySelector('.tabbar') ? ' mapfab--nav' : '');
-    /* 아래 버튼 바가 있으면 그 높이만큼 띄운다 */
-    if (!document.querySelector('.tabbar') && cta) {
-      b.style.bottom = (cta.offsetHeight + 16) + 'px';
-    }
+
+    /* 좁은 화면에서 도구를 하단 바 위로 띄우는 값 */
+    var lift = 16;
+    if (tabbar) lift = tabbar.offsetHeight + 16;
+    else if (cta) lift = cta.offsetHeight + 16;
+    document.documentElement.style.setProperty('--tool-lift', lift + 'px');
+
+    var t = document.createElement('div');
+    t.className = 'vtoggle';
+    t.innerHTML =
+      '<button type="button" data-variant="current">현재</button>' +
+      '<button type="button" data-variant="proposal">제안</button>';
+    t.querySelector(isProposal() ? '[data-variant="proposal"]' : '[data-variant="current"]')
+      .classList.add('is-on');
+    t.addEventListener('click', function (e) {
+      var b = e.target.closest('[data-variant]');
+      if (!b) return;
+      var want = b.getAttribute('data-variant') === 'proposal';
+      if (want === isProposal()) return;
+      location.href = otherVariantHref();
+    });
+    document.body.appendChild(t);
+
+    if (onMap) return;
+
+    var b = document.createElement('button');
+    b.className = 'mapfab';
     b.setAttribute('aria-label', '화면 맵');
     b.innerHTML =
       '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
@@ -93,9 +128,9 @@
   }
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', addMapButton);
+    document.addEventListener('DOMContentLoaded', addTools);
   } else {
-    addMapButton();
+    addTools();
   }
 
   w.SP = SP;
