@@ -3,28 +3,17 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>인쇄 | 무인과금출력</title>
+<title>인쇄 · 파일 선택 | 무인과금출력</title>
 <link rel="icon" href="assets/img/favicon.svg">
 <link rel="stylesheet" href="assets/css/font.css">
 <link rel="stylesheet" href="assets/css/app.css">
+<link rel="stylesheet" href="assets/css/shot.css">
 </head>
 <body>
-<div class="app">
-  <header class="titlebar titlebar--flow">
-    <button class="titlebar__back" id="flowBack">뒤로</button>
-    <h1 class="titlebar__title" id="flowTitle">인쇄 · 파일 선택</h1>
-    <span></span>
-  </header>
-
-  <div class="stepper" id="stepper"></div>
-
-  <main class="page" id="flowBody"></main>
-
-  <div class="cta"><button class="btn" id="flowCta" disabled>파일을 선택하세요</button></div>
-</div>
-
+<!-- 화면을 다시 만들지 않는다. 받은 스크린샷을 그대로 올리고 버튼 자리에 히트박스만 얹는다.
+     좌표는 assets/js/shot.js 의 print 항목에 있다. -->
 <script src="assets/js/app.js"></script>
-<script src="assets/js/flow.js"></script>
-<script>SPFlow.start('print');</script>
+<script src="assets/js/shot.js"></script>
+<script>SPShot.render('print');</script>
 </body>
 </html>

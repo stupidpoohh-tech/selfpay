@@ -1,79 +1,8 @@
-/* 무인과금출력 껍데기 — 공통 스크립트
- * 서버 없이 화면만 이어 붙인다. 상태는 브라우저 localStorage 에만 남는다. */
+/* 화면 밖 도구와 화면 이동.
+ * 화면 자체는 스크린샷 이미지라 앱 상태가 없다. */
 (function (w) {
   'use strict';
 
-  var KEY = 'selfpay.state.v1';
-
-  var DEFAULT_STATE = {
-    user: null,   // {name, email, type:'member'|'guest'}
-    options: { color: 'color', duplex: 'single', paper: 'A4', orient: 'portrait' },
-    notify: { done: true, refund: true }
-  };
-
-  function clone(o) { return JSON.parse(JSON.stringify(o)); }
-
-  function read() {
-    try {
-      var raw = w.localStorage.getItem(KEY);
-      if (!raw) return clone(DEFAULT_STATE);
-      var s = JSON.parse(raw);
-      var base = clone(DEFAULT_STATE);
-      return {
-        user: s.user || base.user,
-        options: Object.assign(base.options, s.options || {}),
-        notify: Object.assign(base.notify, s.notify || {})
-      };
-    } catch (e) {
-      return clone(DEFAULT_STATE);
-    }
-  }
-
-  function write(s) {
-    try { w.localStorage.setItem(KEY, JSON.stringify(s)); } catch (e) {}
-    return s;
-  }
-
-  function update(fn) {
-    var s = read();
-    fn(s);
-    return write(s);
-  }
-
-  var SP = {
-    state: read,
-    update: update,
-
-    signIn: function (email, label) {
-      return update(function (s) {
-        s.user = { name: label || email.split('@')[0], email: email, type: 'member' };
-      });
-    },
-    signInGuest: function () {
-      return update(function (s) {
-        s.user = { name: '비회원', email: 'guest.anon.55f1bfc108d2@mobile.local', type: 'guest' };
-      });
-    },
-    signOut: function () {
-      update(function (s) { s.user = null; });
-      location.href = 'index.html';
-    },
-    /* 로그인 화면이 첫 화면이다. 로그인 전에는 어떤 화면도 열리지 않는다. */
-    requireUser: function () {
-      var s = read();
-      if (!s.user) { location.replace('index.html'); return null; }
-      return s.user;
-    }
-  };
-
-  /* data-go="home.html" 로 어디서나 이동 */
-  document.addEventListener('click', function (e) {
-    var go = e.target.closest('[data-go]');
-    if (go) location.href = go.getAttribute('data-go');
-  });
-
-  /* ── 화면 밖 도구: 현재/제안 토글, 화면 맵 버튼 ──
-   * 앱 셸이 아니라 브라우저 화면 모서리에 붙는다. */
   function isProposal() { return /\/proposal\//.test(location.pathname); }
 
   function fileName() {
@@ -96,16 +25,15 @@
     return '../' + (TO_CURRENT[f] || f);
   }
 
+  /* data-go="home.html" 로 어디서나 이동 */
+  document.addEventListener('click', function (e) {
+    var go = e.target.closest('[data-go]');
+    if (go) location.href = go.getAttribute('data-go');
+  });
+
+  /* ── 모서리 도구: 현재/제안 토글, 화면 맵 버튼 ── */
   function addTools() {
     var onMap = /map\.html$/.test(location.pathname);
-    var tabbar = document.querySelector('.tabbar, .p-tab');
-    var cta = document.querySelector('.cta:not([hidden]), .p-cta');
-
-    /* 좁은 화면에서 도구를 하단 바 위로 띄우는 값 */
-    var lift = 16;
-    if (tabbar) lift = tabbar.offsetHeight + 16;
-    else if (cta) lift = cta.offsetHeight + 16;
-    document.documentElement.style.setProperty('--tool-lift', lift + 'px');
 
     var t = document.createElement('div');
     t.className = 'vtoggle';
@@ -117,8 +45,7 @@
     t.addEventListener('click', function (e) {
       var b = e.target.closest('[data-variant]');
       if (!b) return;
-      var want = b.getAttribute('data-variant') === 'proposal';
-      if (want === isProposal()) return;
+      if ((b.getAttribute('data-variant') === 'proposal') === isProposal()) return;
       location.href = otherVariantHref();
     });
     document.body.appendChild(t);
@@ -142,6 +69,4 @@
   } else {
     addTools();
   }
-
-  w.SP = SP;
 })(window);

@@ -26,10 +26,10 @@
       { id: 'settings', x: 600, y: 610, name: '설정',      file: 'settings.html', state: 'full' },
 
       { id: 'noti',    x: 880, y: 40,  name: '알림', file: 'notifications.html', state: 'full' },
-      { id: 'print',   x: 880, y: 160, name: '인쇄', file: 'print.html', state: 'partial', note: '6단계 · 파일선택만 화면 있음' },
-      { id: 'copy',    x: 880, y: 280, name: '복사', file: 'copy.html',  state: 'partial', note: '6단계 · 복합기연결만 화면 있음' },
-      { id: 'scan',    x: 880, y: 400, name: '스캔', file: 'scan.html',  state: 'partial', note: '6단계 · 복합기연결만 화면 있음' },
-      { id: 'fax',     x: 880, y: 520, name: '팩스', file: 'fax.html',   state: 'partial', note: '6단계 · 복합기연결만 화면 있음' },
+      { id: 'print',   x: 880, y: 160, name: '인쇄', file: 'print.html', state: 'full', note: '파일 선택' },
+      { id: 'copy',    x: 880, y: 280, name: '복사', file: 'copy.html',  state: 'full', note: '복합기 연결' },
+      { id: 'scan',    x: 880, y: 400, name: '스캔', file: 'scan.html',  state: 'full', note: '복합기 연결' },
+      { id: 'fax',     x: 880, y: 520, name: '팩스', file: 'fax.html',   state: 'full', note: '복합기 연결' },
       { id: 'profile', x: 880, y: 640, name: '수정', file: 'profile.html', state: 'empty' }
     ],
     edges: [
@@ -45,7 +45,7 @@
       { from: 'home', to: 'scan',     label: '스캔' },
       { from: 'home', to: 'fax',      label: '팩스' },
       { from: 'home', to: 'history',  label: '이력 · 전체보기' },
-      { from: 'home', to: 'settings', label: '설정' },
+      { from: 'home', to: 'settings', label: '내 정보' },
       { from: 'settings', to: 'profile', label: '수정' },
 
       { from: 'home',     to: 'history',  label: '하단 탭', kind: 'tab' },
@@ -77,11 +77,11 @@
       { id: 'history',  x: 110, y: 450, name: '작업 이력', file: 'history.html',  state: 'full', note: '스크린샷' },
       { id: 'settings', x: 110, y: 600, name: '설정',      file: 'settings.html', state: 'full', note: '스크린샷' },
 
-      { id: 'print', x: 390, y: 30,  name: '인쇄', file: 'print.html', state: 'empty' },
-      { id: 'copy',  x: 390, y: 150, name: '복사', file: 'copy.html',  state: 'empty' },
-      { id: 'scan',  x: 390, y: 270, name: '스캔', file: 'scan.html',  state: 'empty' },
-      { id: 'fax',   x: 390, y: 390, name: '팩스', file: 'fax.html',   state: 'empty' },
-      { id: 'noti',  x: 390, y: 510, name: '알림', file: 'notifications.html', state: 'empty' },
+      { id: 'print', x: 390, y: 30,  name: '인쇄', file: 'print.html', state: 'full', note: '스크린샷' },
+      { id: 'copy',  x: 390, y: 150, name: '복사', file: 'copy.html',  state: 'full', note: '스크린샷' },
+      { id: 'scan',  x: 390, y: 270, name: '스캔', file: 'scan.html',  state: 'full', note: '스크린샷' },
+      { id: 'fax',   x: 390, y: 390, name: '팩스', file: 'fax.html',   state: 'full', note: '스크린샷' },
+      { id: 'noti',  x: 390, y: 510, name: '알림', file: 'notifications.html', state: 'full', note: '스크린샷' },
       { id: 'paper', x: 390, y: 760, name: '용지 선택', file: 'paper.html', state: 'empty' },
 
       { id: 'login', x: 670, y: 600, name: '로그인', file: 'login.html', state: 'full', note: '스크린샷' },
@@ -116,10 +116,10 @@
       { from: 'home',    to: 'history',  label: '하단 탭', kind: 'tab' },
       { from: 'history', to: 'settings', label: '하단 탭', kind: 'tab' },
 
-      { from: 'print',   to: 'home',     label: '뒤로', kind: 'back' },
-      { from: 'copy',    to: 'home',     label: '뒤로', kind: 'back' },
-      { from: 'scan',    to: 'home',     label: '뒤로', kind: 'back' },
-      { from: 'fax',     to: 'home',     label: '뒤로', kind: 'back' },
+      { from: 'print',   to: 'home',     label: '하단 탭', kind: 'back' },
+      { from: 'copy',    to: 'home',     label: '하단 탭', kind: 'back' },
+      { from: 'scan',    to: 'home',     label: '하단 탭', kind: 'back' },
+      { from: 'fax',     to: 'home',     label: '하단 탭', kind: 'back' },
       { from: 'noti',    to: 'home',     label: '뒤로', kind: 'back' },
       { from: 'paper',   to: 'settings', label: '뒤로', kind: 'back' },
       { from: 'guest',   to: 'login',    label: '로그인 화면으로', kind: 'back' },

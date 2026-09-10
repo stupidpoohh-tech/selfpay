@@ -7,54 +7,13 @@
 <link rel="icon" href="assets/img/favicon.svg">
 <link rel="stylesheet" href="assets/css/font.css">
 <link rel="stylesheet" href="assets/css/app.css">
+<link rel="stylesheet" href="assets/css/shot.css">
 </head>
 <body>
-<div class="app">
-  <header class="titlebar">
-    <span></span><h1 class="titlebar__title">작업 이력</h1><span></span>
-  </header>
-
-  <main class="page has-nav">
-    <div class="segment" id="segment">
-      <button class="segment__item is-on"><b>전체</b><span>0건</span></button>
-      <button class="segment__item"><b>작업중</b><span>0건</span></button>
-      <button class="segment__item"><b>완료</b><span>0건</span></button>
-    </div>
-
-    <div class="chips" id="chips">
-      <button class="chip is-on">전체</button>
-      <button class="chip">인쇄</button>
-      <button class="chip">복사</button>
-      <button class="chip">스캔</button>
-      <button class="chip">팩스</button>
-    </div>
-
-    <p class="empty">작업 이력이 없습니다.</p>
-  </main>
-
-  <nav class="tabbar">
-    <button class="tab" data-go="home.html">홈</button>
-    <button class="tab is-on">이력</button>
-    <button class="tab" data-go="settings.html">설정</button>
-  </nav>
-</div>
-
+<!-- 화면을 다시 만들지 않는다. 받은 스크린샷을 그대로 올리고 버튼 자리에 히트박스만 얹는다.
+     좌표는 assets/js/shot.js 의 history 항목에 있다. -->
 <script src="assets/js/app.js"></script>
-<script>
-  SP.requireUser();
-
-  /* 이력이 없으므로 필터는 선택 표시만 바뀐다. */
-  function pick(container, selector) {
-    container.addEventListener('click', function (e) {
-      var b = e.target.closest(selector);
-      if (!b) return;
-      container.querySelectorAll(selector).forEach(function (x) {
-        x.classList.toggle('is-on', x === b);
-      });
-    });
-  }
-  pick(document.getElementById('segment'), '.segment__item');
-  pick(document.getElementById('chips'), '.chip');
-</script>
+<script src="assets/js/shot.js"></script>
+<script>SPShot.render('history');</script>
 </body>
 </html>
