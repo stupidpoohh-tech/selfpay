@@ -699,7 +699,16 @@
     });
   }
 
-  draw();
-  /* 주소에 화면 지정이 없거나 entry=1 이면 첫 진입 팝업으로 시작한다 */
-  if (params.get('entry') === '1' || (!params.get('screen') && params.get('mode') !== 'proto')) openEntry();
+  /* 낡은 사본이 섞이면 화면이 통째로 비어 버린다. 그때는 흰 화면 대신 이유를 알린다. */
+  try {
+    draw();
+    /* 주소에 화면 지정이 없거나 entry=1 이면 첫 진입 팝업으로 시작한다 */
+    if (params.get('entry') === '1' || (!params.get('screen') && params.get('mode') !== 'proto')) openEntry();
+  } catch (err) {
+    el.stage.innerHTML = '<div class="cmp"><div class="pane"><div class="pane__body">' +
+      '<div class="pane__none"><b>화면을 그리지 못했습니다</b>' +
+      '<span>새로 고침(당겨서 새로 고침)으로 다시 받아 주세요.<br>' +
+      '그래도 같으면 브라우저 캐시를 지우고 열어 주세요.</span></div></div></div></div>';
+    throw err;
+  }
 })(window);

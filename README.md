@@ -184,6 +184,11 @@ node tools/smoke.js http://localhost:8000
 
 작업은 `claude/cloudflare-shell-page-ew8iwd` 에서 하고, 배포할 때 `main` 으로 옮깁니다.
 
+`public/_headers` 에서 `assets` 와 스크린샷을 매번 다시 확인하도록 두었습니다. 파일 이름이
+바뀌지 않는 구조라 오래 캐시하면 새 HTML 과 옛 JS·CSS 가 섞여 화면이 비어 버립니다.
+바뀌지 않았으면 304 로 끝나므로 비용은 거의 없습니다. HTML 안의 `?v=` 는 이미 캐시된
+사본에서 한 번 빠져나오기 위한 값이고, 평소에는 손대지 않아도 됩니다.
+
 - CLI: `npm install && npx wrangler login && npm run deploy`
 
 ## 아직 없는 것

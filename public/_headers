@@ -3,5 +3,13 @@
   Referrer-Policy: strict-origin-when-cross-origin
   X-Frame-Options: SAMEORIGIN
 
+# 파일 이름이 그대로라서 오래 캐시하면 새 HTML 과 옛 JS·CSS 가 섞인다.
+# 매번 물어보게 두고, 바뀌지 않았으면 304 로 끝낸다.
 /assets/*
-  Cache-Control: public, max-age=86400
+  Cache-Control: public, max-age=0, must-revalidate
+
+/shots/*
+  Cache-Control: public, max-age=0, must-revalidate
+
+/proposal/shots/*
+  Cache-Control: public, max-age=0, must-revalidate
