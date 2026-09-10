@@ -86,6 +86,8 @@
     login:  '<path d="M10 4.5H6.5a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2H10M15 8.5l4 3.5-4 3.5M19 12H9.5"/>',
     guest:  '<circle cx="12" cy="8" r="3.6"/><path d="M4.5 20c1.2-3.6 4-5.4 7.5-5.4S18.3 16.4 19.5 20"/>',
     notifications:'<path d="M18 8a6 6 0 1 0-12 0c0 6-2 7-2 7h16s-2-1-2-7"/><path d="M10.5 20a2 2 0 0 0 3 0"/>',
+    entry:'<path d="M4 20.5V6.2L13 3.5v17.8L4 20.5Z"/><path d="M13 6.2h6.2a1.8 1.8 0 0 1 1.8 1.8v10.8a1.8 1.8 0 0 1-1.8 1.8H13"/><path d="M10.2 12.2h.01"/>',
+    'print-flow':'<path d="M3.6 5.6h5.2M3.6 12h5.2M3.6 18.4h5.2"/><path d="M8.8 5.6c0 4 2.4 6.4 6.2 6.4M8.8 18.4c0-4 2.4-6.4 6.2-6.4M8.8 12H15"/><path d="m16.8 8.8 3.2 3.2-3.2 3.2"/>',
     'print-confirm':'<path d="M13.5 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8.5L13.5 3Z"/><path d="M13.5 3v5.5H19"/><path d="m9.2 14.4 2 2 3.6-3.8"/>',
     'print-options':'<path d="M4 7h9M17 7h3M4 12h3M11 12h9M4 17h9M17 17h3"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="15" cy="17" r="2"/>',
     'print-amount':'<circle cx="12" cy="12" r="8.4"/><path d="M9.4 9.2h5.2M9.4 12h5.2M12 16.4V9.6"/>',
@@ -137,7 +139,8 @@
     el.more.classList.toggle('is-on', restOn);
     el.moreLabel.textContent = restOn ? SCREENS[state.index].label : '기타';
 
-    el.navCurrent.textContent = '현재: ' + screen().label + ' 화면 ' +
+    var cs = screen();
+    el.navCurrent.textContent = '현재: ' + cs.label + (cs.kind === 'flow' ? ' 흐름 ' : ' 화면 ') +
       (state.mode === 'proto' ? '프로토타입' : '비교');
     el.counter.textContent = (state.index + 1) + ' / ' + SCREENS.length;
 
@@ -196,13 +199,54 @@
   }
 
   /* ── 비교 보기 ─────────────────────────────── */
+  /* 흐름 비교 항목: 화면 한 장이 아니라 거쳐 가는 단계를 보여 준다 */
+  function flowHtml(d, side) {
+    var steps = (d && d.steps) || [];
+
+    var list = steps.map(function (st, i) {
+      var shot = st.img
+        ? '<span class="fstep__shot"><img src="' + st.img + '" alt="" data-zoom="' + st.img + '"></span>'
+        : '';
+      var note = st.note ? '<span class="fstep__note">' + st.note + '</span>' : '';
+      var items = (st.items && st.items.length)
+        ? '<ul class="fstep__items">' + st.items.map(function (t) {
+            return '<li>' + t + '</li>';
+          }).join('') + '</ul>'
+        : '';
+      var arrow = i < steps.length - 1
+        ? '<span class="farrow" aria-hidden="true">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" ' +
+            'stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v14"/><path d="m6 13 6 6 6-6"/></svg>' +
+          '</span>'
+        : '';
+      return '<div class="fstep' + (st.img ? '' : ' fstep--text') + '">' +
+          '<span class="fstep__n">' + (i + 1) + '</span>' + shot +
+          '<span class="fstep__text"><b>' + st.label + '</b>' + note + items + '</span>' +
+        '</div>' + arrow;
+    }).join('');
+
+    var foot = d && d.foot ? '<p class="flow__foot">' + d.foot + '</p>' : '';
+    var title = d && d.title ? '<p class="flow__title">' + d.title + '</p>' : '';
+
+    return '<div class="pane__body pane__body--flow"><div class="flow" data-side="' + side + '">' +
+      title + list + foot + '</div></div>';
+  }
+
   function paneHtml(s, side) {
     var isCur = side === 'current';
     var d = s[isCur ? 'current' : 'proposal'];
+    var isFlow = s.kind === 'flow';
+
+    var badge = isFlow && d && d.summary
+      ? '<span class="pane__badge">' + d.summary + '</span>' : '';
 
     var head = '<div class="pane__head"><span class="pane__mark"></span>' +
       '<span class="tag tag--' + (isCur ? 'as">AS-IS' : 'to">TO-BE') + '</span>' +
-      '<span class="pane__name">' + (isCur ? '현재 화면' : '개선 화면') + '</span></div>';
+      '<span class="pane__name">' + (isFlow ? (isCur ? '현재 흐름' : '개선 흐름')
+                                            : (isCur ? '현재 화면' : '개선 화면')) + '</span>' +
+      badge + '</div>';
+
+    if (isFlow) return '<div class="pane pane--' + side + ' pane--flow">' + head + flowHtml(d, side) + '</div>';
 
     /* 한쪽에만 있는 화면이면 빈 자리를 그대로 보여 준다 */
     var body = d
@@ -245,6 +289,9 @@
           textContent: img.getAttribute('src') + ' 를 찾을 수 없습니다.'
         }));
       });
+    });
+    el.stage.querySelectorAll('.fstep__shot img[data-zoom]').forEach(function (im) {
+      im.addEventListener('click', function () { openZoom(im.getAttribute('data-zoom')); });
     });
     el.stage.querySelectorAll('.shotbox').forEach(function (box) {
       box.addEventListener('click', function (e) {
@@ -338,11 +385,14 @@
 
   function drawProto() {
     var s = screen();
-    var url = protoUrl(s);
+    var url = s.kind === 'flow' ? null : protoUrl(s);
     if (!url) {
+      var msg = s.kind === 'flow'
+        ? '<b>눌러 볼 화면이 아닙니다</b><span>이 항목은 화면이 아니라 흐름 비교용 항목입니다. ' +
+          '비교 보기에서 확인해 주세요.</span>'
+        : '<b>프로토타입 화면 없음</b><span>이 화면은 아직 눌러 볼 수 있는 페이지가 없습니다.</span>';
       el.stage.innerHTML = '<div class="proto"><div class="proto__stage">' +
-        '<div class="pane__none"><b>프로토타입 화면 없음</b>' +
-        '<span>이 화면은 아직 눌러 볼 수 있는 페이지가 없습니다.</span></div></div></div>';
+        '<div class="pane__none">' + msg + '</div></div></div>';
       return;
     }
     el.stage.innerHTML =

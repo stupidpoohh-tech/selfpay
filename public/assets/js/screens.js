@@ -14,12 +14,61 @@
  *
  * changes 가 없는 화면은 notes(제목·본문만 있는 목록)로 대체 표시되고,
  * 그것도 없으면 '개선사항 정리 예정' 으로 표시된다.
+ *
+ * kind: 'flow' 인 항목은 개별 화면 비교가 아니라 진입·작업 흐름 비교다.
+ * 이 항목은 img 대신 steps 를 갖는다. 실제 서비스 페이지가 아니므로 page 는 없다.
+ *   { summary, title, steps:[{ label, note, items:[…], img }], foot }
+ *   img 는 기존 스크린샷을 작게 다시 쓰는 용도다. 새 이미지를 만들지 않는다.
  */
 window.REVIEW = {
   title: '무인과금 서비스 UI/UX 개선',
   subtitle: 'AS-IS · TO-BE 비교 검토',
 
   screens: [
+    {
+      /* 개별 화면 디자인이 아니라 서비스에 들어오는 순서를 비교하는 항목이다.
+       * 로그인·비회원 화면의 디자인 차이는 각각의 항목에서 따로 다룬다. */
+      id: 'entry', label: '첫 진입', primary: true, kind: 'flow',
+      current: {
+        summary: '4단계',
+        title: '로그인 화면에서 시작',
+        steps: [
+          { label: '로그인 화면', note: '첫 진입 시 먼저 노출됩니다.', img: 'shots/index.png' },
+          { label: '로그인 또는 비회원 이용 선택',
+            note: '로그인·간편 로그인과 비회원으로 이용하기 중에서 고릅니다.' },
+          { label: '홈', note: '인쇄·복사·스캔·팩스 카드가 여기서 처음 보입니다.', img: 'shots/home.png' },
+          { label: '작업 선택' }
+        ],
+        foot: '비회원 사용자는 로그인 화면 → 비회원 이용 → 홈 경로를 거칩니다.'
+      },
+      proposal: {
+        summary: '2단계',
+        title: '홈에서 시작',
+        steps: [
+          { label: '홈', note: '인쇄·복사·스캔·팩스를 첫 화면에서 바로 보여 줍니다.',
+            img: 'proposal/shots/index.png' },
+          { label: '작업 선택' }
+        ],
+        foot: '로그인 화면은 그대로 있으나 첫 화면은 아닙니다.'
+      },
+      notes: [
+        { title: '관찰한 문제',
+          body: '첫 진입에서 로그인 화면이 먼저 노출되어, 실제로 어떤 작업을 할 수 있는지 보기 전에 ' +
+                '계정 방식을 먼저 고르게 됩니다. 로그인이 필요한 서비스처럼 인식될 수 있습니다. ' +
+                '비회원 사용자는 화면을 한 번 더 거쳐 홈으로 들어옵니다.' },
+        { title: '변경한 내용',
+          body: '첫 진입 화면이 로그인에서 홈으로 바뀌었습니다. 인쇄·복사·스캔·팩스 등 ' +
+                '사용 가능한 작업을 먼저 보여 주는 구조입니다.' },
+        { title: '이 항목에서 다루지 않는 것',
+          body: '로그인이 어느 시점에 필요한지에 대한 정책은 이번 자료에서 확인되지 않아 다루지 않습니다. ' +
+                '로그인·비회원 화면의 디자인 차이는 각각의 비교 항목에서 봅니다.' }
+      ],
+      effects: [
+        '서비스 목적과 가능한 작업을 더 빠르게 파악할 수 있을 것으로 보입니다',
+        '작업 선택까지의 진입 단계를 줄일 수 있습니다',
+        '비회원 사용자가 거치는 화면이 줄어들 가능성이 있습니다'
+      ]
+    },
     {
       id: 'home', label: '홈', primary: true,
       current:  { img: 'shots/home.png',           page: 'home.html' },
@@ -88,6 +137,49 @@ window.REVIEW = {
       current:  { img: 'shots/print.png',          page: 'print.html' },
       proposal: { img: 'proposal/shots/print.png', page: 'proposal/print.html' },
       notes: []
+    },
+    {
+      /* 아래 파일확인·인쇄옵션·금액확인 세 항목의 상위 설명이다.
+       * 세부 차이는 그 세 항목에서 다루고, 여기서는 흐름만 본다. */
+      id: 'print-flow', label: '인쇄 설정·결제 통합', primary: true, kind: 'flow',
+      current: {
+        summary: '3개 화면·상태',
+        title: '여러 화면·상태로 나뉜 과정',
+        steps: [
+          { label: '파일 확인', img: 'shots/print-confirm.png' },
+          { label: '인쇄 옵션', note: '독립된 페이지가 아니라 화면 위에 열리는 시트 상태입니다.',
+            img: 'shots/print-options.png' },
+          { label: '금액 확인', img: 'shots/print-amount.png' }
+        ]
+      },
+      proposal: {
+        summary: '1개 화면',
+        title: '하나의 작업 화면',
+        steps: [
+          { label: '파일 확인 및 결제',
+            note: '시안에서 한 화면 안에 함께 놓인 것들입니다.',
+            items: ['선택 파일 확인', '파일 미리보기', '인쇄 옵션 확인·변경',
+                    '예상 결제 금액 확인', '결제 진입'],
+            img: 'proposal/shots/print-checkout.png' }
+        ]
+      },
+      notes: [
+        { title: '관찰한 문제',
+          body: '파일 확인, 인쇄 옵션, 금액 확인이 여러 화면·상태에 나뉘어 있습니다. ' +
+                '이 가운데 인쇄 옵션은 독립된 페이지가 아니라 화면 위에 열리는 시트 상태입니다.' },
+        { title: '변경한 내용',
+          body: '3개 화면·상태를 하나의 작업 화면으로 통합했습니다. ' +
+                '시안에서는 파일 확인, 파일 미리보기, 인쇄 옵션 확인·변경, 예상 결제 금액 확인, ' +
+                '결제 진입이 한 화면 안에 배치되어 있습니다.' },
+        { title: '이 항목에서 다루지 않는 것',
+          body: '옵션이 어디로 옮겨졌는지, 예상 금액이 어느 자리에 놓였는지 같은 세부 차이는 ' +
+                '파일확인·인쇄옵션·금액확인 항목에서 각각 봅니다.' }
+      ],
+      effects: [
+        '한 화면에서 설정과 예상 금액을 함께 확인할 수 있습니다',
+        '화면 사이를 오가는 횟수가 줄어들 것으로 보입니다',
+        '결제 전에 무엇을 확인해야 하는지 한눈에 파악될 가능성이 있습니다'
+      ]
     },
     {
       id: 'print-confirm', label: '파일확인',
