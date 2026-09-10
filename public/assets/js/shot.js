@@ -124,15 +124,13 @@
       img: 'shots/settings.png', alt: '설정',
       hits: P_APPBAR.concat([
         { l: 73.0, t: 23.7, w: 20.0, h: 4.4, to: 'login.html', name: '로그인' },
-        { l: 69.4, t: 49.0, w: 22.0, h: 3.6, to: 'paper.html', name: '용지' },
         { l: 4.6,  t: 82.5, w: 91.2, h: 4.7, to: 'login.html', name: '로그아웃' }
       ], P_TAB)
     },
     history: {
       img: 'shots/history.png', alt: '작업 이력',
-      hits: P_APPBAR.concat([
-        { l: 28.2, t: 73.5, w: 43.5, h: 4.3, to: 'index.html', name: '홈에서 작업 시작' }
-      ], P_TAB)
+      /* 교체된 이미지에는 빈 상태 CTA가 없다. 그 자리는 결제대기 카드 영역이다 */
+      hits: P_APPBAR.concat(P_TAB)
     },
     guest: {
       img: 'shots/guest.png', alt: '비회원 이용',

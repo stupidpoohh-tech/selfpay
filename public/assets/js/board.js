@@ -35,6 +35,41 @@
     zoomImg: document.getElementById('zoomImg')
   };
 
+  /* Cloudflare Pages 는 .html 이 빠진 주소로도 같은 문서를 준다.
+   * /home.html · /home · /proposal/ · /proposal/index?embed=1 가 모두 같은 화면이어야 한다. */
+  function normPath(p) {
+    var t = String(p || '').split('#')[0].split('?')[0];
+    try { t = decodeURIComponent(t); } catch (e) {}
+    t = t.toLowerCase().replace(/\/{2,}/g, '/');
+    if (t.charAt(0) !== '/') t = '/' + t;
+    if (t.charAt(t.length - 1) === '/') t += 'index';
+    return t.replace(/\.html?$/, '');
+  }
+
+  /* AS-IS 의 index/login 과 TO-BE 의 index/home 은 역할이 다르므로
+   * 파일 이름만 보지 않고 디렉터리까지 포함해 맞춘다. */
+  function findByPath(path) {
+    var got = normPath(path);
+    var cands = [got];
+    if (got.slice(-6) !== '/index') cands.push(got + '/index');   /* /proposal → /proposal/index */
+    var loose = null;
+
+    for (var i = 0; i < SCREENS.length; i++) {
+      var sides = ['proposal', 'current'];
+      for (var k = 0; k < sides.length; k++) {
+        var d = SCREENS[i][sides[k]];
+        if (!d || !d.page) continue;
+        var want = normPath(d.page);
+        for (var c = 0; c < cands.length; c++) {
+          if (cands[c] === want) return { index: i, side: sides[k] };
+          /* 하위 경로에 올려도 맞도록. want 가 '/' 로 시작하므로 경계는 안전하다 */
+          if (!loose && cands[c].slice(-want.length) === want) loose = { index: i, side: sides[k] };
+        }
+      }
+    }
+    return loose;
+  }
+
   function screen() { return SCREENS[state.index]; }
   function changes() { return screen().changes || []; }
   function activeId() { return state.hover || state.active; }
@@ -325,11 +360,18 @@
     frame.addEventListener('load', function () {
       var path;
       try { path = frame.contentWindow.location.pathname; } catch (e) { return; }
-      var i = SCREENS.findIndex(function (x) {
-        return (x.current && x.current.page && path.endsWith('/' + x.current.page)) ||
-               (x.proposal && x.proposal.page && path.endsWith('/' + x.proposal.page));
-      });
-      if (i >= 0 && i !== state.index) { state.index = i; drawNav(); }
+      var hit = findByPath(path);
+      if (hit) {
+        state.index = hit.index;
+        if (hit.side !== state.protoSide) {
+          state.protoSide = hit.side;
+          el.protoSeg.querySelectorAll('button').forEach(function (x) {
+            x.classList.toggle('is-on', x.getAttribute('data-proto-side') === hit.side);
+          });
+        }
+        drawNav();
+        syncUrl();
+      }
       sizeFrame();
     });
   }
@@ -394,6 +436,10 @@
     el.protoSeg.hidden = state.mode !== 'proto';
     document.body.setAttribute('data-mode', state.mode);
     document.body.setAttribute('data-side', state.side);
+    syncUrl();
+  }
+
+  function syncUrl() {
     var s = screen();
     document.title = s.label + ' · ' + R.title;
     var q = new URLSearchParams();
