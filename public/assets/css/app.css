@@ -55,32 +55,3 @@ button{font:inherit;color:inherit;cursor:pointer}
 .slot__name{font-size:17px;font-weight:800;color:var(--muted)}
 .slot__file{font-size:12px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
 .slot__hint{font-size:12px;font-weight:700;margin-top:4px}
-
-/* ── 화면 맵 버튼 · 현재/제안 토글 ───────────── */
-/* 앱 화면 밖, 브라우저 화면 모서리에 붙는 도구들 */
-.mapfab{
-  position:fixed;z-index:60;right:16px;bottom:16px;
-  width:56px;height:56px;border-radius:50%;
-  border:1px solid var(--line);background:var(--paper);color:var(--ink);
-  display:grid;place-items:center;
-  box-shadow:0 6px 18px rgba(0,10,20,.14);
-}
-.mapfab:active{transform:scale(.96)}
-
-.vtoggle{
-  position:fixed;z-index:60;top:16px;right:16px;
-  display:inline-flex;gap:2px;padding:3px;
-  background:var(--paper);border:1px solid var(--line);border-radius:11px;
-  box-shadow:0 6px 18px rgba(0,10,20,.12);
-}
-.vtoggle button{
-  height:32px;padding:0 16px;border:0;border-radius:8px;background:none;
-  font-size:13px;font-weight:700;color:var(--muted);
-}
-.vtoggle button.is-on{background:var(--ink);color:#fff}
-
-/* 좁은 화면에서는 앱 화면과 겹치므로 아래 모서리로 내린다 */
-@media (max-width:640px){
-  .mapfab{bottom:16px}
-  .vtoggle{top:auto;right:auto;left:16px;bottom:16px}
-}

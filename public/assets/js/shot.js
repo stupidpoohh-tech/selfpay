@@ -18,7 +18,7 @@
   var CUR_BACK = { l: 1.5, t: 1.2, w: 11.0, h: 3.4, to: 'home.html', name: '뒤로' };
 
   var CURRENT = {
-    index: {
+    login: {
       img: 'shots/index.png', alt: '로그인',
       hits: [
         { l: 4.6,  t: 36.8, w: 90.9, h: 5.7, to: 'home.html',          name: '로그인' },
@@ -46,7 +46,7 @@
       img: 'shots/settings.png', alt: '설정',
       hits: [
         { l: 85.5, t: 9.4,  w: 8.5,  h: 2.6, to: 'profile.html', name: '수정' },
-        { l: 4.6,  t: 86.5, w: 90.9, h: 5.5, to: 'index.html',   name: '로그아웃' }
+        { l: 4.6,  t: 86.5, w: 90.9, h: 5.5, to: 'login.html',   name: '로그아웃' }
       ].concat(CUR_TAB)
     },
     history: {
@@ -72,9 +72,9 @@
     guest: {
       img: 'shots/guest.png', alt: '비회원 이용',
       hits: [
-        { l: 1.5, t: 1.2,  w: 11.0, h: 3.4, to: 'index.html', name: '뒤로' },
+        { l: 1.5, t: 1.2,  w: 11.0, h: 3.4, to: 'login.html', name: '뒤로' },
         { l: 3.8, t: 86.6, w: 92.0, h: 5.5, to: 'home.html',  name: '바로 시작하기' },
-        { l: 3.8, t: 93.8, w: 92.0, h: 5.3, to: 'index.html', name: '로그인 화면으로' }
+        { l: 3.8, t: 93.8, w: 92.0, h: 5.3, to: 'login.html', name: '로그인 화면으로' }
       ]
     },
     notifications: {
@@ -167,11 +167,25 @@
 
   var SCREENS = IS_PROPOSAL ? PROPOSAL : CURRENT;
 
+  var params = new URLSearchParams(location.search);
+  var EMBED = params.has('embed');
+  var DEBUG = params.get('debug') === 'hits';
+
+  /* 화면 안에서 이동해도 보기 모드가 유지되도록 링크에 붙일 값 */
+  var SUFFIX = (function () {
+    var q = [];
+    if (EMBED) q.push('embed=1');
+    if (DEBUG) q.push('debug=hits');
+    return q.length ? '?' + q.join('&') : '';
+  })();
+
   function render(id) {
     var s = SCREENS[id];
     if (!s) return;
 
     document.title = s.alt + (IS_PROPOSAL ? ' · 제안' : '') + ' | 무인과금출력';
+    if (EMBED) document.body.classList.add('embed');
+    if (DEBUG) document.body.classList.add('debug-hits');
 
     var wrap = document.createElement('div');
     wrap.className = 'shotwrap';
@@ -197,7 +211,7 @@
     s.hits.forEach(function (h) {
       var a = document.createElement('a');
       a.className = 'hit';
-      a.href = h.to;
+      a.href = h.to + SUFFIX;
       a.style.cssText = 'left:' + h.l + '%;top:' + h.t + '%;width:' + h.w + '%;height:' + h.h + '%';
       a.setAttribute('data-name', h.name);
       a.setAttribute('aria-label', h.name);
@@ -205,16 +219,6 @@
     });
 
     document.body.insertBefore(wrap, document.body.firstChild);
-
-    /* 히트박스 보기 버튼 */
-    var btn = document.createElement('button');
-    btn.className = 'hitbtn';
-    btn.textContent = '히트박스';
-    btn.addEventListener('click', function () {
-      document.body.classList.toggle('show-hits');
-      btn.classList.toggle('is-on');
-    });
-    document.body.appendChild(btn);
   }
 
   w.SPShot = { render: render, screens: SCREENS };

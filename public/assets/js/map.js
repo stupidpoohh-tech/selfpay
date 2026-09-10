@@ -16,7 +16,7 @@
       { x: 856, y: 8,   w: 238, h: 740, label: '서비스 · 상세' }
     ],
     nodes: [
-      { id: 'index',   x: 40,  y: 300, name: '로그인',        file: 'index.html',         state: 'full', start: true },
+      { id: 'index',   x: 40,  y: 300, name: '로그인',        file: 'login.html',         state: 'full', start: true },
       { id: 'guest',   x: 320, y: 120, name: '비회원 이용',   file: 'guest.html',         state: 'full' },
       { id: 'signup',  x: 320, y: 470, name: '회원가입',      file: 'signup.html',        state: 'empty' },
       { id: 'findpw',  x: 320, y: 590, name: '비밀번호 찾기', file: 'find-password.html', state: 'empty' },
