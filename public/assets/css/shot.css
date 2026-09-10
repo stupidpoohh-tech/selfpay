@@ -70,3 +70,16 @@ body.debug-hits .hit::after{
 .sheet__btn:hover{background:#f6f8fb}
 .sheet__btn--main{border-color:#2870ff;background:#2870ff;color:#fff}
 .sheet__btn--main:hover{background:#1f5fe0}
+
+/* 고른 항목 (결제 수단처럼 화면을 옮기지 않는 선택) */
+.hit.is-picked{
+  border-radius:12px;
+  box-shadow:inset 0 0 0 2px #2870ff, 0 2px 8px rgba(40,112,255,.22);
+  background:rgba(40,112,255,.08);
+}
+.hit.is-picked::after{
+  content:"✓";position:absolute;right:5px;top:5px;
+  width:18px;height:18px;border-radius:50%;background:#2870ff;color:#fff;
+  font-size:10px;font-weight:800;line-height:18px;text-align:center;
+  box-shadow:0 1px 4px rgba(40,112,255,.4);
+}

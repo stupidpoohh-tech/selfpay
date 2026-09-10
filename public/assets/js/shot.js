@@ -92,7 +92,18 @@
       img: 'shots/print-amount.png', alt: '인쇄 · 금액 확인',
       hits: [
         { l: 1.5, t: 1.2, w: 11.0, h: 3.4, to: 'print-confirm.html', name: '뒤로' },
+        { l: 4.0, t: 84.8, w: 92.0, h: 7.6, to: 'payment.html', name: '모바일로 결제', next: true },
         { l: 5.0, t: 93.5, w: 90.0, h: 5.2, to: 'home.html', name: '작업 취소', confirm: TASK_LEAVE }
+      ]
+    },
+    payment: {
+      img: 'shots/payment.png', alt: '인쇄 · 모바일 결제',
+      hits: [
+        { l: 1.5,  t: 1.2,  w: 11.0, h: 3.4, to: 'print-amount.html', name: '뒤로' },
+        /* 결제 수단은 화면을 옮기지 않고 고른 것만 표시한다 */
+        { l: 14.5, t: 44.8, w: 30.0, h: 6.2, act: 'pick', group: 'pay', name: '신용·체크카드' },
+        { l: 47.0, t: 44.8, w: 30.0, h: 6.2, act: 'pick', group: 'pay', name: 'Toss Pay' },
+        { l: 5.0,  t: 93.2, w: 90.0, h: 5.4, to: 'home.html', name: '작업 취소', confirm: TASK_LEAVE }
       ]
     },
     copy: {
@@ -216,8 +227,20 @@
     'print-checkout': {
       img: 'shots/print-checkout.png', alt: '파일 확인 및 결제',
       hits: P_APPBAR.concat([
-        { l: 71.5, t: 33.9, w: 23.0, h: 4.4, to: 'print.html', name: '다른 파일 선택' }
+        { l: 71.5, t: 33.9, w: 23.0, h: 4.4, to: 'print.html',   name: '다른 파일 선택' },
+        { l: 4.0,  t: 81.5, w: 92.0, h: 6.4, to: 'payment.html', name: '250원 결제하기' }
       ], taskTab(P_TAB))
+    },
+    payment: {
+      img: 'shots/payment.png', alt: '인쇄 · 모바일 결제',
+      hits: P_APPBAR.concat([
+        /* 결제 수단은 화면을 옮기지 않고 고른 것만 표시한다 */
+        { l: 4.0,  t: 59.4, w: 45.5, h: 11.0, act: 'pick', group: 'pay', name: '신용·체크카드' },
+        { l: 50.5, t: 59.4, w: 45.5, h: 11.0, act: 'pick', group: 'pay', name: 'Toss Pay' }
+      ], taskTab(P_TAB), [
+        /* 하단 탭과 겹치는 자리라 탭보다 뒤에 둬서 위에 오게 한다 */
+        { l: 33.0, t: 88.3, w: 34.0, h: 3.6, to: 'index.html', name: '작업 취소', confirm: TASK_LEAVE }
+      ])
     },
     copy: {
       img: 'shots/copy.png', alt: '복사 · 복합기 연결',
@@ -310,7 +333,19 @@
       a.setAttribute('data-name', h.name);
       a.setAttribute('aria-label', h.name);
 
-      if (h.act === 'connect') {
+      if (h.act === 'pick') {
+        a.setAttribute('data-group', h.group || 'pick');
+        a.setAttribute('aria-pressed', 'false');
+        a.addEventListener('click', function (e) {
+          e.preventDefault();
+          box.querySelectorAll('.hit[data-group="' + (h.group || 'pick') + '"]').forEach(function (x) {
+            x.classList.remove('is-picked');
+            x.setAttribute('aria-pressed', 'false');
+          });
+          a.classList.add('is-picked');
+          a.setAttribute('aria-pressed', 'true');
+        });
+      } else if (h.act === 'connect') {
         a.addEventListener('click', function (e) {
           e.preventDefault();
           connected(box, s);

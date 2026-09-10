@@ -30,7 +30,7 @@ window.REVIEW = {
   groups: [
     { id: 'home',          label: '홈',            screens: ['home'] },
     { id: 'login',         label: '로그인',         screens: ['login', 'guest'] },
-    { id: 'print',         label: '인쇄',           screens: ['print', 'print-flow', 'print-confirm', 'print-options', 'print-amount'] },
+    { id: 'print',         label: '인쇄',           screens: ['print', 'print-flow', 'print-confirm', 'print-options', 'print-amount', 'payment'] },
     { id: 'work',          label: '복사·스캔·팩스',  screens: ['copy', 'scan', 'fax'] },
     { id: 'settings',      label: '설정',           screens: ['settings', 'cost', 'payments', 'refund', 'troubleshoot'] },
     { id: 'notifications', label: '알림',           screens: ['notifications'] },
@@ -342,6 +342,51 @@ window.REVIEW = {
             proposal: [{ x: 16, y: 25.1, w: 68, h: 6.0 }]
           }
         }
+      ]
+    },
+    {
+      id: 'payment', label: '결제',
+      current:  { img: 'shots/payment.png',          page: 'payment.html' },
+      proposal: { img: 'proposal/shots/payment.png', page: 'proposal/payment.html' },
+      changes: [
+        {
+          id: 'summary', type: 'restructure', shortLabel: '재구성',
+          title: '결제 정보 통합',
+          description: 'AS-IS에서는 결제 금액만 상단에 표시했습니다. ' +
+            'TO-BE에서는 결제 금액과 파일명·컬러·단면·용지·방향·부수 등 최종 출력 조건을 함께 보여줘, ' +
+            '결제 전에 무엇에 얼마를 지불하는지 확인할 수 있도록 했습니다.',
+          targets: {
+            current:  [{ x: 4.0, y: 15.2, w: 91.0, h: 6.2 }],
+            proposal: [{ x: 4.0, y: 36.8, w: 92.0, h: 15.6 }]
+          }
+        },
+        {
+          id: 'method', type: 'restructure', shortLabel: '재구성',
+          title: '결제 수단 선택 강화',
+          description: 'AS-IS에서는 신용·체크카드와 Toss Pay가 단순 라디오 버튼 형태로 배치되어 ' +
+            '있었습니다. TO-BE에서는 결제 수단을 독립된 선택 카드로 구성하고 선택 상태를 명확하게 ' +
+            '표시해 현재 선택한 결제 방식을 쉽게 확인할 수 있도록 했습니다.',
+          targets: {
+            current:  [{ x: 13.5, y: 44.4, w: 63.0, h: 7.0 }],
+            proposal: [{ x: 4.0, y: 58.8, w: 92.0, h: 12.2 }]
+          }
+        },
+        {
+          id: 'steps', type: 'restructure', shortLabel: '단계 축소',
+          title: '결제 단계 단순화',
+          description: 'AS-IS에서는 파일선택부터 출력까지 6단계를 모두 표시했습니다. ' +
+            'TO-BE에서는 현재 작업 흐름을 설정 → 결제 → 출력 3단계로 정리해 결제 시점에서 ' +
+            '남은 과정을 간단하게 파악할 수 있도록 했습니다.',
+          targets: {
+            current:  [{ x: 0, y: 6.6, w: 100, h: 7.6 }],
+            proposal: [{ x: 12.0, y: 26.6, w: 76.0, h: 10.0 }]
+          }
+        }
+      ],
+      effects: [
+        '결제 전에 무엇에 얼마를 지불하는지 확인할 수 있습니다',
+        '지금 고른 결제 수단을 한눈에 알 수 있습니다',
+        '결제 시점에서 남은 과정을 파악하기 쉬워집니다'
       ]
     },
     {

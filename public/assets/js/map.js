@@ -18,7 +18,7 @@
       { x: 16,   y: 84,  w: 518, h: 700, label: '진입' },
       { x: 576,  y: 200, w: 238, h: 560, label: '메인 · 하단 탭' },
       { x: 856,  y: 8,   w: 238, h: 1010, label: '서비스 · 상세' },
-      { x: 1136, y: 80,  w: 238, h: 420, label: '인쇄 흐름' }
+      { x: 1136, y: 80,  w: 238, h: 540, label: '인쇄 흐름' }
     ],
     nodes: [
       { id: 'index',   x: 40,  y: 320, name: '로그인',        file: 'login.html',         state: 'full', start: true },
@@ -39,7 +39,8 @@
 
       { id: 'print-confirm', x: 1160, y: 120, name: '파일 확인', file: 'print-confirm.html', state: 'full' },
       { id: 'print-options', x: 1160, y: 240, name: '인쇄옵션',  file: 'print-options.html', state: 'full', note: '시트' },
-      { id: 'print-amount',  x: 1160, y: 360, name: '금액 확인', file: 'print-amount.html',  state: 'full' }
+      { id: 'print-amount',  x: 1160, y: 360, name: '금액 확인', file: 'print-amount.html',  state: 'full' },
+      { id: 'payment',       x: 1160, y: 480, name: '모바일 결제', file: 'payment.html',      state: 'full' }
     ]
   };
 
@@ -49,7 +50,7 @@
     frames: [
       { x: 40,  y: 214, w: 300, h: 460, label: '메인 · 하단 탭' },
       { x: 40,  y: 694, w: 300, h: 500, label: '설정 아래 안내' },
-      { x: 366, y: 6,   w: 238, h: 840, label: '서비스 · 작업' },
+      { x: 366, y: 6,   w: 238, h: 960, label: '서비스 · 작업' },
       { x: 646, y: 654, w: 518, h: 540, label: '계정' }
     ],
     nodes: [
@@ -59,10 +60,11 @@
 
       { id: 'print',          x: 390, y: 30,  name: '인쇄',           file: 'print.html',          state: 'full', note: '파일 선택' },
       { id: 'print-checkout', x: 390, y: 150, name: '파일 확인 및 결제', file: 'print-checkout.html', state: 'full' },
-      { id: 'copy',  x: 390, y: 300, name: '복사', file: 'copy.html',  state: 'full', note: '복합기 연결' },
-      { id: 'scan',  x: 390, y: 420, name: '스캔', file: 'scan.html',  state: 'full', note: '복합기 연결' },
-      { id: 'fax',   x: 390, y: 540, name: '팩스', file: 'fax.html',   state: 'full', note: '복합기 연결' },
-      { id: 'noti',  x: 390, y: 660, name: '알림', file: 'notifications.html', state: 'full' },
+      { id: 'payment',        x: 390, y: 270, name: '모바일 결제',       file: 'payment.html',        state: 'full' },
+      { id: 'copy',  x: 390, y: 420, name: '복사', file: 'copy.html',  state: 'full', note: '복합기 연결' },
+      { id: 'scan',  x: 390, y: 540, name: '스캔', file: 'scan.html',  state: 'full', note: '복합기 연결' },
+      { id: 'fax',   x: 390, y: 660, name: '팩스', file: 'fax.html',   state: 'full', note: '복합기 연결' },
+      { id: 'noti',  x: 390, y: 780, name: '알림', file: 'notifications.html', state: 'full' },
 
       { id: 'cost',         x: 110, y: 730,  name: '요금 안내', file: 'cost.html',         state: 'full' },
       { id: 'payments',     x: 110, y: 850,  name: '결제 내역', file: 'payments.html',     state: 'full' },

@@ -47,6 +47,17 @@ function ok(cond, name, extra) {
   await step('/home.html?embed=1', '인쇄', '/print');
   await step('/print.html?embed=1', '파일 선택', '/print-confirm');
   await step('/print-confirm.html?embed=1', '금액 확인', '/print-amount');
+  await step('/print-amount.html?embed=1', '모바일로 결제', '/payment');
+  await step('/proposal/print-checkout.html?embed=1', '250원 결제하기', '/proposal/payment');
+
+  /* 결제 수단은 화면을 옮기지 않고 고른 것만 표시한다 */
+  for (const url of ['/payment.html?embed=1', '/proposal/payment.html?embed=1']) {
+    await p.goto(BASE + url); await p.waitForTimeout(400);
+    await p.click('.hit[data-name="Toss Pay"]'); await p.waitForTimeout(250);
+    const picked = await p.evaluate(() =>
+      [...document.querySelectorAll('.hit[data-group]')].map(e => e.getAttribute('aria-pressed')).join(','));
+    ok(picked === 'false,true', `결제 수단 고르기 ${url}`, picked);
+  }
 
   /* 복합기 연결은 이동이 아니라 상태 변화다 */
   for (const svc of ['copy', 'scan', 'fax']) {
