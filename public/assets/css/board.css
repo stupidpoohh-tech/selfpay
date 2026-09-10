@@ -321,17 +321,21 @@ body.modal-open{overflow:hidden}
 }
 .anno.has-active .anno__veil{opacity:.58}
 
+/* 흐리게 하는 것은 테두리와 채움뿐이다. 번호·라벨까지 흐려지면
+ * 흰 바탕이 비쳐서 화면 글자와 겹쳐 보인다. */
 .anno__box{
   --c:#2f6df6;
-  position:absolute;border-radius:7px;opacity:0;transition:opacity .24s ease;
+  position:absolute;border-radius:7px;
 }
 .anno__box::after{
   content:"";position:absolute;inset:0;border:1.5px solid var(--c);border-radius:inherit;
+  opacity:0;transition:opacity .24s ease;
 }
-.anno.is-on .anno__box{opacity:.72;pointer-events:auto;cursor:pointer}
-.anno.has-active .anno__box:not(.is-active){opacity:.14}
-.anno__box.is-active{opacity:1;z-index:3;background:color-mix(in srgb, var(--c) 9%, transparent)}
-.anno__box.is-active::after{border-width:2px}
+.anno.is-on .anno__box{pointer-events:auto;cursor:pointer}
+.anno.is-on .anno__box::after{opacity:.72}
+.anno.has-active .anno__box:not(.is-active)::after{opacity:.14}
+.anno__box.is-active{z-index:3;background:color-mix(in srgb, var(--c) 9%, transparent)}
+.anno__box.is-active::after{opacity:1;border-width:2px}
 
 .anno__box--add{--c:#1f9d63}
 .anno__box--remove{--c:#c9584a}
@@ -339,21 +343,29 @@ body.modal-open{overflow:hidden}
 .anno__box--restructure{--c:#6b7a99;border-radius:11px}
 .anno__box--merge::after,.anno__box--move::after{border-style:solid}
 
+/* 번호와 라벨은 흰 바탕을 그대로 유지해 화면 글자를 가린다 */
 .anno__num{
   position:absolute;left:-9px;top:-10px;min-width:19px;height:19px;padding:0 5px;
   border-radius:6px;background:#fff;border:1px solid var(--c);color:var(--c);
   font-size:10px;font-weight:800;display:grid;place-items:center;
   box-shadow:0 1px 3px rgba(16,24,40,.14);
+  opacity:0;transition:opacity .24s ease;
 }
 .anno__label{
   position:absolute;top:-10px;right:0;height:19px;padding:0 8px;border-radius:999px;
   background:#fff;color:var(--c);border:1px solid var(--c);
   font-size:10px;font-weight:800;letter-spacing:.02em;
+  box-shadow:0 1px 3px rgba(16,24,40,.14);
   display:none;align-items:center;
 }
+.anno.is-on .anno__num,
+.anno__box.is-active .anno__num{opacity:1}
 .anno.is-on .anno__label,
 .anno__box.is-active .anno__label{display:inline-flex}
 .anno__box.is-active .anno__label{background:var(--c);color:#fff}
+/* 하나를 고르면 나머지 번호·라벨은 아예 감춘다. 반투명하게 두면 다시 글자와 겹친다 */
+.anno.has-active .anno__box:not(.is-active) .anno__num{opacity:0}
+.anno.has-active .anno__box:not(.is-active) .anno__label{display:none}
 
 .cmp{position:relative}
 .linklayer{position:absolute;inset:0;z-index:6;pointer-events:none;overflow:visible}
