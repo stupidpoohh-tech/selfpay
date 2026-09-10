@@ -19,11 +19,11 @@ jobs:
 
       # 프로젝트가 없으면 만든다. 이미 있으면 그대로 둔다.
       - name: Ensure Pages project
-        run: npx --yes wrangler@3 pages project create selfpay-shell --production-branch=main || true
+        run: npx --yes wrangler@3 pages project create selfpay-ag5 --production-branch=main || true
 
       - name: Publish
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy public --project-name=selfpay-shell --branch=main --commit-dirty=true
+          command: pages deploy public --project-name=selfpay-ag5 --branch=main --commit-dirty=true
