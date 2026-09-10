@@ -90,6 +90,115 @@ window.REVIEW = {
       notes: []
     },
     {
+      id: 'print-confirm', label: '파일확인',
+      current:  { img: 'shots/print-confirm.png' },
+      proposal: { img: 'proposal/shots/print-checkout.png' },
+      changes: [
+        {
+          id: 'steps', type: 'restructure', shortLabel: '단계 축소',
+          title: '단계 6개에서 3개로',
+          description: '파일선택·파일확인·금액확인·결제·복합기연결·출력 여섯 단계를 모두 표시하던 것을 ' +
+            '설정·결제·출력 세 단계로 줄였습니다.',
+          targets: {
+            current:  [{ x: 0, y: 6.3, w: 100, h: 7.5 }],
+            proposal: [{ x: 16, y: 25.1, w: 68, h: 6.0 }]
+          }
+        },
+        {
+          id: 'merge', type: 'merge', shortLabel: '통합',
+          title: '세 화면을 한 화면으로',
+          description: '파일 확인, 인쇄 옵션, 금액 확인이 각각 별도 화면이었습니다. ' +
+            'TO-BE에서는 한 화면 안에서 모두 처리합니다.',
+          targets: {
+            current:  [{ x: 3.8, y: 14.5, w: 92.5, h: 20.5 }],
+            proposal: [{ x: 3.7, y: 32.6, w: 92.5, h: 56.8 }]
+          }
+        },
+        {
+          id: 'file', type: 'restructure', shortLabel: '재구성',
+          title: '파일 카드에 미리보기와 옵션 요약',
+          description: '파일명과 인쇄옵션 버튼만 있던 카드에 미리보기가 생기고, ' +
+            '선택한 옵션을 카드 안에서 바로 보여 줍니다.',
+          targets: {
+            current:  [{ x: 3.8, y: 25.1, w: 92.5, h: 9.5 }],
+            proposal: [{ x: 3.7, y: 32.6, w: 92.5, h: 14.1 }]
+          }
+        }
+      ]
+    },
+    {
+      id: 'print-options', label: '인쇄옵션',
+      current:  { img: 'shots/print-options.png' },
+      proposal: { img: 'proposal/shots/print-checkout.png' },
+      changes: [
+        {
+          id: 'sheet', type: 'move', shortLabel: '이동',
+          title: '옵션이 시트에서 본문으로',
+          description: '화면 아래에서 올라오는 시트로 열던 인쇄 옵션이, ' +
+            'TO-BE에서는 본문 안에 항상 보이는 영역이 되었습니다.',
+          targets: {
+            current:  [{ x: 0, y: 46.9, w: 100, h: 53.1 }],
+            proposal: [{ x: 3.7, y: 47.8, w: 92.5, h: 28.4 }]
+          }
+        },
+        {
+          id: 'amount', type: 'add', shortLabel: '추가',
+          title: '옵션 아래 예상 금액 표시',
+          description: 'AS-IS 시트에는 금액이 없었습니다. TO-BE는 옵션 바로 아래에 ' +
+            '예상 결제 금액과 결제 버튼이 함께 있습니다.',
+          targets: {
+            proposal: [{ x: 6.9, y: 77.2, w: 86.0, h: 6.6 }]
+          }
+        },
+        {
+          id: 'steps', type: 'restructure', shortLabel: '단계 축소',
+          title: '단계 6개에서 3개로',
+          description: '여섯 단계를 모두 표시하던 것을 설정·결제·출력 세 단계로 줄였습니다.',
+          targets: {
+            current:  [{ x: 0, y: 6.3, w: 100, h: 7.5 }],
+            proposal: [{ x: 16, y: 25.1, w: 68, h: 6.0 }]
+          }
+        }
+      ]
+    },
+    {
+      id: 'print-amount', label: '금액확인',
+      current:  { img: 'shots/print-amount.png' },
+      proposal: { img: 'proposal/shots/print-checkout.png' },
+      changes: [
+        {
+          id: 'merge', type: 'merge', shortLabel: '통합',
+          title: '금액 확인 화면 통합',
+          description: '합계와 파일별 상세를 따로 보여 주던 화면이, ' +
+            '옵션 화면 안의 예상 결제 금액 한 곳으로 합쳐졌습니다.',
+          targets: {
+            current:  [{ x: 3.8, y: 15.6, w: 92.5, h: 8.0 },
+                       { x: 3.8, y: 27.7, w: 92.5, h: 8.2 }],
+            proposal: [{ x: 6.9, y: 77.2, w: 86.0, h: 6.6 }]
+          }
+        },
+        {
+          id: 'cta', type: 'restructure', shortLabel: '재구성',
+          title: '결제 진입 방식 변경',
+          description: '모바일로 결제 안내와 작업 취소가 하단에 나뉘어 있던 것을, ' +
+            '금액이 적힌 결제 버튼 하나로 정리했습니다.',
+          targets: {
+            current:  [{ x: 3.8, y: 84.5, w: 92.5, h: 14.6 }],
+            proposal: [{ x: 6.9, y: 84.9, w: 86.0, h: 4.5 }]
+          }
+        },
+        {
+          id: 'steps', type: 'restructure', shortLabel: '단계 축소',
+          title: '단계 6개에서 3개로',
+          description: '여섯 단계를 모두 표시하던 것을 설정·결제·출력 세 단계로 줄였습니다.',
+          targets: {
+            current:  [{ x: 0, y: 6.4, w: 100, h: 7.4 }],
+            proposal: [{ x: 16, y: 25.1, w: 68, h: 6.0 }]
+          }
+        }
+      ]
+    },
+    {
       id: 'copy', label: '복사',
       current:  { img: 'shots/copy.png',          page: 'copy.html' },
       proposal: { img: 'proposal/shots/copy.png', page: 'proposal/copy.html' },
@@ -136,6 +245,54 @@ window.REVIEW = {
       current:  { img: 'shots/notifications.png',          page: 'notifications.html' },
       proposal: { img: 'proposal/shots/notifications.png', page: 'proposal/notifications.html' },
       notes: []
+    },
+    {
+      id: 'cost', label: '요금 안내',
+      proposal: { img: 'proposal/shots/cost.png' },
+      changes: [
+        {
+          id: 'new', type: 'add', shortLabel: '신규',
+          title: '새로 추가된 화면',
+          description: '현재 서비스에는 없는 화면입니다. 흑백 50원, 컬러 250원 같은 장당 요금과 ' +
+            '지원 용지, 선택할 수 있는 인쇄 옵션을 한 화면에 정리했습니다.'
+        }
+      ]
+    },
+    {
+      id: 'payments', label: '결제 내역',
+      proposal: { img: 'proposal/shots/payments.png' },
+      changes: [
+        {
+          id: 'new', type: 'add', shortLabel: '신규',
+          title: '새로 추가된 화면',
+          description: '현재 서비스에는 없는 화면입니다. 최근 결제 내역을 서비스 종류로 걸러 보고, ' +
+            '각 내역에서 영수증을 확인할 수 있습니다.'
+        }
+      ]
+    },
+    {
+      id: 'refund', label: '환불 안내',
+      proposal: { img: 'proposal/shots/refund.png' },
+      changes: [
+        {
+          id: 'new', type: 'add', shortLabel: '신규',
+          title: '새로 추가된 화면',
+          description: '현재 서비스에는 없는 화면입니다. 출력이 진행되지 않은 경우, 오류로 출력되지 않은 경우, ' +
+            '부분 출력된 경우로 나눠 환불 기준을 안내합니다.'
+        }
+      ]
+    },
+    {
+      id: 'troubleshoot', label: '문제 해결',
+      proposal: { img: 'proposal/shots/troubleshoot.png' },
+      changes: [
+        {
+          id: 'new', type: 'add', shortLabel: '신규',
+          title: '새로 추가된 화면',
+          description: '현재 서비스에는 없는 화면입니다. 결제 후 미출력, 용지 걸림, 파일 열림 오류, ' +
+            '기기 연결 문제를 항목별로 안내하고 문의하기로 이어집니다.'
+        }
+      ]
     }
   ]
 };

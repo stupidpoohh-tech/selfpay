@@ -128,18 +128,27 @@
   function paneHtml(s, side) {
     var isCur = side === 'current';
     var d = s[isCur ? 'current' : 'proposal'];
-    return '<div class="pane pane--' + side + '">' +
-      '<div class="pane__head"><span class="pane__mark"></span>' +
+
+    var head = '<div class="pane__head"><span class="pane__mark"></span>' +
       '<span class="tag tag--' + (isCur ? 'as">AS-IS' : 'to">TO-BE') + '</span>' +
-      '<span class="pane__name">' + (isCur ? '현재' : '제안') + '</span></div>' +
-      '<div class="pane__body">' +
-        '<div class="device"><div class="shotbox">' +
-          '<img class="shotimg" src="' + d.img + '" alt="' + s.label + ' ' +
-          (isCur ? 'AS-IS' : 'TO-BE') + '" data-zoom="' + d.img + '">' +
-          '<div class="anno" data-side="' + side + '">' + SPAnno.overlayHtml(s, side, s.id) + '</div>' +
-        '</div></div>' +
-        '<span class="caption">' + (isCur ? '현재 서비스 화면 (AS-IS)' : '개선 제안 화면 (TO-BE)') + '</span>' +
-      '</div></div>';
+      '<span class="pane__name">' + (isCur ? '현재' : '제안') + '</span></div>';
+
+    /* 한쪽에만 있는 화면이면 빈 자리를 그대로 보여 준다 */
+    var body = d
+      ? '<div class="pane__body">' +
+          '<div class="device"><div class="shotbox">' +
+            '<img class="shotimg" src="' + d.img + '" alt="' + s.label + ' ' +
+            (isCur ? 'AS-IS' : 'TO-BE') + '" data-zoom="' + d.img + '">' +
+            '<div class="anno" data-side="' + side + '">' + SPAnno.overlayHtml(s, side, s.id) + '</div>' +
+          '</div></div>' +
+          '<span class="caption">' + (isCur ? '현재 서비스 화면 (AS-IS)' : '개선 제안 화면 (TO-BE)') + '</span>' +
+        '</div>'
+      : '<div class="pane__body"><div class="pane__none">' +
+          '<b>' + (isCur ? '현재 서비스에 없는 화면' : '제안 화면 준비 전') + '</b>' +
+          '<span>' + (isCur ? 'TO-BE에서 새로 제안된 화면입니다.' : '아직 시안이 없습니다.') + '</span>' +
+        '</div></div>';
+
+    return '<div class="pane pane--' + side + '">' + head + body + '</div>';
   }
 
   function drawCompare() {
@@ -244,13 +253,27 @@
   }
 
   /* ── 프로토타입 보기 ───────────────────────── */
+  function protoPage(s) {
+    var want = state.protoSide === 'current' ? 'current' : 'proposal';
+    var other = want === 'current' ? 'proposal' : 'current';
+    var d = s[want] && s[want].page ? s[want] : (s[other] && s[other].page ? s[other] : null);
+    return d ? d.page : null;
+  }
+
   function protoUrl(s) {
-    var d = s[state.protoSide === 'current' ? 'current' : 'proposal'];
-    return d.page + '?embed=1' + (DEBUG ? '&debug=hits' : '');
+    var page = protoPage(s);
+    return page ? page + '?embed=1' + (DEBUG ? '&debug=hits' : '') : null;
   }
 
   function drawProto() {
     var s = screen();
+    var url = protoUrl(s);
+    if (!url) {
+      el.stage.innerHTML = '<div class="proto"><div class="proto__stage">' +
+        '<div class="pane__none"><b>프로토타입 화면 없음</b>' +
+        '<span>이 화면은 아직 눌러 볼 수 있는 페이지가 없습니다.</span></div></div></div>';
+      return;
+    }
     el.stage.innerHTML =
       '<div class="proto">' +
         '<div class="proto__stage" id="protoStage">' +
@@ -267,7 +290,8 @@
       var path;
       try { path = frame.contentWindow.location.pathname; } catch (e) { return; }
       var i = SCREENS.findIndex(function (x) {
-        return path.endsWith('/' + x.current.page) || path.endsWith('/' + x.proposal.page);
+        return (x.current && x.current.page && path.endsWith('/' + x.current.page)) ||
+               (x.proposal && x.proposal.page && path.endsWith('/' + x.proposal.page));
       });
       if (i >= 0 && i !== state.index) { state.index = i; drawChips(); }
       sizeFrame();
@@ -279,7 +303,9 @@
     var frame = document.getElementById('protoFrame');
     if (!stage || !frame) return;
     var s = screen();
-    var src = s[state.protoSide === 'current' ? 'current' : 'proposal'].img;
+    var want = state.protoSide === 'current' ? 'current' : 'proposal';
+    var side = s[want] && s[want].img ? s[want] : (s.proposal || s.current);
+    var src = side.img;
     ratio(src, function (r) {
       var box = stage.getBoundingClientRect();
       var pad = 18;

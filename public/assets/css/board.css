@@ -134,6 +134,12 @@ a{color:inherit;text-decoration:none}
   background:var(--soft);border-radius:999px;padding:6px 14px;
 }
 .pane__miss{font-size:13px;color:var(--muted-2);text-align:center;line-height:1.6}
+.pane__none{
+  display:grid;place-content:center;justify-items:center;gap:7px;text-align:center;
+  width:100%;height:100%;border:1px dashed var(--line);border-radius:14px;background:#fbfcfe;
+}
+.pane__none b{font-size:14.5px;font-weight:800;color:var(--muted)}
+.pane__none span{font-size:12.5px;color:var(--muted-2)}
 
 /* ── 개선 노트 ─────────────────────────────────── */
 .notes{
