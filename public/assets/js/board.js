@@ -448,6 +448,35 @@
       b.classList.toggle('is-on', mine === id);
       b.setAttribute('aria-pressed', String(state.active === mine));
     });
+
+    spreadBadges(cmp);
+  }
+
+  /* 두 변경점의 윗변이 겹치면 번호·라벨도 같은 자리에 포개진다.
+   * 그리고 나서 겹친 것만 아래로 조금씩 밀어 준다. */
+  function spreadBadges(cmp) {
+    cmp.querySelectorAll('.anno').forEach(function (layer) {
+      ['.anno__num', '.anno__label'].forEach(function (sel) {
+        var all = Array.prototype.slice.call(layer.querySelectorAll(sel));
+        all.forEach(function (b) { b.style.marginTop = ''; });
+
+        var shown = all.filter(function (b) {
+          var cs = w.getComputedStyle(b);
+          return cs.display !== 'none' && cs.opacity !== '0';
+        });
+        shown.sort(function (a, b) {
+          return a.getBoundingClientRect().top - b.getBoundingClientRect().top;
+        });
+
+        var bottom = -1e9;
+        shown.forEach(function (b) {
+          var r = b.getBoundingClientRect();
+          var push = bottom + 3 - r.top;
+          if (push > 0) { b.style.marginTop = Math.round(push) + 'px'; bottom = r.top + push + r.height; }
+          else { bottom = r.top + r.height; }
+        });
+      });
+    });
   }
 
   /* ── 프로토타입 보기 ───────────────────────── */

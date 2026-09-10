@@ -343,21 +343,30 @@ body.modal-open{overflow:hidden}
 .anno__box--restructure{--c:#6b7a99;border-radius:11px}
 .anno__box--merge::after,.anno__box--move::after{border-style:solid}
 
-/* 번호와 라벨은 흰 바탕을 그대로 유지해 화면 글자를 가린다 */
+/* 번호와 라벨은 화면 밖 여백에 둔다. 화면 안에 올려 두면 무엇을 하든
+ * 그 자리의 글자를 가린다. 번호는 왼쪽, 유형 라벨은 오른쪽이다. */
 .anno__num{
-  position:absolute;left:-9px;top:-10px;min-width:19px;height:19px;padding:0 5px;
+  position:absolute;right:calc(100% + 15px);top:-3px;min-width:19px;height:19px;padding:0 5px;
   border-radius:6px;background:#fff;border:1px solid var(--c);color:var(--c);
   font-size:10px;font-weight:800;display:grid;place-items:center;
   box-shadow:0 1px 3px rgba(16,24,40,.14);
   opacity:0;transition:opacity .24s ease;
 }
 .anno__label{
-  position:absolute;top:-10px;right:0;height:19px;padding:0 8px;border-radius:999px;
+  position:absolute;left:calc(100% + 15px);top:-3px;height:19px;padding:0 8px;border-radius:999px;
   background:#fff;color:var(--c);border:1px solid var(--c);
-  font-size:10px;font-weight:800;letter-spacing:.02em;
+  font-size:10px;font-weight:800;letter-spacing:.02em;white-space:nowrap;
   box-shadow:0 1px 3px rgba(16,24,40,.14);
   display:none;align-items:center;
 }
+/* 영역까지 이어지는 짧은 선 */
+.anno__num::after,
+.anno__label::after{
+  content:"";position:absolute;top:50%;width:11px;height:1px;background:var(--c);opacity:.5;
+}
+.anno__num::after{left:100%}
+.anno__label::after{right:100%}
+.anno__box.is-active .anno__label::after{background:var(--c);opacity:1}
 .anno.is-on .anno__num,
 .anno__box.is-active .anno__num{opacity:1}
 .anno.is-on .anno__label,
@@ -480,6 +489,11 @@ button.note:focus-visible{outline:2px solid rgba(47,109,246,.55);outline-offset:
   .pane--flow .pane__head{display:flex;padding:10px 13px}
   .pane--flow .pane__mark{display:none}
   .pane--flow .pane__body--flow{padding:12px 13px 14px}
+  /* 화면 밖 여백이 좁아 표시도 함께 줄인다 */
+  .pane__body{padding-left:6px;padding-right:6px}
+  .anno__num{right:calc(100% + 10px);min-width:17px;height:17px;padding:0 4px;font-size:9.5px}
+  .anno__label{left:calc(100% + 10px);height:17px;padding:0 6px;font-size:9.5px}
+  .anno__num::after,.anno__label::after{width:7px}
   .fstep__shot{width:78px}
   .pane__body{padding:12px 12px 10px;gap:9px}
   .caption{font-size:11px;padding:5px 12px}
