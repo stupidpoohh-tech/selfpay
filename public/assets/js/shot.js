@@ -33,7 +33,8 @@
         { l: 4.6,  t: 48.3, w: 90.9, h: 5.9, to: 'home.html',          name: '카카오로 시작하기' },
         { l: 4.6,  t: 55.8, w: 90.9, h: 5.9, to: 'home.html',          name: '네이버로 시작하기' },
         { l: 4.6,  t: 63.3, w: 90.9, h: 5.9, to: 'home.html',          name: 'Google로 시작하기' },
-        { l: 4.6,  t: 89.4, w: 90.9, h: 5.7, to: 'guest.html',         name: '비회원으로 이용하기' },
+        /* next: 다음 단계로 넘어가는 자리. 비교 화면에서 화살표로 표시한다 */
+        { l: 4.6,  t: 89.4, w: 90.9, h: 5.7, to: 'guest.html',         name: '비회원으로 이용하기', next: true },
         { l: 31.5, t: 96.9, w: 13.0, h: 2.4, to: 'signup.html',        name: '회원가입' },
         { l: 48.5, t: 96.9, w: 19.5, h: 2.4, to: 'find-password.html', name: '비밀번호 찾기' }
       ]
@@ -69,7 +70,7 @@
       hits: [
         CUR_BACK,
         { l: 6.0, t: 19.6, w: 88.0, h: 12.4, to: 'print-confirm.html', name: '파일 선택' },
-        { l: 6.0, t: 91.8, w: 88.0, h: 6.6, to: 'print-confirm.html', name: '파일을 선택하세요' }
+        { l: 6.0, t: 91.8, w: 88.0, h: 6.6, to: 'print-confirm.html', name: '파일을 선택하세요', next: true }
       ]
     },
     'print-confirm': {
@@ -77,7 +78,7 @@
       hits: [
         { l: 1.5, t: 1.2, w: 11.0, h: 3.4, to: 'print.html', name: '뒤로' },
         { l: 72.5, t: 26.3, w: 22.0, h: 5.2, to: 'print-options.html', name: '인쇄옵션' },
-        { l: 6.0, t: 91.8, w: 88.0, h: 6.6, to: 'print-amount.html', name: '금액 확인' }
+        { l: 6.0, t: 91.8, w: 88.0, h: 6.6, to: 'print-amount.html', name: '금액 확인', next: true }
       ]
     },
     'print-options': {

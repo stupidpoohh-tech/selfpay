@@ -36,8 +36,7 @@
     protoSide: 'proposal',
     active: null,           /* 클릭·포커스로 고정한 변경점 */
     hover: null,            /* 마우스가 올라간 변경점 */
-    showAnno: true,         /* 변경점 보기. 처음부터 켜 둔다 */
-    showNav: true           /* 다음 화면으로 가는 자리 표시 */
+    showAnno: true          /* 변경점 보기. 처음부터 켜 둔다 */
   };
 
   var el = {
@@ -195,20 +194,13 @@
     var count = cs.length ? '총 ' + cs.length + '개의 변경점'
       : (s.notes && s.notes.length ? '총 ' + s.notes.length + '개의 개선 제안' : '작성 전');
 
-    /* 화면 위에 표시할 영역이 하나도 없으면 변경점 토글을 두지 않는다 */
+    /* 화면 위에 표시할 영역이 하나도 없으면 토글을 두지 않는다 */
     var hasBox = cs.some(function (c) {
       return SPAnno.boxesOf(c, 'current').length || SPAnno.boxesOf(c, 'proposal').length;
     });
-    var hasNav = ['current', 'proposal'].some(function (side) {
-      return navHitsHtml(s, side) !== '';
-    });
-    var toggle = (hasBox || hasNav)
-      ? '<div class="annobar">' +
-        (hasBox ? '<button type="button" class="annotoggle" id="annoToggle" ' +
-          'role="switch" aria-checked="false">변경점 보기<i></i></button>' : '') +
-        (hasNav ? '<button type="button" class="annotoggle annotoggle--nav" id="navToggle" ' +
-          'role="switch" aria-checked="false">이동 지점 보기<i></i></button>' : '') +
-        '</div>'
+    var toggle = hasBox
+      ? '<div class="annobar"><button type="button" class="annotoggle" id="annoToggle" ' +
+        'role="switch" aria-checked="false">변경점 보기<i></i></button></div>'
       : '';
 
     return '<aside class="notes">' +
@@ -282,7 +274,7 @@
     if (entry && entry.hits) {
       entry.hits.forEach(function (h) {
         var hit = findByPath(dir + h.to);
-        if (hit) list.push({ l: h.l, t: h.t, w: h.w, h: h.h, i: hit.index });
+        if (hit) list.push({ l: h.l, t: h.t, w: h.w, h: h.h, i: hit.index, next: !!h.next });
       });
     }
     var seen = {};
@@ -294,7 +286,8 @@
       var label = SCREENS[h.i].label + ' 비교로 이동';
       /* 이동 영역이 변경점 위에 겹치면, 올렸을 때 그 변경점도 함께 강조한다 */
       var anno = changeAt(s, side, h.l + h.w / 2, h.t + h.h / 2);
-      return '<button type="button" class="navhit" data-go="' + h.i + '"' +
+      return '<button type="button" class="navhit' + (h.next ? ' navhit--next' : '') +
+        '" data-go="' + h.i + '"' +
         (anno ? ' data-anno="' + anno + '"' : '') +
         ' title="' + label + '" aria-label="' + label + '"' +
         ' style="left:' + h.l + '%;top:' + h.t + '%;width:' + h.w + '%;height:' + h.h + '%"></button>';
@@ -411,18 +404,6 @@
 
   /* 개선 사항 항목 ↔ 화면 위 표시 */
   function bindNotes() {
-    var navT = document.getElementById('navToggle');
-    if (navT) {
-      navT.setAttribute('aria-checked', String(state.showNav));
-      navT.classList.toggle('is-on', state.showNav);
-      navT.addEventListener('click', function () {
-        state.showNav = !state.showNav;
-        navT.setAttribute('aria-checked', String(state.showNav));
-        navT.classList.toggle('is-on', state.showNav);
-        syncAnno();
-      });
-    }
-
     var toggle = document.getElementById('annoToggle');
     if (toggle) {
       toggle.setAttribute('aria-checked', String(state.showAnno));
@@ -460,7 +441,6 @@
     if (!cmp) return;
 
     cmp.classList.toggle('anno-on', state.showAnno || !!id);
-    cmp.classList.toggle('nav-on', state.showNav);
     SPAnno.apply(cmp, s, { active: id, showAll: state.showAnno });
     SPAnno.drawLinks(cmp, s, { active: id });
 
