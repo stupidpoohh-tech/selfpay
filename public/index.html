@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>로그인 | 무인과금출력</title>
+<meta name="description" content="간편하고 빠르게 어디서나 출력·복사·스캔·팩스를">
+<meta name="theme-color" content="#2870ff">
+<link rel="icon" href="assets/img/favicon.svg">
+<link rel="stylesheet" href="assets/css/font.css">
+<link rel="stylesheet" href="assets/css/app.css">
+</head>
+<body>
+<div class="app">
+  <main class="page" style="padding-top:28px;display:flex;flex-direction:column">
+    <header style="margin-bottom:26px">
+      <div style="display:flex;align-items:center;gap:10px">
+        <img class="logo logo--lg" src="assets/img/logo.svg" alt="">
+        <h1 style="font-size:26px;font-weight:800;margin:0">무인과금출력</h1>
+      </div>
+      <p class="help" style="margin-top:8px">간편하고 빠르게 어디서나 출력·복사·스캔·팩스를</p>
+    </header>
+
+    <form id="loginForm" novalidate>
+      <div class="field">
+        <label class="field__label" for="email">이메일</label>
+        <input class="input" type="email" id="email" placeholder="example@email.com" autocomplete="username">
+      </div>
+      <div class="field">
+        <label class="field__label" for="pw">비밀번호</label>
+        <div class="input-wrap">
+          <input class="input input--with-icon" type="password" id="pw" placeholder="••••••••" autocomplete="current-password">
+          <button class="input-icon" type="button" id="pwToggle" aria-label="비밀번호 보기">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M2 12s3.6-6 10-6 10 6 10 6-3.6 6-10 6-10-6-10-6Z"/><circle cx="12" cy="12" r="3"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+      <button class="btn" type="submit" style="margin-top:6px">로그인</button>
+    </form>
+
+    <div class="divider">간편 로그인</div>
+    <div class="btn-stack">
+      <button class="btn btn--kakao" data-social="kakao">카카오로 시작하기</button>
+      <button class="btn btn--naver" data-social="naver">네이버로 시작하기</button>
+      <button class="btn btn--google" data-social="google">Google로 시작하기</button>
+    </div>
+
+    <div style="margin-top:auto;padding-top:32px">
+      <button class="btn btn--ghost" id="guestBtn">비회원으로 이용하기</button>
+      <p class="footnote">
+        <a href="signup.html">회원가입</a><span class="sep">|</span><a href="find-password.html">비밀번호 찾기</a>
+      </p>
+    </div>
+  </main>
+</div>
+
+<script src="assets/js/app.js"></script>
+<script>
+  document.getElementById('pwToggle').addEventListener('click', function () {
+    var pw = document.getElementById('pw');
+    pw.type = pw.type === 'password' ? 'text' : 'password';
+  });
+
+  document.getElementById('loginForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var email = document.getElementById('email').value.trim();
+    var pw = document.getElementById('pw').value;
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return SP.toast('이메일 주소를 확인해 주세요');
+    if (pw.length < 4) return SP.toast('비밀번호를 4자 이상 입력해 주세요');
+    SP.signIn(email);
+    location.href = 'home.html';
+  });
+
+  var SOCIAL = {
+    kakao: { email: 'kakao.user@kakao.com', name: '카카오 사용자' },
+    naver: { email: 'naver.user@naver.com', name: '네이버 사용자' },
+    google: { email: 'google.user@gmail.com', name: 'Google 사용자' }
+  };
+  document.querySelectorAll('[data-social]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var s = SOCIAL[b.getAttribute('data-social')];
+      SP.signIn(s.email, s.name);
+      location.href = 'home.html';
+    });
+  });
+
+  document.getElementById('guestBtn').addEventListener('click', function () {
+    SP.signInGuest();
+    location.href = 'home.html';
+  });
+</script>
+</body>
+</html>

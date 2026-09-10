@@ -1,0 +1,14 @@
+/* 회사 서체 Freesentation 을 불러오는 곳. 여기 한 파일만 고치면 전체에 적용됩니다.
+ *
+ * 지금은 공개 CDN을 참조합니다. 회사 라이선스 폰트 파일을 직접 올려 쓰려면
+ * 아래 @import 를 지우고 public/assets/font/ 에 woff2 를 넣은 뒤 @font-face 를 쓰세요.
+ *
+ *   @font-face{
+ *     font-family:'Freesentation';
+ *     src:url('../font/Freesentation-6SemiBold.woff2') format('woff2');
+ *     font-weight:600; font-display:swap;
+ *   }
+ *
+ * 서체를 불러오지 못해도 Pretendard·시스템 서체로 자연스럽게 대체됩니다.
+ */
+@import url('https://cdn.jsdelivr.net/gh/webfontworld/freesentation/Freesentation.css');

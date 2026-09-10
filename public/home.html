@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>홈 | 무인과금출력</title>
+<meta name="theme-color" content="#ffffff">
+<link rel="icon" href="assets/img/favicon.svg">
+<link rel="stylesheet" href="assets/css/font.css">
+<link rel="stylesheet" href="assets/css/app.css">
+</head>
+<body>
+<div class="app">
+  <header class="appbar">
+    <div class="appbar__brand">
+      <img class="logo" src="assets/img/logo.svg" alt="">무인과금출력
+    </div>
+    <div class="appbar__actions">
+      <button class="icon-btn" data-go="notifications.html" aria-label="알림">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9">
+          <path d="M18 8a6 6 0 1 0-12 0c0 6-2 7-2 7h16s-2-1-2-7"/><path d="M10.5 20a2 2 0 0 0 3 0"/>
+        </svg>
+      </button>
+      <button class="icon-btn" data-go="settings.html" aria-label="내 정보">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9">
+          <circle cx="12" cy="8" r="3.4"/><path d="M4.5 20c1.2-3.6 4-5.4 7.5-5.4S18.3 16.4 19.5 20"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <main class="page has-nav">
+    <h1 class="h1">무엇을<br>도와드릴까요?</h1>
+
+    <nav class="tiles">
+      <a class="tile tile--print" href="print.html">
+        <span class="tile__chev">›</span>
+        <span class="tile__name">인쇄</span><span class="tile__desc">내 파일을 인쇄해요</span>
+      </a>
+      <a class="tile tile--copy" href="copy.html">
+        <span class="tile__chev">›</span>
+        <span class="tile__name">복사</span><span class="tile__desc">종이를 복사해요</span>
+      </a>
+      <a class="tile tile--scan" href="scan.html">
+        <span class="tile__chev">›</span>
+        <span class="tile__name">스캔</span><span class="tile__desc">종이를 메일로 보내요</span>
+      </a>
+      <a class="tile tile--fax" href="fax.html">
+        <span class="tile__chev">›</span>
+        <span class="tile__name">팩스</span><span class="tile__desc">종이를 팩스로 보내요</span>
+      </a>
+    </nav>
+
+    <div style="display:flex;align-items:center;justify-content:space-between;margin:24px 0 4px">
+      <span class="section-label" style="margin:0">진행중 작업</span>
+      <a class="btn-link" href="history.html">전체보기 ›</a>
+    </div>
+    <div id="ongoing"><p class="empty">진행중인 작업이 없습니다.</p></div>
+  </main>
+
+  <nav class="tabbar">
+    <button class="tab is-on">홈</button>
+    <button class="tab" data-go="history.html">이력</button>
+    <button class="tab" data-go="settings.html">설정</button>
+  </nav>
+</div>
+
+<script src="assets/js/app.js"></script>
+<script>
+  SP.requireUser();
+
+  var jobs = SP.state().jobs.slice(0, 3);
+  if (jobs.length) {
+    document.getElementById('ongoing').innerHTML = '<div class="card">' + jobs.map(function (j) {
+      var svc = SP.SERVICE[j.type];
+      return '<a class="job" href="history.html">' +
+        '<span class="job__icon" style="background:' + svc.color + '">' + svc.name + '</span>' +
+        '<span><span class="job__title">' + j.title + '</span>' +
+        '<span class="job__meta">' + SP.when(j.at) + ' · ' + j.meta + '</span></span>' +
+        '<span class="job__right"><span class="badge badge--done">완료</span>' +
+        '<span class="job__price">' + SP.money(j.price) + '</span></span></a>';
+    }).join('') + '</div>';
+  }
+</script>
+</body>
+</html>

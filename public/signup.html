@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>회원가입 | 무인과금출력</title>
+<link rel="icon" href="assets/img/favicon.svg">
+<link rel="stylesheet" href="assets/css/font.css">
+<link rel="stylesheet" href="assets/css/app.css">
+</head>
+<body>
+<div class="app">
+  <header class="titlebar titlebar--plain">
+    <button class="titlebar__back" data-go="index.html">뒤로</button>
+    <h1 class="titlebar__title">회원가입</h1><span></span>
+  </header>
+
+  <main class="page has-cta">
+    <p class="lead">이메일로 가입하면 출력 이력과 기본 옵션이 저장됩니다.</p>
+    <form id="signupForm" novalidate>
+      <div class="field"><label class="field__label" for="name">이름</label>
+        <input class="input" id="name" placeholder="홍길동"></div>
+      <div class="field"><label class="field__label" for="email">이메일</label>
+        <input class="input" type="email" id="email" placeholder="example@email.com"></div>
+      <div class="field"><label class="field__label" for="pw">비밀번호</label>
+        <input class="input" type="password" id="pw" placeholder="8자 이상"></div>
+      <div class="field"><label class="field__label" for="pw2">비밀번호 확인</label>
+        <input class="input" type="password" id="pw2" placeholder="한 번 더 입력"></div>
+      <div class="card card--pad" style="margin-top:8px">
+        <div class="row"><span class="row__label">[필수] 서비스 이용약관 동의</span>
+          <label class="switch"><input type="checkbox" id="agree1"><span class="switch__track"></span></label></div>
+        <div class="row"><span class="row__label">[선택] 마케팅 정보 수신</span>
+          <label class="switch"><input type="checkbox" id="agree2"><span class="switch__track"></span></label></div>
+      </div>
+    </form>
+  </main>
+
+  <div class="cta"><button class="btn" id="submitBtn">가입하고 시작하기</button></div>
+</div>
+
+<script src="assets/js/app.js"></script>
+<script>
+  document.getElementById('submitBtn').addEventListener('click', function () {
+    var name = document.getElementById('name').value.trim();
+    var email = document.getElementById('email').value.trim();
+    var pw = document.getElementById('pw').value;
+    var pw2 = document.getElementById('pw2').value;
+    if (!name) return SP.toast('이름을 입력해 주세요');
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return SP.toast('이메일 주소를 확인해 주세요');
+    if (pw.length < 8) return SP.toast('비밀번호는 8자 이상이어야 합니다');
+    if (pw !== pw2) return SP.toast('비밀번호가 서로 다릅니다');
+    if (!document.getElementById('agree1').checked) return SP.toast('필수 약관에 동의해 주세요');
+    SP.signIn(email, name);
+    location.href = 'home.html';
+  });
+</script>
+</body>
+</html>

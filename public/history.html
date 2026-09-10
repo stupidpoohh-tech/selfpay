@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>작업 이력 | 무인과금출력</title>
+<link rel="icon" href="assets/img/favicon.svg">
+<link rel="stylesheet" href="assets/css/font.css">
+<link rel="stylesheet" href="assets/css/app.css">
+</head>
+<body>
+<div class="app">
+  <header class="titlebar titlebar--plain">
+    <span></span><h1 class="titlebar__title">작업 이력</h1><span></span>
+  </header>
+
+  <main class="page has-nav">
+    <div class="segment" id="segment">
+      <button class="segment__item is-on" data-status="all"><b>전체</b><span id="cAll">0건</span></button>
+      <button class="segment__item" data-status="ing"><b>작업중</b><span id="cIng">0건</span></button>
+      <button class="segment__item" data-status="done"><b>완료</b><span id="cDone">0건</span></button>
+    </div>
+
+    <div class="chips" id="chips">
+      <button class="chip is-on" data-type="all">전체</button>
+      <button class="chip" data-type="print">인쇄</button>
+      <button class="chip" data-type="copy">복사</button>
+      <button class="chip" data-type="scan">스캔</button>
+      <button class="chip" data-type="fax">팩스</button>
+    </div>
+
+    <div id="list"></div>
+  </main>
+
+  <nav class="tabbar">
+    <button class="tab" data-go="home.html">홈</button>
+    <button class="tab is-on">이력</button>
+    <button class="tab" data-go="settings.html">설정</button>
+  </nav>
+</div>
+
+<script src="assets/js/app.js"></script>
+<script>
+  SP.requireUser();
+
+  var filter = { status: 'all', type: 'all' };
+
+  function render() {
+    var jobs = SP.state().jobs;
+    document.getElementById('cAll').textContent = jobs.length + '건';
+    document.getElementById('cIng').textContent = jobs.filter(function (j) { return j.status === 'ing'; }).length + '건';
+    document.getElementById('cDone').textContent = jobs.filter(function (j) { return j.status === 'done'; }).length + '건';
+
+    var rows = jobs.filter(function (j) {
+      return (filter.status === 'all' || j.status === filter.status) &&
+             (filter.type === 'all' || j.type === filter.type);
+    });
+
+    document.getElementById('list').innerHTML = rows.length
+      ? '<div class="card">' + rows.map(function (j) {
+          var svc = SP.SERVICE[j.type];
+          var done = j.status === 'done';
+          return '<div class="job">' +
+            '<span class="job__icon" style="background:' + svc.color + '">' + svc.name + '</span>' +
+            '<span><span class="job__title">' + j.title + '</span>' +
+            '<span class="job__meta">' + SP.when(j.at) + ' · ' + j.meta + '</span></span>' +
+            '<span class="job__right"><span class="badge ' + (done ? 'badge--done">완료' : 'badge--ing">작업중') + '</span>' +
+            '<span class="job__price">' + SP.money(j.price) + '</span></span></div>';
+        }).join('') + '</div>'
+      : '<p class="empty">작업 이력이 없습니다.</p>';
+  }
+
+  document.getElementById('segment').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-status]');
+    if (!b) return;
+    filter.status = b.getAttribute('data-status');
+    this.querySelectorAll('.segment__item').forEach(function (x) { x.classList.toggle('is-on', x === b); });
+    render();
+  });
+
+  document.getElementById('chips').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-type]');
+    if (!b) return;
+    filter.type = b.getAttribute('data-type');
+    this.querySelectorAll('.chip').forEach(function (x) { x.classList.toggle('is-on', x === b); });
+    render();
+  });
+
+  render();
+</script>
+</body>
+</html>

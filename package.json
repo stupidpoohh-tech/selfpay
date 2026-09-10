@@ -1,0 +1,13 @@
+{
+  "name": "selfpay-shell",
+  "version": "0.1.0",
+  "private": true,
+  "description": "무인과금출력 프로토타입 껍데기 페이지 (Cloudflare Pages)",
+  "scripts": {
+    "dev": "wrangler pages dev public --port 8788",
+    "deploy": "wrangler pages deploy public --project-name selfpay-shell"
+  },
+  "devDependencies": {
+    "wrangler": "^4.0.0"
+  }
+}

@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>스캔 | 무인과금출력</title>
+<link rel="icon" href="assets/img/favicon.svg">
+<link rel="stylesheet" href="assets/css/font.css">
+<link rel="stylesheet" href="assets/css/app.css">
+</head>
+<body>
+<div class="app">
+  <header class="titlebar titlebar--flow">
+    <button class="titlebar__back" id="flowBack">뒤로</button>
+    <h1 class="titlebar__title" id="flowTitle">스캔</h1>
+    <span></span>
+  </header>
+
+  <div class="stepper" id="stepper"></div>
+
+  <main class="page has-cta" id="flowBody"></main>
+
+  <div class="cta"><button class="btn" id="flowCta">다음</button></div>
+</div>
+
+<script src="assets/js/app.js"></script>
+<script src="assets/js/flow.js"></script>
+<script>SPFlow.start('scan');</script>
+</body>
+</html>

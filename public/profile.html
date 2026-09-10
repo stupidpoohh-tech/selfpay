@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>프로필 수정 | 무인과금출력</title>
+<link rel="icon" href="assets/img/favicon.svg">
+<link rel="stylesheet" href="assets/css/font.css">
+<link rel="stylesheet" href="assets/css/app.css">
+</head>
+<body>
+<div class="app">
+  <header class="titlebar titlebar--plain">
+    <button class="titlebar__back" data-go="settings.html">뒤로</button>
+    <h1 class="titlebar__title">프로필 수정</h1><span></span>
+  </header>
+
+  <main class="page has-cta">
+    <div class="field"><label class="field__label" for="name">이름</label>
+      <input class="input" id="name"></div>
+    <div class="field"><label class="field__label" for="email">이메일</label>
+      <input class="input" type="email" id="email"></div>
+    <p class="help" id="guestNote" hidden>비회원 계정은 이 기기에서만 유지됩니다. 회원가입하면 이력이 계정에 저장됩니다.</p>
+    <div id="guestUpgrade" hidden style="margin-top:14px">
+      <button class="btn btn--line btn--sm" data-go="signup.html">회원으로 전환하기</button>
+    </div>
+  </main>
+
+  <div class="cta"><button class="btn" id="saveBtn">저장하기</button></div>
+</div>
+
+<script src="assets/js/app.js"></script>
+<script>
+  var user = SP.requireUser();
+  if (user) {
+    document.getElementById('name').value = user.name;
+    document.getElementById('email').value = user.email;
+    if (user.type === 'guest') {
+      document.getElementById('guestNote').hidden = false;
+      document.getElementById('guestUpgrade').hidden = false;
+    }
+  }
+  document.getElementById('saveBtn').addEventListener('click', function () {
+    var name = document.getElementById('name').value.trim();
+    var email = document.getElementById('email').value.trim();
+    if (!name) return SP.toast('이름을 입력해 주세요');
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return SP.toast('이메일 주소를 확인해 주세요');
+    SP.update(function (s) { s.user.name = name; s.user.email = email; });
+    SP.toast('저장했습니다');
+    setTimeout(function () { location.href = 'settings.html'; }, 700);
+  });
+</script>
+</body>
+</html>
