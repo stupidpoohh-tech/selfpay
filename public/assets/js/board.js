@@ -36,7 +36,8 @@
     protoSide: 'proposal',
     active: null,           /* 클릭·포커스로 고정한 변경점 */
     hover: null,            /* 마우스가 올라간 변경점 */
-    showAnno: true          /* 변경점 보기. 처음부터 켜 둔다 */
+    showAnno: true,         /* 변경점 보기. 처음부터 켜 둔다 */
+    showNav: true           /* 다음 화면으로 가는 자리 표시 */
   };
 
   var el = {
@@ -194,13 +195,20 @@
     var count = cs.length ? '총 ' + cs.length + '개의 변경점'
       : (s.notes && s.notes.length ? '총 ' + s.notes.length + '개의 개선 제안' : '작성 전');
 
-    /* 화면 위에 표시할 영역이 하나도 없으면 토글을 두지 않는다 */
+    /* 화면 위에 표시할 영역이 하나도 없으면 변경점 토글을 두지 않는다 */
     var hasBox = cs.some(function (c) {
       return SPAnno.boxesOf(c, 'current').length || SPAnno.boxesOf(c, 'proposal').length;
     });
-    var toggle = hasBox
-      ? '<div class="annobar"><button type="button" class="annotoggle" id="annoToggle" ' +
-        'role="switch" aria-checked="false">변경점 보기<i></i></button></div>'
+    var hasNav = ['current', 'proposal'].some(function (side) {
+      return navHitsHtml(s, side) !== '';
+    });
+    var toggle = (hasBox || hasNav)
+      ? '<div class="annobar">' +
+        (hasBox ? '<button type="button" class="annotoggle" id="annoToggle" ' +
+          'role="switch" aria-checked="false">변경점 보기<i></i></button>' : '') +
+        (hasNav ? '<button type="button" class="annotoggle annotoggle--nav" id="navToggle" ' +
+          'role="switch" aria-checked="false">이동 지점 보기<i></i></button>' : '') +
+        '</div>'
       : '';
 
     return '<aside class="notes">' +
@@ -403,6 +411,18 @@
 
   /* 개선 사항 항목 ↔ 화면 위 표시 */
   function bindNotes() {
+    var navT = document.getElementById('navToggle');
+    if (navT) {
+      navT.setAttribute('aria-checked', String(state.showNav));
+      navT.classList.toggle('is-on', state.showNav);
+      navT.addEventListener('click', function () {
+        state.showNav = !state.showNav;
+        navT.setAttribute('aria-checked', String(state.showNav));
+        navT.classList.toggle('is-on', state.showNav);
+        syncAnno();
+      });
+    }
+
     var toggle = document.getElementById('annoToggle');
     if (toggle) {
       toggle.setAttribute('aria-checked', String(state.showAnno));
@@ -440,6 +460,7 @@
     if (!cmp) return;
 
     cmp.classList.toggle('anno-on', state.showAnno || !!id);
+    cmp.classList.toggle('nav-on', state.showNav);
     SPAnno.apply(cmp, s, { active: id, showAll: state.showAnno });
     SPAnno.drawLinks(cmp, s, { active: id });
 

@@ -190,9 +190,9 @@
       img: 'shots/history.png', alt: '작업 이력',
       /* 상태마다 가장 중요한 행동만 목적지를 잇는다. 취소·상세는 갈 화면이 없어 비워 둔다 */
       hits: P_APPBAR.concat([
-        { l: 5.5,  t: 48.4, w: 43.0, h: 5.0, to: 'payments.html',       name: '영수증 보기' },
-        { l: 50.0, t: 48.4, w: 44.5, h: 5.0, to: 'refund.html',         name: '환불 요청' },
-        { l: 4.5,  t: 76.0, w: 91.0, h: 5.4, to: 'print-checkout.html', name: '결제하기' }
+        { l: 5.5,  t: 49.5, w: 43.0, h: 5.0, to: 'payments.html',       name: '영수증 보기' },
+        { l: 50.0, t: 49.5, w: 44.5, h: 5.0, to: 'refund.html',         name: '환불 요청' },
+        { l: 4.5,  t: 76.8, w: 91.0, h: 5.2, to: 'print-checkout.html', name: '결제하기' }
       ], P_TAB)
     },
     notifications: {
@@ -215,7 +215,7 @@
     'print-checkout': {
       img: 'shots/print-checkout.png', alt: '파일 확인 및 결제',
       hits: P_APPBAR.concat([
-        { l: 73.0, t: 29.3, w: 23.0, h: 4.2, to: 'print.html', name: '다른 파일 선택' }
+        { l: 71.5, t: 33.9, w: 23.0, h: 4.4, to: 'print.html', name: '다른 파일 선택' }
       ], taskTab(P_TAB))
     },
     copy: {
