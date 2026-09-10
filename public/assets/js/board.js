@@ -15,7 +15,7 @@
     protoSide: 'proposal',
     active: null,           /* 클릭·포커스로 고정한 변경점 */
     hover: null,            /* 마우스가 올라간 변경점 */
-    showAnno: false         /* 변경점 보기 */
+    showAnno: true          /* 변경점 보기. 처음부터 켜 둔다 */
   };
 
   var el = {
@@ -165,12 +165,33 @@
           textContent: img.getAttribute('src') + ' 를 찾을 수 없습니다.'
         }));
       });
-      img.addEventListener('click', function () { openZoom(img.getAttribute('data-zoom')); });
+    });
+    el.stage.querySelectorAll('.shotbox').forEach(function (box) {
+      box.addEventListener('click', function (e) {
+        if (e.target.closest('.anno__box')) return;   /* 표시 영역은 선택용 */
+        var img = box.querySelector('.shotimg');
+        if (img) openZoom(img.getAttribute('data-zoom'));
+      });
     });
 
+    bindBoxes();
     bindNotes();
     bindMobile();
     syncAnno();
+  }
+
+  /* 화면 위 표시 영역에 직접 올리거나 눌러도 같은 변경점이 강조된다 */
+  function bindBoxes() {
+    el.stage.querySelectorAll('.anno__box').forEach(function (box) {
+      var id = box.getAttribute('data-change');
+      box.addEventListener('mouseenter', function () { state.hover = id; syncAnno(); });
+      box.addEventListener('mouseleave', function () { state.hover = null; syncAnno(); });
+      box.addEventListener('click', function (e) {
+        e.stopPropagation();
+        state.active = state.active === id ? null : id;
+        syncAnno();
+      });
+    });
   }
 
   /* 개선 사항 항목 ↔ 화면 위 표시 */
