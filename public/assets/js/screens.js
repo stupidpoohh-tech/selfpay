@@ -4,11 +4,10 @@
  * 보드에 '개선사항 정리 예정' 으로 표시된다. 내용을 채울 때는 아래 형태로 적는다.
  *
  *   notes: [
- *     { title: '단계 단순화',
- *       body: '기존 6단계 구조에서 사용자가 실제로 인지해야 하는 핵심 행동 중심으로 단계를 축소.' },
- *     { title: '선택 UI 정리',
- *       body: '컬러/흑백, 단면/양면처럼 2개 중 하나를 선택하는 항목을 큰 카드 대신 간결한 컨트롤로 변경.' }
- *   ]
+ *     { title: '단계 단순화', body: '…' },
+ *     { title: '정보 위계 강화', body: '…', tone: 'warn' }   // tone 을 주면 번호가 주황색
+ *   ],
+ *   effects: ['사용자 작업 완료 시간 단축', '…']              // 기대 효과. 비우면 블록이 숨는다
  */
 window.REVIEW = {
   title: '무인과금 서비스 UI/UX 개선',
@@ -19,7 +18,22 @@ window.REVIEW = {
       id: 'home', label: '홈',
       current:  { img: 'shots/home.png',           page: 'home.html' },
       proposal: { img: 'proposal/shots/index.png', page: 'proposal/index.html' },
-      notes: []
+      notes: [
+        { title: '단계 단순화',
+          body: '핵심 기능에 바로 접근할 수 있도록<br>홈 화면의 정보 구조를 단순화했습니다.' },
+        { title: '선택 UI 정리',
+          body: '아이콘과 레이블을 함께 제공하여<br>기능 인지성을 높였습니다.' },
+        { title: '정보 위계 강화', tone: 'warn',
+          body: '주요 질문과 핵심 기능을 강조하여<br>사용자의 시선 흐름을 개선했습니다.' },
+        { title: '화면 밀도 개선',
+          body: '여백과 컴포넌트 간 간격을 최적화하여<br>더 깔끔하고 편안한 사용 경험을 제공합니다.' }
+      ],
+      effects: [
+        '사용자 작업 완료 시간 단축',
+        '초보 사용자도 쉽게 이용 가능',
+        '핵심 기능의 가시성 및 접근성 향상',
+        '전반적인 사용자 만족도 개선'
+      ]
     },
     {
       id: 'print', label: '인쇄',

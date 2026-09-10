@@ -29,6 +29,29 @@
 
   function screen() { return SCREENS[state.index]; }
 
+  /* 화면별 칩 아이콘 (선택된 칩에만 보인다) */
+  var ICONS = {
+    home:   '<path d="M12 3.6 4 10v10.4h5.2v-6h5.6v6H20V10L12 3.6Z"/>',
+    print:  '<path d="M7 4h10v4H7zM5 9h14a2 2 0 0 1 2 2v5h-4v4H7v-4H3v-5a2 2 0 0 1 2-2Z"/>',
+    copy:   '<path d="M4 4h11v11H4zM9 17h11V6"/>',
+    scan:   '<path d="M3 8V5a2 2 0 0 1 2-2h3M16 3h3a2 2 0 0 1 2 2v3M21 16v3a2 2 0 0 1-2 2h-3M8 21H5a2 2 0 0 1-2-2v-3M3 12h18"/>',
+    fax:    '<path d="M6 4h5v5H6zM4 10h16a1.5 1.5 0 0 1 1.5 1.5V19a1.5 1.5 0 0 1-1.5 1.5H4A1.5 1.5 0 0 1 2.5 19v-7.5A1.5 1.5 0 0 1 4 10Z"/>',
+    history:'<circle cx="12" cy="12" r="8.4"/><path d="M12 7.4V12l3.2 2"/>',
+    settings:'<circle cx="12" cy="12" r="3.2"/><path d="M19.4 13.5a7.6 7.6 0 0 0 0-3l1.8-1.3-1.8-3.2-2.1.8a7.7 7.7 0 0 0-2.6-1.5L14.4 3h-3.7l-.3 2.3c-1 .3-1.8.8-2.6 1.5l-2.1-.8-1.8 3.2 1.8 1.3a7.6 7.6 0 0 0 0 3l-1.8 1.3 1.8 3.2 2.1-.8c.8.7 1.6 1.2 2.6 1.5l.3 2.3h3.7l.3-2.3c1-.3 1.8-.8 2.6-1.5l2.1.8 1.8-3.2-1.8-1.3Z"/>',
+    login:  '<path d="M10 4.5H6.5a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2H10M15 8.5l4 3.5-4 3.5M19 12H9.5"/>',
+    guest:  '<circle cx="12" cy="8" r="3.6"/><path d="M4.5 20c1.2-3.6 4-5.4 7.5-5.4S18.3 16.4 19.5 20"/>',
+    notifications:'<path d="M18 8a6 6 0 1 0-12 0c0 6-2 7-2 7h16s-2-1-2-7"/><path d="M10.5 20a2 2 0 0 0 3 0"/>'
+  };
+
+  function icon(id) {
+    var p = ICONS[id];
+    if (!p) return '';
+    var filled = id === 'home' || id === 'print' || id === 'copy' || id === 'fax';
+    return '<svg viewBox="0 0 24 24" fill="' + (filled ? 'currentColor' : 'none') +
+      '" stroke="currentColor" stroke-width="' + (filled ? '0' : '1.9') +
+      '" stroke-linecap="round" stroke-linejoin="round">' + p + '</svg>';
+  }
+
   /* 이미지 원본 비율 (프로토타입 화면 크기 계산용) */
   var ratios = {};
   function ratio(src, cb) {
@@ -45,8 +68,9 @@
   /* ── 화면 목록 ─────────────────────────────── */
   function drawChips() {
     el.chips.innerHTML = SCREENS.map(function (s, i) {
-      return '<button class="chip' + (i === state.index ? ' is-on' : '') + '" data-i="' + i + '">' +
-        s.label + '</button>';
+      var on = i === state.index;
+      return '<button class="chip' + (on ? ' is-on' : '') + '" data-i="' + i + '">' +
+        (on ? icon(s.id) : '') + s.label + '</button>';
     }).join('');
     el.counter.textContent = (state.index + 1) + ' / ' + SCREENS.length;
     var on = el.chips.querySelector('.chip.is-on');
@@ -55,30 +79,55 @@
 
   /* ── 개선 노트 ─────────────────────────────── */
   function notesHtml(s) {
-    var body = (s.notes && s.notes.length)
-      ? s.notes.map(function (n) {
-          return '<div class="note"><h3 class="note__title">' + n.title + '</h3>' +
-            '<p class="note__body">' + n.body + '</p></div>';
+    var list = (s.notes && s.notes.length)
+      ? s.notes.map(function (n, i) {
+          return '<div class="note' + (n.tone === 'warn' ? ' note--warn' : '') + '">' +
+            '<span class="note__num">' + String(i + 1).padStart(2, '0') + '</span>' +
+            '<div><h3 class="note__title">' + n.title + '</h3>' +
+            '<p class="note__body">' + n.body + '</p></div></div>';
         }).join('')
       : '<div class="notes__empty">개선사항 정리 예정<br>' +
         '<span style="font-size:12px">assets/js/screens.js 의 notes 에 작성합니다.</span></div>';
 
+    var effects = (s.effects && s.effects.length)
+      ? '<div class="effects"><div class="effects__head">' +
+        '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#2f6df6" stroke-width="1.9">' +
+        '<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="3.6"/></svg>' +
+        '<h3>기대 효과</h3></div><ul>' +
+        s.effects.map(function (t) {
+          return '<li><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">' +
+            '<path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm-1.2 14.3-4-4 1.5-1.5 2.5 2.5 5.4-5.4 1.5 1.5-6.9 6.9Z"/></svg>' +
+            t + '</li>';
+        }).join('') + '</ul></div>'
+      : '';
+
+    var count = (s.notes && s.notes.length)
+      ? '총 ' + s.notes.length + '개의 개선 제안' : '작성 전';
+
     return '<aside class="notes">' +
-      '<div class="notes__head"><h2>개선 사항</h2>' +
-      '<span class="notes__screen">' + s.label + '</span></div>' + body + '</aside>';
+      '<div class="notes__head">' +
+      '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f0a93c" stroke-width="1.9" stroke-linecap="round">' +
+      '<path d="M9.5 17.5h5M10.5 20.5h3"/>' +
+      '<path d="M12 3a6 6 0 0 0-3.5 10.9c.3.3.5.7.5 1.1h6c0-.4.2-.8.5-1.1A6 6 0 0 0 12 3Z"/></svg>' +
+      '<h2>개선 사항</h2><span class="notes__count">' + count + '</span>' +
+      '<button class="notes__close" type="button">닫기</button></div>' +
+      '<div class="notes__body">' + list + effects + '</div></aside>';
   }
 
   /* ── 비교 보기 ─────────────────────────────── */
   function paneHtml(s, side) {
-    var d = s[side === 'current' ? 'current' : 'proposal'];
-    var tag = side === 'current'
-      ? '<span class="tag tag--as">AS-IS</span><span class="pane__name">현재</span>'
-      : '<span class="tag tag--to">TO-BE</span><span class="pane__name">제안</span>';
+    var isCur = side === 'current';
+    var d = s[isCur ? 'current' : 'proposal'];
     return '<div class="pane pane--' + side + '">' +
-      '<div class="pane__head">' + tag + '</div>' +
+      '<div class="pane__head"><span class="pane__mark"></span>' +
+      '<span class="tag tag--' + (isCur ? 'as">AS-IS' : 'to">TO-BE') + '</span>' +
+      '<span class="pane__name">' + (isCur ? '현재' : '제안') + '</span></div>' +
       '<div class="pane__body">' +
-      '<img class="shotimg" src="' + d.img + '" alt="' + s.label + ' ' +
-      (side === 'current' ? 'AS-IS' : 'TO-BE') + '" data-zoom="' + d.img + '">' +
+        '<div class="device">' +
+          '<img class="shotimg" src="' + d.img + '" alt="' + s.label + ' ' +
+          (isCur ? 'AS-IS' : 'TO-BE') + '" data-zoom="' + d.img + '">' +
+        '</div>' +
+        '<span class="caption">' + (isCur ? '현재 서비스 화면 (AS-IS)' : '개선 제안 화면 (TO-BE)') + '</span>' +
       '</div></div>';
   }
 
@@ -86,9 +135,13 @@
     var s = screen();
     el.stage.innerHTML =
       '<div class="cmp">' +
-        '<div class="tabs" id="tabs">' +
-          '<button data-side="current"' + (state.side === 'current' ? ' class="is-on"' : '') + '>AS-IS</button>' +
-          '<button data-side="proposal"' + (state.side === 'proposal' ? ' class="is-on"' : '') + '>TO-BE</button>' +
+        '<div class="tabrow">' +
+          '<div class="tabs" id="tabs">' +
+            '<button data-side="current"' + (state.side === 'current' ? ' class="is-on"' : '') + '>AS-IS</button>' +
+            '<button data-side="proposal"' + (state.side === 'proposal' ? ' class="is-on"' : '') + '>TO-BE</button>' +
+          '</div>' +
+          '<button class="notesbtn" id="notesBtn" type="button">개선 사항' +
+            (s.notes && s.notes.length ? ' <b>' + s.notes.length + '</b>' : '') + '</button>' +
         '</div>' +
         paneHtml(s, 'current') + paneHtml(s, 'proposal') + notesHtml(s) +
       '</div>';
@@ -102,6 +155,15 @@
       });
       img.addEventListener('click', function () { openZoom(img.getAttribute('data-zoom')); });
     });
+
+    var openBtn = document.getElementById('notesBtn');
+    if (openBtn) {
+      openBtn.addEventListener('click', function () { document.body.classList.add('notes-open'); });
+    }
+    var closeBtn = el.stage.querySelector('.notes__close');
+    if (closeBtn) {
+      closeBtn.addEventListener('click', function () { document.body.classList.remove('notes-open'); });
+    }
 
     var tabs = document.getElementById('tabs');
     if (tabs) {
@@ -126,8 +188,9 @@
     el.stage.innerHTML =
       '<div class="proto">' +
         '<div class="proto__stage" id="protoStage">' +
-          '<iframe class="proto__frame" id="protoFrame" title="' + s.label + ' 프로토타입" ' +
-          'src="' + protoUrl(s) + '"></iframe>' +
+          '<div class="device" id="protoDevice">' +
+            '<iframe id="protoFrame" title="' + s.label + ' 프로토타입" src="' + protoUrl(s) + '"></iframe>' +
+          '</div>' +
         '</div>' +
         '<p class="proto__hint">화면 안의 버튼을 눌러 이동해 보세요.</p>' +
       '</div>';
@@ -157,9 +220,10 @@
     var src = s[state.protoSide === 'current' ? 'current' : 'proposal'].img;
     ratio(src, function (r) {
       var box = stage.getBoundingClientRect();
-      var h = box.height - 2;
+      var pad = 18;                       /* 목업 테두리 두께 */
+      var h = box.height - pad;
       var wd = h * r;
-      if (wd > box.width) { wd = box.width; h = wd / r; }
+      if (wd + pad > box.width) { wd = box.width - pad; h = wd / r; }
       frame.style.width = Math.floor(wd) + 'px';
       frame.style.height = Math.floor(h) + 'px';
     });
@@ -177,6 +241,7 @@
 
   /* ── 그리기 ────────────────────────────────── */
   function draw() {
+    document.body.classList.remove('notes-open');
     drawChips();
     if (state.mode === 'compare') drawCompare(); else drawProto();
     el.protoSeg.hidden = state.mode !== 'proto';

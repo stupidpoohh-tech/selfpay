@@ -12,9 +12,12 @@
 <body class="board" data-mode="compare" data-side="proposal">
 
 <header class="bar">
-  <div class="bar__title">
-    <h1>무인과금 서비스 UI/UX 개선</h1>
-    <p class="bar__sub">AS-IS · TO-BE 비교 검토</p>
+  <div class="bar__brand">
+    <img src="assets/img/logo.svg" alt="">
+    <div class="bar__title">
+      <h1>무인과금 서비스 UI/UX 개선</h1>
+      <p class="bar__sub">AS-IS · TO-BE 비교 검토</p>
+    </div>
   </div>
   <div class="bar__right">
     <div class="seg seg--sm" id="protoSeg" hidden>
@@ -25,15 +28,25 @@
       <button type="button" data-mode="compare" class="is-on">비교 보기</button>
       <button type="button" data-mode="proto">프로토타입 보기</button>
     </div>
-    <a class="linkbtn" href="map.html">화면 맵</a>
+    <a class="linkbtn" href="map.html">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round">
+        <path d="M9 4 3 6.2v13.4L9 17.4l6 2.2 6-2.2V4l-6 2.2L9 4Z"/><path d="M9 4v13.4"/><path d="M15 6.6V20"/>
+      </svg>화면 맵
+    </a>
   </div>
 </header>
 
 <nav class="nav">
-  <button class="arrow" id="prev" aria-label="이전 화면">‹</button>
   <div class="chips" id="chips"></div>
-  <button class="arrow" id="next" aria-label="다음 화면">›</button>
-  <span class="counter" id="counter"></span>
+  <div class="pager">
+    <button class="arrow" id="prev" type="button" aria-label="이전 화면">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 5-7 7 7 7"/></svg>
+    </button>
+    <span class="counter" id="counter"></span>
+    <button class="arrow" id="next" type="button" aria-label="다음 화면">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 5 7 7-7 7"/></svg>
+    </button>
+  </div>
 </nav>
 
 <main class="stage" id="stage"></main>
