@@ -1,13 +1,19 @@
 /* 화면 데이터 — AS-IS(현재) / TO-BE(제안) 짝과 개선 노트를 한곳에서 관리한다.
  *
- * notes 는 화면별 개선 사항이다. 아직 정리되지 않은 화면은 빈 배열로 두면
- * 보드에 '개선사항 정리 예정' 으로 표시된다. 내용을 채울 때는 아래 형태로 적는다.
+ * 화면마다 두 가지를 적는다.
  *
- *   notes: [
- *     { title: '단계 단순화', body: '…' },
- *     { title: '정보 위계 강화', body: '…' }
- *   ],
- *   effects: ['사용자 작업 완료 시간 단축', '…']              // 기대 효과. 비우면 블록이 숨는다
+ *  changes — AS-IS / TO-BE 사이의 실제 변경점. 오른쪽 목록이자 화면 위 표시의 원본이다.
+ *    { id, type, title, description, shortLabel, link, targets:{ current:[…], proposal:[…] } }
+ *    type      move | resize | add | remove | merge | restructure
+ *    targets   각 면의 대상 영역. 한 면에 여러 개를 둘 수 있다. 없으면 그 면에는 표시하지 않는다.
+ *              좌표는 이미지 크기와 무관한 % (x, y, w, h) 다. 이미지가 줄거나 늘어도 따라간다.
+ *    link      AS-IS ↔ TO-BE 연결선 여부. 생략하면 유형 기본값(move·merge·restructure만 true)
+ *    shortLabel 화면 위에 붙는 짧은 라벨. 생략하면 유형 기본 라벨
+ *
+ *  effects — 기대 효과 목록. 비우면 블록이 숨는다.
+ *
+ * changes 가 없는 화면은 notes(제목·본문만 있는 목록)로 대체 표시되고,
+ * 그것도 없으면 '개선사항 정리 예정' 으로 표시된다.
  */
 window.REVIEW = {
   title: '무인과금 서비스 UI/UX 개선',
@@ -18,16 +24,58 @@ window.REVIEW = {
       id: 'home', label: '홈',
       current:  { img: 'shots/home.png',           page: 'home.html' },
       proposal: { img: 'proposal/shots/index.png', page: 'proposal/index.html' },
-      notes: [
-        { title: '단계 단순화',
-          body: '핵심 기능에 바로 접근할 수 있도록<br>홈 화면의 정보 구조를 단순화했습니다.' },
-        { title: '선택 UI 정리',
-          body: '아이콘과 레이블을 함께 제공하여<br>기능 인지성을 높였습니다.' },
-        { title: '정보 위계 강화',
-          body: '주요 질문과 핵심 기능을 강조하여<br>사용자의 시선 흐름을 개선했습니다.' },
-        { title: '화면 밀도 개선',
-          body: '여백과 컴포넌트 간 간격을 최적화하여<br>더 깔끔하고 편안한 사용 경험을 제공합니다.' }
+
+      /* 두 화면을 직접 비교해 확인되는 차이만 적었다. */
+      changes: [
+        {
+          id: 'cards',
+          type: 'resize',
+          shortLabel: '축소',
+          title: '기능 카드 축소',
+          description: '진한 색으로 채운 큰 블록 네 개가 화면 세로의 36%를 차지했습니다. ' +
+            'TO-BE에서는 30%로 줄고 옅은 배경 카드로 바뀌었습니다.',
+          targets: {
+            current:  [{ x: 3.8, y: 17.3, w: 91.8, h: 35.7 }],
+            proposal: [{ x: 4.3, y: 36.9, w: 91.4, h: 30.0 }]
+          }
+        },
+        {
+          id: 'hero',
+          type: 'add',
+          shortLabel: '추가',
+          title: '상단 안내 문구와 그림 추가',
+          description: '제목 위 한 줄 안내와 오른쪽 프린터 그림이 새로 들어갔습니다. ' +
+            'AS-IS에는 없던 영역입니다.',
+          targets: {
+            proposal: [{ x: 4.3, y: 15.0, w: 91.4, h: 19.1 }]
+          }
+        },
+        {
+          id: 'ongoing',
+          type: 'restructure',
+          shortLabel: '재구성',
+          title: '진행중 작업 영역 카드화',
+          description: '안내 문구 한 줄이던 자리가 아이콘·설명·이동 화살표가 있는 카드로 바뀌었습니다. ' +
+            '영역 자체를 눌러 이력으로 갈 수 있습니다.',
+          targets: {
+            current:  [{ x: 3.8, y: 55.6, w: 91.8, h: 8.2 }],
+            proposal: [{ x: 4.3, y: 70.6, w: 91.4, h: 13.7 }]
+          }
+        },
+        {
+          id: 'tabbar',
+          type: 'restructure',
+          shortLabel: '재구성',
+          link: false,
+          title: '하단 탭 구성 변경',
+          description: '글자만 있던 탭에 아이콘과 선택 표시가 더해지고 영역이 높아졌습니다.',
+          targets: {
+            current:  [{ x: 0, y: 94.7, w: 100, h: 5.3 }],
+            proposal: [{ x: 0, y: 88.4, w: 100, h: 7.9 }]
+          }
+        }
       ],
+
       effects: [
         '사용자 작업 완료 시간 단축',
         '초보 사용자도 쉽게 이용 가능',

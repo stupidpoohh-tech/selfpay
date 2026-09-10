@@ -33,23 +33,44 @@ AS-IS / TO-BE 탭으로 한 장씩 보고, 그 아래에 개선 노트가 붙습
 프로토타입 보기는 기존 화면 페이지를 그대로 불러옵니다(`?embed=1`). 화면 안에서 이동하면
 위쪽 화면 목록도 따라 움직입니다. 기본값은 TO-BE이고, 작은 컨트롤로 AS-IS 프로토타입도 볼 수 있습니다.
 
-## 개선 노트
+## 변경점
 
-`public/assets/js/screens.js` 의 `notes` 에 화면별로 적습니다. 비어 있으면 보드에
-'개선사항 정리 예정' 으로 표시됩니다.
+오른쪽 목록은 설명문이 아니라 조작 장치입니다. 항목에 마우스를 올리거나 누르면
+AS-IS · TO-BE 양쪽에서 해당 영역이 동시에 강조되고, 나머지는 옅게 가려집니다.
+`변경점 보기` 를 켜면 번호와 최소한의 외곽선이 모두 보입니다. 기본값은 꺼짐입니다.
+
+화면별 변경점은 `public/assets/js/screens.js` 한 곳에서 관리합니다. 화면이 늘어도
+데이터만 추가하면 같은 표시가 자동으로 적용됩니다.
 
 ```js
 {
   id: 'print', label: '인쇄',
   current:  { img: 'shots/print.png',          page: 'print.html' },
   proposal: { img: 'proposal/shots/print.png', page: 'proposal/print.html' },
-  notes: [
-    { title: '단계 단순화', body: '…' }
-  ]
+  changes: [
+    {
+      id: 'steps',                    // 화면 안에서 고유한 값
+      type: 'resize',                 // move | resize | add | remove | merge | restructure
+      shortLabel: '축소',             // 화면 위에 붙는 짧은 라벨 (생략 가능)
+      title: '단계 표시 축소',
+      description: '…',
+      link: false,                    // AS-IS ↔ TO-BE 연결선 (생략하면 유형 기본값)
+      targets: {                      // 없는 면은 생략. 한 면에 여러 개도 가능
+        current:  [{ x: 3.8, y: 17.3, w: 91.8, h: 35.7 }],
+        proposal: [{ x: 4.3, y: 36.9, w: 91.4, h: 30.0 }]
+      }
+    }
+  ],
+  effects: ['…']
 }
 ```
 
-AS-IS / TO-BE 짝도 이 파일 한 곳에서 관리합니다.
+좌표는 이미지 크기와 무관한 % 입니다. 창 크기가 바뀌어도 위치가 따라갑니다.
+`type` 별 기본 표시는 `assets/js/annotate.js` 의 `TYPES` 에 있고, 연결선은
+`move` · `merge` · `restructure` 에서만 기본으로 그려집니다.
+
+`changes` 가 없는 화면은 `notes` (제목·본문만 있는 목록)로 대체 표시되고,
+그것도 없으면 '개선사항 정리 예정' 으로 표시됩니다.
 
 ## 히트박스
 
@@ -79,7 +100,8 @@ public/
   shots/                 현재 화면 스크린샷
   proposal/shots/        제안 화면 스크린샷
   map.html, proposal/map.html   화면 맵 (보드 상단 '화면 맵')
-  assets/js/screens.js   AS-IS / TO-BE 짝과 개선 노트
+  assets/js/screens.js   AS-IS / TO-BE 짝, 변경점 데이터, 기대 효과
+  assets/js/annotate.js  변경점 레이어 렌더러 (유형별 표시·연결선)
   assets/js/board.js     보드 동작
   assets/js/shot.js      화면별 히트박스 좌표
   assets/js/map.js       화면 맵의 노드·연결선
@@ -116,6 +138,6 @@ python3 -m http.server 8000 --directory public
 
 ## 아직 없는 것
 
-- 개선 노트 본문 (열 화면 모두 비어 있음)
+- 홈을 제외한 아홉 화면의 변경점 데이터
 - 스크린샷이 없는 화면: 회원가입, 비밀번호 찾기, 수정 / 제안 쪽은 도움말, 고객센터, 용지 선택 추가
 - 입력·결제·복합기 통신 등 실제 동작. 화면은 이미지입니다.

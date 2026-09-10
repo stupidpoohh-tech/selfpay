@@ -1,4 +1,4 @@
-/* UX Review Board — 화면 선택, 비교 보기, 프로토타입 보기 */
+/* UX Review Board — 화면 선택, 비교 보기, 변경점 표시, 프로토타입 보기 */
 (function (w) {
   'use strict';
 
@@ -11,8 +11,11 @@
   var state = {
     index: 0,
     mode: 'compare',        /* compare | proto */
-    side: 'proposal',       /* 모바일 탭, 프로토타입에서 볼 쪽 */
-    protoSide: 'proposal'
+    side: 'proposal',       /* 모바일 탭 */
+    protoSide: 'proposal',
+    active: null,           /* 클릭·포커스로 고정한 변경점 */
+    hover: null,            /* 마우스가 올라간 변경점 */
+    showAnno: false         /* 변경점 보기 */
   };
 
   var el = {
@@ -28,6 +31,8 @@
   };
 
   function screen() { return SCREENS[state.index]; }
+  function changes() { return screen().changes || []; }
+  function activeId() { return state.hover || state.active; }
 
   /* 화면별 칩 아이콘 (선택된 칩에만 보인다) */
   var ICONS = {
@@ -57,10 +62,7 @@
   function ratio(src, cb) {
     if (ratios[src]) return cb(ratios[src]);
     var im = new Image();
-    im.onload = function () {
-      ratios[src] = im.naturalWidth / im.naturalHeight;
-      cb(ratios[src]);
-    };
+    im.onload = function () { ratios[src] = im.naturalWidth / im.naturalHeight; cb(ratios[src]); };
     im.onerror = function () { cb(0.5625); };
     im.src = src;
   }
@@ -77,32 +79,49 @@
     if (on && on.scrollIntoView) on.scrollIntoView({ block: 'nearest', inline: 'nearest' });
   }
 
-  /* ── 개선 노트 ─────────────────────────────── */
+  /* ── 개선 사항 패널 ────────────────────────── */
   function notesHtml(s) {
-    var list = (s.notes && s.notes.length)
-      ? s.notes.map(function (n, i) {
-          return '<div class="note">' +
-            '<span class="note__num">' + String(i + 1).padStart(2, '0') + '</span>' +
-            '<div class="note__text"><h3 class="note__title">' + n.title + '</h3>' +
-            '<p class="note__body">' + n.body + '</p></div></div>';
-        }).join('')
-      : '<div class="notes__empty">개선사항 정리 예정<br>' +
-        '<span style="font-size:12px">assets/js/screens.js 의 notes 에 작성합니다.</span></div>';
+    var cs = s.changes || [];
+    var list;
+
+    if (cs.length) {
+      /* 변경점이 있으면 목록이 곧 조작 장치가 된다 */
+      list = cs.map(function (c, i) {
+        return '<button type="button" class="note" data-change="' + c.id + '" aria-pressed="false">' +
+          '<span class="note__num">' + SPAnno.pad(i + 1) + '</span>' +
+          '<span class="note__text"><span class="note__title">' + c.title +
+          '<em class="note__type note__type--' + c.type + '">' + SPAnno.typeLabel(c) + '</em></span>' +
+          '<span class="note__body">' + c.description + '</span></span></button>';
+      }).join('');
+    } else if (s.notes && s.notes.length) {
+      list = s.notes.map(function (n, i) {
+        return '<div class="note note--static"><span class="note__num">' + SPAnno.pad(i + 1) + '</span>' +
+          '<span class="note__text"><span class="note__title">' + n.title + '</span>' +
+          '<span class="note__body">' + n.body + '</span></span></div>';
+      }).join('');
+    } else {
+      list = '<div class="notes__empty">개선사항 정리 예정<br>' +
+        '<span style="font-size:12px">assets/js/screens.js 의 changes 에 작성합니다.</span></div>';
+    }
 
     var effects = (s.effects && s.effects.length)
       ? '<div class="effects"><h3>기대 효과</h3><ul>' +
-        s.effects.map(function (t) { return '<li>' + t + '</li>'; }).join('') +
-        '</ul></div>'
+        s.effects.map(function (t) { return '<li>' + t + '</li>'; }).join('') + '</ul></div>'
       : '';
 
-    var count = (s.notes && s.notes.length)
-      ? '총 ' + s.notes.length + '개의 개선 제안' : '작성 전';
+    var count = cs.length ? '총 ' + cs.length + '개의 변경점'
+      : (s.notes && s.notes.length ? '총 ' + s.notes.length + '개의 개선 제안' : '작성 전');
+
+    var toggle = cs.length
+      ? '<div class="annobar"><button type="button" class="annotoggle" id="annoToggle" ' +
+        'role="switch" aria-checked="false">변경점 보기<i></i></button></div>'
+      : '';
 
     return '<aside class="notes">' +
       '<div class="notes__head"><h2>개선 사항</h2>' +
       '<span class="notes__count">' + count + '</span>' +
       '<button class="notes__close" type="button">닫기</button></div>' +
-      '<div class="notes__body">' + list + effects + '</div></aside>';
+      '<div class="notes__body">' + toggle + list + effects + '</div></aside>';
   }
 
   /* ── 비교 보기 ─────────────────────────────── */
@@ -114,10 +133,11 @@
       '<span class="tag tag--' + (isCur ? 'as">AS-IS' : 'to">TO-BE') + '</span>' +
       '<span class="pane__name">' + (isCur ? '현재' : '제안') + '</span></div>' +
       '<div class="pane__body">' +
-        '<div class="device">' +
+        '<div class="device"><div class="shotbox">' +
           '<img class="shotimg" src="' + d.img + '" alt="' + s.label + ' ' +
           (isCur ? 'AS-IS' : 'TO-BE') + '" data-zoom="' + d.img + '">' +
-        '</div>' +
+          '<div class="anno" data-side="' + side + '">' + SPAnno.overlayHtml(s, side, s.id) + '</div>' +
+        '</div></div>' +
         '<span class="caption">' + (isCur ? '현재 서비스 화면 (AS-IS)' : '개선 제안 화면 (TO-BE)') + '</span>' +
       '</div></div>';
   }
@@ -125,16 +145,17 @@
   function drawCompare() {
     var s = screen();
     el.stage.innerHTML =
-      '<div class="cmp">' +
+      '<div class="cmp" id="cmp">' +
         '<div class="tabrow">' +
           '<div class="tabs" id="tabs">' +
             '<button data-side="current"' + (state.side === 'current' ? ' class="is-on"' : '') + '>AS-IS</button>' +
             '<button data-side="proposal"' + (state.side === 'proposal' ? ' class="is-on"' : '') + '>TO-BE</button>' +
           '</div>' +
           '<button class="notesbtn" id="notesBtn" type="button">개선 사항' +
-            (s.notes && s.notes.length ? ' <b>' + s.notes.length + '</b>' : '') + '</button>' +
+            ((s.changes && s.changes.length) ? ' <b>' + s.changes.length + '</b>' : '') + '</button>' +
         '</div>' +
         paneHtml(s, 'current') + paneHtml(s, 'proposal') + notesHtml(s) +
+        '<svg class="linklayer" aria-hidden="true"></svg>' +
       '</div>';
 
     el.stage.querySelectorAll('.shotimg').forEach(function (img) {
@@ -147,25 +168,58 @@
       img.addEventListener('click', function () { openZoom(img.getAttribute('data-zoom')); });
     });
 
-    var openBtn = document.getElementById('notesBtn');
-    if (openBtn) {
-      openBtn.addEventListener('click', function () { document.body.classList.add('notes-open'); });
-    }
-    var closeBtn = el.stage.querySelector('.notes__close');
-    if (closeBtn) {
-      closeBtn.addEventListener('click', function () { document.body.classList.remove('notes-open'); });
-    }
+    bindNotes();
+    bindMobile();
+    syncAnno();
+  }
 
-    var tabs = document.getElementById('tabs');
-    if (tabs) {
-      tabs.addEventListener('click', function (e) {
-        var b = e.target.closest('[data-side]');
-        if (!b) return;
-        state.side = b.getAttribute('data-side');
-        document.body.setAttribute('data-side', state.side);
-        tabs.querySelectorAll('button').forEach(function (x) { x.classList.toggle('is-on', x === b); });
+  /* 개선 사항 항목 ↔ 화면 위 표시 */
+  function bindNotes() {
+    var toggle = document.getElementById('annoToggle');
+    if (toggle) {
+      toggle.setAttribute('aria-checked', String(state.showAnno));
+      toggle.classList.toggle('is-on', state.showAnno);
+      toggle.addEventListener('click', function () {
+        state.showAnno = !state.showAnno;
+        toggle.setAttribute('aria-checked', String(state.showAnno));
+        toggle.classList.toggle('is-on', state.showAnno);
+        syncAnno();
       });
     }
+
+    el.stage.querySelectorAll('.note[data-change]').forEach(function (b) {
+      var id = b.getAttribute('data-change');
+      b.addEventListener('mouseenter', function () { state.hover = id; syncAnno(); });
+      b.addEventListener('mouseleave', function () { state.hover = null; syncAnno(); });
+      b.addEventListener('focus', function () { state.hover = id; syncAnno(); });
+      b.addEventListener('blur', function () { state.hover = null; syncAnno(); });
+      b.addEventListener('click', function () {
+        state.active = state.active === id ? null : id;
+        /* 모바일에서는 시트가 화면을 덮으므로, 고르면 닫아서 표시를 볼 수 있게 한다 */
+        if (state.active && w.matchMedia('(max-width:980px)').matches) {
+          state.hover = null;
+          document.body.classList.remove('notes-open');
+        }
+        syncAnno();
+      });
+    });
+  }
+
+  function syncAnno() {
+    var s = screen();
+    var id = activeId();
+    var cmp = document.getElementById('cmp');
+    if (!cmp) return;
+
+    cmp.classList.toggle('anno-on', state.showAnno || !!id);
+    SPAnno.apply(cmp, s, { active: id, showAll: state.showAnno });
+    SPAnno.drawLinks(cmp, s, { active: id });
+
+    cmp.querySelectorAll('.note[data-change]').forEach(function (b) {
+      var mine = b.getAttribute('data-change');
+      b.classList.toggle('is-on', mine === id);
+      b.setAttribute('aria-pressed', String(state.active === mine));
+    });
   }
 
   /* ── 프로토타입 보기 ───────────────────────── */
@@ -188,17 +242,13 @@
 
     var frame = document.getElementById('protoFrame');
     sizeFrame();
-    /* 화면 안에서 이동하면 위쪽 화면 목록도 따라간다 */
     frame.addEventListener('load', function () {
       var path;
       try { path = frame.contentWindow.location.pathname; } catch (e) { return; }
       var i = SCREENS.findIndex(function (x) {
         return path.endsWith('/' + x.current.page) || path.endsWith('/' + x.proposal.page);
       });
-      if (i >= 0 && i !== state.index) {
-        state.index = i;
-        drawChips();
-      }
+      if (i >= 0 && i !== state.index) { state.index = i; drawChips(); }
       sizeFrame();
     });
   }
@@ -211,12 +261,32 @@
     var src = s[state.protoSide === 'current' ? 'current' : 'proposal'].img;
     ratio(src, function (r) {
       var box = stage.getBoundingClientRect();
-      var pad = 18;                       /* 목업 테두리 두께 */
+      var pad = 18;
       var h = box.height - pad;
       var wd = h * r;
       if (wd + pad > box.width) { wd = box.width - pad; h = wd / r; }
       frame.style.width = Math.floor(wd) + 'px';
       frame.style.height = Math.floor(h) + 'px';
+    });
+  }
+
+  /* ── 모바일: 개선 사항 시트, AS-IS/TO-BE 탭 ── */
+  function bindMobile() {
+    var openBtn = document.getElementById('notesBtn');
+    if (openBtn) openBtn.addEventListener('click', function () { document.body.classList.add('notes-open'); });
+
+    var closeBtn = el.stage.querySelector('.notes__close');
+    if (closeBtn) closeBtn.addEventListener('click', function () { document.body.classList.remove('notes-open'); });
+
+    var tabs = document.getElementById('tabs');
+    if (!tabs) return;
+    tabs.addEventListener('click', function (e) {
+      var b = e.target.closest('[data-side]');
+      if (!b) return;
+      state.side = b.getAttribute('data-side');
+      document.body.setAttribute('data-side', state.side);
+      tabs.querySelectorAll('button').forEach(function (x) { x.classList.toggle('is-on', x === b); });
+      syncAnno();
     });
   }
 
@@ -233,6 +303,8 @@
   /* ── 그리기 ────────────────────────────────── */
   function draw() {
     document.body.classList.remove('notes-open');
+    state.active = null;
+    state.hover = null;
     drawChips();
     if (state.mode === 'compare') drawCompare(); else drawProto();
     el.protoSeg.hidden = state.mode !== 'proto';
@@ -280,12 +352,26 @@
 
   el.zoom.addEventListener('click', closeZoom);
   document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape') return closeZoom();
+    if (e.key === 'Escape') {
+      if (el.zoom.classList.contains('is-on')) return closeZoom();
+      if (state.active || state.hover) {
+        state.active = null;
+        state.hover = null;
+        if (document.activeElement && document.activeElement.closest('.note')) document.activeElement.blur();
+        syncAnno();
+      }
+      return;
+    }
     if (e.target.closest('input,textarea')) return;
+    if (e.target.closest('.note')) return;      /* 목록 안에서는 좌우키를 넘기지 않는다 */
     if (e.key === 'ArrowLeft') move(-1);
     if (e.key === 'ArrowRight') move(1);
   });
-  w.addEventListener('resize', function () { if (state.mode === 'proto') sizeFrame(); });
+
+  w.addEventListener('resize', function () {
+    if (state.mode === 'proto') sizeFrame();
+    else syncAnno();
+  });
 
   /* 주소로 들어온 화면·모드 복원 */
   var want = params.get('screen');
