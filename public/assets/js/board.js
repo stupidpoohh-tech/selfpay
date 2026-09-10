@@ -81,35 +81,26 @@
   function notesHtml(s) {
     var list = (s.notes && s.notes.length)
       ? s.notes.map(function (n, i) {
-          return '<div class="note' + (n.tone === 'warn' ? ' note--warn' : '') + '">' +
+          return '<div class="note">' +
             '<span class="note__num">' + String(i + 1).padStart(2, '0') + '</span>' +
-            '<div><h3 class="note__title">' + n.title + '</h3>' +
+            '<div class="note__text"><h3 class="note__title">' + n.title + '</h3>' +
             '<p class="note__body">' + n.body + '</p></div></div>';
         }).join('')
       : '<div class="notes__empty">개선사항 정리 예정<br>' +
         '<span style="font-size:12px">assets/js/screens.js 의 notes 에 작성합니다.</span></div>';
 
     var effects = (s.effects && s.effects.length)
-      ? '<div class="effects"><div class="effects__head">' +
-        '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#2f6df6" stroke-width="1.9">' +
-        '<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="3.6"/></svg>' +
-        '<h3>기대 효과</h3></div><ul>' +
-        s.effects.map(function (t) {
-          return '<li><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">' +
-            '<path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm-1.2 14.3-4-4 1.5-1.5 2.5 2.5 5.4-5.4 1.5 1.5-6.9 6.9Z"/></svg>' +
-            t + '</li>';
-        }).join('') + '</ul></div>'
+      ? '<div class="effects"><h3>기대 효과</h3><ul>' +
+        s.effects.map(function (t) { return '<li>' + t + '</li>'; }).join('') +
+        '</ul></div>'
       : '';
 
     var count = (s.notes && s.notes.length)
       ? '총 ' + s.notes.length + '개의 개선 제안' : '작성 전';
 
     return '<aside class="notes">' +
-      '<div class="notes__head">' +
-      '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f0a93c" stroke-width="1.9" stroke-linecap="round">' +
-      '<path d="M9.5 17.5h5M10.5 20.5h3"/>' +
-      '<path d="M12 3a6 6 0 0 0-3.5 10.9c.3.3.5.7.5 1.1h6c0-.4.2-.8.5-1.1A6 6 0 0 0 12 3Z"/></svg>' +
-      '<h2>개선 사항</h2><span class="notes__count">' + count + '</span>' +
+      '<div class="notes__head"><h2>개선 사항</h2>' +
+      '<span class="notes__count">' + count + '</span>' +
       '<button class="notes__close" type="button">닫기</button></div>' +
       '<div class="notes__body">' + list + effects + '</div></aside>';
   }
