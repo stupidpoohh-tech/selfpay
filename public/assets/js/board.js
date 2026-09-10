@@ -194,7 +194,11 @@
     var count = cs.length ? '총 ' + cs.length + '개의 변경점'
       : (s.notes && s.notes.length ? '총 ' + s.notes.length + '개의 개선 제안' : '작성 전');
 
-    var toggle = cs.length
+    /* 화면 위에 표시할 영역이 하나도 없으면 토글을 두지 않는다 */
+    var hasBox = cs.some(function (c) {
+      return SPAnno.boxesOf(c, 'current').length || SPAnno.boxesOf(c, 'proposal').length;
+    });
+    var toggle = hasBox
       ? '<div class="annobar"><button type="button" class="annotoggle" id="annoToggle" ' +
         'role="switch" aria-checked="false">변경점 보기<i></i></button></div>'
       : '';
@@ -256,27 +260,39 @@
   }
 
   function navHitsHtml(s, side) {
-    var shot = w.SPShot;
     var d = s[side];
-    if (!shot || !d || !d.page) return '';
+    if (!d) return '';
 
-    var map = side === 'proposal' ? shot.PROPOSAL : shot.CURRENT;
-    var key = d.page.replace(/^.*\//, '').replace(/\.html?$/, '');
-    var entry = map && map[key];
-    if (!entry || !entry.hits) return '';
-
+    /* 프로토타입 페이지가 있는 화면은 shot.js 히트박스를 그대로 쓰고,
+     * 페이지가 없는 화면(요금 안내 등)은 screens.js 의 navTo 로 잇는다 */
+    var list = [];
+    var shot = w.SPShot;
+    var map = shot && (side === 'proposal' ? shot.PROPOSAL : shot.CURRENT);
+    var key = d.page ? d.page.replace(/^.*\//, '').replace(/\.html?$/, '') : null;
+    var entry = key && map && map[key];
     var dir = side === 'proposal' ? '/proposal/' : '/';
+
+    if (entry && entry.hits) {
+      entry.hits.forEach(function (h) {
+        var hit = findByPath(dir + h.to);
+        if (hit) list.push({ l: h.l, t: h.t, w: h.w, h: h.h, i: hit.index });
+      });
+    }
+    (d.navTo || []).forEach(function (h) {
+      var i = SCREENS.map(function (x) { return x.id; }).indexOf(h.screen);
+      if (i >= 0) list.push({ l: h.l, t: h.t, w: h.w, h: h.h, i: i });
+    });
+
     var seen = {};
-    var boxes = entry.hits.map(function (h) {
-      var hit = findByPath(dir + h.to);
-      if (!hit || hit.index === state.index) return '';
+    var boxes = list.map(function (h) {
+      if (h.i === state.index) return '';
       var k = h.l + ',' + h.t + ',' + h.w + ',' + h.h;
       if (seen[k]) return '';
       seen[k] = 1;
-      var label = SCREENS[hit.index].label + ' 비교로 이동';
+      var label = SCREENS[h.i].label + ' 비교로 이동';
       /* 이동 영역이 변경점 위에 겹치면, 올렸을 때 그 변경점도 함께 강조한다 */
       var anno = changeAt(s, side, h.l + h.w / 2, h.t + h.h / 2);
-      return '<button type="button" class="navhit" data-go="' + hit.index + '"' +
+      return '<button type="button" class="navhit" data-go="' + h.i + '"' +
         (anno ? ' data-anno="' + anno + '"' : '') +
         ' title="' + label + '" aria-label="' + label + '"' +
         ' style="left:' + h.l + '%;top:' + h.t + '%;width:' + h.w + '%;height:' + h.h + '%"></button>';
@@ -288,7 +304,7 @@
   function paneHtml(s, side) {
     var isCur = side === 'current';
     var d = s[isCur ? 'current' : 'proposal'];
-    var isFlow = s.kind === 'flow';
+    var isFlow = d ? !!d.steps : s.kind === 'flow';
 
     var badge = isFlow && d && d.summary
       ? '<span class="pane__badge">' + d.summary + '</span>' : '';
@@ -450,7 +466,7 @@
 
   function drawProto() {
     var s = screen();
-    var url = s.kind === 'flow' ? null : protoUrl(s);
+    var url = protoUrl(s);
     if (!url) {
       var msg = s.kind === 'flow'
         ? '<b>눌러 볼 화면이 아닙니다</b><span>이 항목은 화면이 아니라 흐름 비교용 항목입니다. ' +
