@@ -81,15 +81,25 @@
     return f || 'index.html';
   }
 
-  /* 같은 이름의 반대편 화면 */
+  /* 제안 쪽은 홈이 첫 화면이라 파일 이름이 어긋난다.
+   * 현재 index.html(로그인) ↔ 제안 login.html, 현재 home.html ↔ 제안 index.html(홈) */
+  var TO_PROPOSAL = { 'index.html': 'login.html', 'home.html': 'index.html' };
+  var TO_CURRENT = { 'login.html': 'index.html', 'index.html': 'home.html' };
+  /* 제안에만 있는 화면. 현재 쪽에는 짝이 없어 첫 화면으로 보낸다. */
+  var PROPOSAL_ONLY = { 'help.html': 1, 'support.html': 1, 'paper.html': 1 };
+
+  /* 같은 자리의 반대편 화면 */
   function otherVariantHref() {
-    return isProposal() ? '../' + fileName() : 'proposal/' + fileName();
+    var f = fileName();
+    if (!isProposal()) return 'proposal/' + (TO_PROPOSAL[f] || f);
+    if (PROPOSAL_ONLY[f]) return '../index.html';
+    return '../' + (TO_CURRENT[f] || f);
   }
 
   function addTools() {
     var onMap = /map\.html$/.test(location.pathname);
-    var tabbar = document.querySelector('.tabbar');
-    var cta = document.querySelector('.cta:not([hidden])');
+    var tabbar = document.querySelector('.tabbar, .p-tab');
+    var cta = document.querySelector('.cta:not([hidden]), .p-cta');
 
     /* 좁은 화면에서 도구를 하단 바 위로 띄우는 값 */
     var lift = 16;

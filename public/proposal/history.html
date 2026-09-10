@@ -7,19 +7,97 @@
 <link rel="icon" href="../assets/img/favicon.svg">
 <link rel="stylesheet" href="../assets/css/font.css">
 <link rel="stylesheet" href="../assets/css/app.css">
+<link rel="stylesheet" href="../assets/css/proposal.css">
 </head>
 <body>
 <div class="app">
-  <!-- 제안 화면 자리. 시안이 나오면 여기에 넣는다. -->
-  <main class="page slot">
-    <div class="slot__box">
-      <span class="slot__name">작업 이력</span>
-      <span class="slot__file">proposal/history.html</span>
-      <span class="slot__hint">제안 화면 자리</span>
+  <header class="p-appbar">
+    <div class="p-appbar__brand"><img src="../assets/img/logo.svg" alt="">무인과금출력</div>
+    <div class="p-appbar__actions">
+      <button class="p-round" data-go="notifications.html" aria-label="알림">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9">
+          <path d="M18 8a6 6 0 1 0-12 0c0 6-2 7-2 7h16s-2-1-2-7"/><path d="M10.5 20a2 2 0 0 0 3 0"/>
+        </svg>
+      </button>
+      <button class="p-round" data-go="settings.html" aria-label="내 정보">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+          <circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6.5 8-6.5S20 17 20 21H4Z"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <main class="p-page p-page--tab">
+    <h1 class="p-h1 p-h1--sm" style="margin-top:10px">작업 이력</h1>
+    <p class="p-sub">진행 중이거나 완료된 작업을 확인하세요.</p>
+
+    <p class="p-label">작업 상태</p>
+    <div class="p-seg" id="seg">
+      <button class="is-on">전체</button>
+      <button>작업중</button>
+      <button>완료</button>
+    </div>
+
+    <p class="p-label">서비스 종류</p>
+    <div class="p-chips" id="chips">
+      <button class="is-on">전체</button>
+      <button>인쇄</button>
+      <button>복사</button>
+      <button>스캔</button>
+      <button>팩스</button>
+    </div>
+
+    <div class="p-card" style="margin-top:16px;padding:20px 16px 26px">
+      <div class="p-empty">
+        <div class="p-empty__art p-art" data-art="empty"></div>
+        <div class="p-empty__title">아직 작업 이력이 없습니다.</div>
+        <div class="p-empty__desc">첫 작업을 시작하면 여기에 표시됩니다.</div>
+        <a class="p-empty__btn" href="index.html">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3.2 3.5 10v10.3h6v-6h5v6h6V10L12 3.2Z"/></svg>
+          홈에서 작업 시작
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 5 7 7-7 7"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <div class="p-tip">
+      <span class="p-tip__icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M9 17h6M10 20h4"/><path d="M12 3a6 6 0 0 0-3.5 10.9c.3.3.5.7.5 1.1h6c0-.4.2-.8.5-1.1A6 6 0 0 0 12 3Z"/>
+        </svg>
+      </span>
+      다양한 문서를 인쇄, 복사, 스캔, 팩스로 간편하게 이용해보세요.
     </div>
   </main>
+
+  <nav class="p-tab">
+    <a class="p-tab__item" href="index.html">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3.2 3.5 10v10.3h6v-6h5v6h6V10L12 3.2Z"/></svg>
+      <span>홈</span>
+    </a>
+    <a class="p-tab__item is-on" href="history.html">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><circle cx="12" cy="12" r="8.4"/><path d="M12 7.4V12l3.2 2" stroke-linecap="round"/></svg>
+      <span>이력</span>
+    </a>
+    <a class="p-tab__item" href="settings.html">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 13.5a7.6 7.6 0 0 0 0-3l1.8-1.3-1.8-3.2-2.1.8a7.7 7.7 0 0 0-2.6-1.5L14.4 3h-3.7l-.3 2.3c-1 .3-1.8.8-2.6 1.5l-2.1-.8-1.8 3.2 1.8 1.3a7.6 7.6 0 0 0 0 3l-1.8 1.3 1.8 3.2 2.1-.8c.8.7 1.6 1.2 2.6 1.5l.3 2.3h3.7l.3-2.3c1-.3 1.8-.8 2.6-1.5l2.1.8 1.8-3.2-1.8-1.3Z"/></svg>
+      <span>설정</span>
+    </a>
+  </nav>
 </div>
 
 <script src="../assets/js/app.js"></script>
+<script src="../assets/js/proposal.js"></script>
+<script>
+  /* 이력이 없으므로 필터는 선택 표시만 바뀐다. */
+  ['seg', 'chips'].forEach(function (id) {
+    var box = document.getElementById(id);
+    box.addEventListener('click', function (e) {
+      var b = e.target.closest('button');
+      if (!b) return;
+      box.querySelectorAll('button').forEach(function (x) { x.classList.toggle('is-on', x === b); });
+    });
+  });
+</script>
 </body>
 </html>

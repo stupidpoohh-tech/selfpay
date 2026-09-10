@@ -5,7 +5,7 @@ Cloudflare Pages에 그대로 올립니다.
 
 **첫 화면은 로그인(`index.html`)입니다.** 로그인 전에는 다른 화면을 직접 열어도 로그인으로 돌아옵니다.
 
-**내용은 전달받은 스크린샷 10장이 전부입니다.** 스크린샷에 없는 문구·금액·이력 같은 임의 데이터는
+**내용은 전달받은 스크린샷 15장이 전부입니다.** 스크린샷에 없는 문구·금액·이력 같은 임의 데이터는
 넣지 않았습니다. 스크린샷이 없는 화면은 제목만 있는 빈 페이지로 두었습니다.
 
 화면 모서리에 도구 두 개가 떠 있습니다. 앱 화면이 아니라 프로토타입을 보기 위한 것입니다.
@@ -17,8 +17,15 @@ Cloudflare Pages에 그대로 올립니다.
 
 좁은 화면에서는 두 도구가 하단 바 위로 내려옵니다.
 
-**제안(`public/proposal/`)은 아직 비어 있습니다.** 현재와 같은 화면 목록, 같은 파일 이름, 같은 맵을
-자리만 잡아 두었습니다. 시안이 나오면 그 파일의 내용만 채우면 되고, 맵과 토글은 그대로 동작합니다.
+**제안(`public/proposal/`)은 홈이 첫 화면입니다.** 로그인은 설정에서 들어갑니다. 이 때문에 파일 이름이
+현재와 한 자리씩 어긋나며, 토글이 알아서 짝을 맞춥니다.
+
+| 현재 | 제안 |
+| --- | --- |
+| `index.html` (로그인) | `proposal/login.html` |
+| `home.html` (홈) | `proposal/index.html` — 첫 진입 |
+
+제안에만 있는 화면(도움말·고객센터·용지 선택)에서 현재를 누르면 현재의 첫 화면인 로그인으로 갑니다.
 
 ## 화면 구성
 
@@ -51,9 +58,30 @@ Cloudflare Pages에 그대로 올립니다.
 
 | 파일 | 화면 |
 | --- | --- |
-| `map.html` | 화면 맵. 우측 하단 지도 버튼으로 들어갑니다 |
-| `proposal/*.html` | 제안 화면 자리. 위 화면들과 같은 이름으로 비어 있습니다 |
-| `proposal/map.html` | 제안 화면 맵. 같은 자리·같은 연결을 비운 상태로 보여 줍니다 |
+| `map.html` | 현재 화면 맵. 우측 하단 지도 버튼으로 들어갑니다 |
+| `proposal/map.html` | 제안 화면 맵. 홈에서 시작하는 연결을 보여 줍니다 |
+
+### 제안 화면
+
+내용이 있는 화면 (스크린샷 그대로)
+
+| 파일 | 화면 |
+| --- | --- |
+| `proposal/index.html` | 홈 — 첫 진입 화면 |
+| `proposal/login.html` | 로그인 |
+| `proposal/guest.html` | 비회원 이용 |
+| `proposal/history.html` | 작업 이력 |
+| `proposal/settings.html` | 설정 |
+
+비어 있는 화면
+
+| 파일 | 어디서 들어오는가 |
+| --- | --- |
+| `proposal/print.html`, `copy.html`, `scan.html`, `fax.html` | 홈의 서비스 카드 |
+| `proposal/notifications.html` | 홈 상단 알림 |
+| `proposal/paper.html` | 설정의 용지 |
+| `proposal/signup.html`, `find-password.html`, `help.html`, `support.html` | 로그인 화면의 링크 |
+| `proposal/profile.html` | 현재 쪽 수정 화면과 짝을 맞추기 위한 자리 |
 
 ## 코드 구조
 
@@ -63,14 +91,16 @@ public/
   assets/css/app.css     디자인 토큰과 공통 컴포넌트
   assets/css/font.css    회사 서체(Freesentation) 불러오는 곳
   assets/css/map.css     화면 맵 스타일
+  assets/css/proposal.css 제안 시안 스타일
   assets/js/app.js       로그인 상태, 화면 이동, 모서리 도구(지도 버튼·현재/제안 토글)
   assets/js/flow.js      인쇄·복사·스캔·팩스 단계 이동
-  assets/js/map.js       화면 맵의 노드·연결선
+  assets/js/map.js       화면 맵의 노드·연결선 (현재·제안 두 그래프)
+  assets/js/proposal.js  제안 시안의 일러스트
   assets/img/            로고, 파비콘
 ```
 
 단계의 이름·순서·서비스 색은 `public/assets/js/flow.js` 맨 위 `FLOWS` 에 있습니다.
-화면 맵의 노드와 연결선은 `public/assets/js/map.js` 의 `NODES`·`EDGES` 에 있습니다.
+화면 맵의 노드와 연결선은 `public/assets/js/map.js` 의 `GRAPHS.current` · `GRAPHS.proposal` 에 있습니다.
 화면을 새로 만들면 이 두 곳만 고치면 됩니다.
 
 ## 로컬에서 보기
