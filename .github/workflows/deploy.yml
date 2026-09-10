@@ -5,25 +5,19 @@ on:
     branches: [main]
   workflow_dispatch:
 
+# PROJECT: Cloudflare 대시보드의 Pages 프로젝트 이름과 정확히 같아야 한다.
+# 이름이 다르면 배포가 'Project not found' 로 실패한다. (새 프로젝트를 만들지 않는다)
 jobs:
   deploy:
     runs-on: ubuntu-latest
     permissions:
       contents: read
       deployments: write
-    env:
-      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
     steps:
       - uses: actions/checkout@v4
-
-      # 프로젝트가 없으면 만든다. 이미 있으면 그대로 둔다.
-      - name: Ensure Pages project
-        run: npx --yes wrangler@3 pages project create selfpay-ag5 --production-branch=main || true
-
       - name: Publish
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy public --project-name=selfpay-ag5 --branch=main --commit-dirty=true
+          command: pages deploy public --project-name=selfpay --branch=main --commit-dirty=true
