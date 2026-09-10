@@ -48,7 +48,7 @@
     </div>
 
     <div style="margin-top:auto;padding-top:32px">
-      <button class="btn btn--ghost" id="guestBtn">비회원으로 이용하기</button>
+      <button class="btn btn--ghost" data-go="guest.html">비회원으로 이용하기</button>
       <p class="footnote">
         <a href="signup.html">회원가입</a><span class="sep">|</span><a href="find-password.html">비밀번호 찾기</a>
       </p>
@@ -85,11 +85,6 @@
       SP.signIn(s.email, s.name);
       location.href = 'home.html';
     });
-  });
-
-  document.getElementById('guestBtn').addEventListener('click', function () {
-    SP.signInGuest();
-    location.href = 'home.html';
   });
 </script>
 </body>

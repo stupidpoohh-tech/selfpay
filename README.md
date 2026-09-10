@@ -5,8 +5,11 @@ Cloudflare Pages에 그대로 올립니다.
 
 **첫 화면은 로그인(`index.html`)입니다.** 로그인 전에는 다른 화면을 직접 열어도 로그인으로 돌아옵니다.
 
-**내용은 전달받은 스크린샷 5장이 전부입니다.** 스크린샷에 없는 문구·금액·이력 같은 임의 데이터는
+**내용은 전달받은 스크린샷 10장이 전부입니다.** 스크린샷에 없는 문구·금액·이력 같은 임의 데이터는
 넣지 않았습니다. 스크린샷이 없는 화면은 제목만 있는 빈 페이지로 두었습니다.
+
+**우측 하단 지도 버튼**을 누르면 `map.html` 이 열립니다. 화면들의 위계와 연결을 한 장에 펼쳐 보여 주고,
+노드를 누르면 그 화면으로 갑니다.
 
 ## 화면 구성
 
@@ -15,22 +18,31 @@ Cloudflare Pages에 그대로 올립니다.
 | 파일 | 화면 |
 | --- | --- |
 | `index.html` | 로그인 |
+| `guest.html` | 비회원 이용 |
 | `home.html` | 홈 |
 | `history.html` | 작업 이력 |
 | `settings.html` | 설정 |
-| `print.html` | 인쇄 · 파일 선택 (6단계 표시 포함) |
+| `notifications.html` | 알림 |
+| `print.html` | 인쇄 · 파일 선택 |
+| `copy.html` | 복사 · 복합기 연결 (QR 스캔) |
+| `scan.html` | 스캔 · 복합기 연결 (QR 스캔) |
+| `fax.html` | 팩스 · 복합기 연결 (QR 스캔) |
+
+인쇄·복사·스캔·팩스는 6단계 중 위 한 단계만 화면이 있습니다. 나머지 단계는 상단 단계 표시만
+넘어가고 내용은 비어 있습니다.
 
 비어 있는 화면 (버튼이 가리키는 곳, 시안이 나오면 채우면 됩니다)
 
 | 파일 | 어디서 들어오는가 |
 | --- | --- |
-| `copy.html`, `scan.html`, `fax.html` | 홈의 복사·스캔·팩스 카드 |
-| `notifications.html` | 홈 상단 알림 아이콘 |
 | `profile.html` | 설정의 수정 |
 | `signup.html`, `find-password.html` | 로그인 하단 회원가입 · 비밀번호 찾기 |
 
-인쇄의 나머지 단계(파일확인·금액확인·결제·복합기연결·출력)도 같은 이유로 비어 있습니다.
-상단 단계 표시만 넘어갑니다.
+도구 화면
+
+| 파일 | 화면 |
+| --- | --- |
+| `map.html` | 화면 맵. 우측 하단 지도 버튼으로 들어갑니다 |
 
 ## 코드 구조
 
@@ -38,12 +50,16 @@ Cloudflare Pages에 그대로 올립니다.
 public/
   assets/css/app.css     디자인 토큰과 공통 컴포넌트
   assets/css/font.css    회사 서체(Freesentation) 불러오는 곳
-  assets/js/app.js       로그인 상태, 화면 이동
-  assets/js/print.js     인쇄 단계 이동, 파일 선택
+  assets/css/map.css     화면 맵 스타일
+  assets/js/app.js       로그인 상태, 화면 이동, 지도 버튼
+  assets/js/flow.js      인쇄·복사·스캔·팩스 단계 이동
+  assets/js/map.js       화면 맵의 노드·연결선
   assets/img/            로고, 파비콘
 ```
 
-인쇄 단계의 이름과 순서는 `public/assets/js/print.js` 맨 위 `STEPS` 배열에 있습니다.
+단계의 이름·순서·서비스 색은 `public/assets/js/flow.js` 맨 위 `FLOWS` 에 있습니다.
+화면 맵의 노드와 연결선은 `public/assets/js/map.js` 의 `NODES`·`EDGES` 에 있습니다.
+화면을 새로 만들면 이 두 곳만 고치면 됩니다.
 
 ## 로컬에서 보기
 
@@ -98,4 +114,5 @@ npm run deploy
 
 - 실제 인증, 결제 승인, 복합기 통신
 - 파일 업로드. 선택한 파일은 이름만 화면에 보여 주고 전송하지 않습니다.
+- QR 스캔. 카메라 영역은 스크린샷 그대로의 그림이고, 시리얼번호 직접 입력을 누르면 다음 단계로 갑니다.
 - 서버 저장. 로그인 여부와 설정 값만 브라우저 `localStorage`에 남습니다.

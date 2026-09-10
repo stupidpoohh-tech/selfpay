@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>비회원 이용 | 무인과금출력</title>
+<link rel="icon" href="assets/img/favicon.svg">
+<link rel="stylesheet" href="assets/css/font.css">
+<link rel="stylesheet" href="assets/css/app.css">
+</head>
+<body>
+<div class="app">
+  <header class="titlebar">
+    <button class="titlebar__back" data-go="index.html">뒤로</button>
+    <h1 class="titlebar__title">비회원 이용</h1>
+    <span></span>
+  </header>
+
+  <main class="page has-cta">
+    <h2 class="h2">로그인 없이 바로 시작</h2>
+
+    <div class="notice">
+      <p>로그인 없이도 인쇄·복사·스캔·팩스를 이용하실 수 있어요.</p>
+      <p>단, 작업 이력과 영수증은 저장되지 않아요. 영수증이 필요하시면 휴대폰 번호를 입력하세요.</p>
+    </div>
+
+    <div class="field" style="margin-top:22px">
+      <label class="field__label" for="phone">휴대폰 번호</label>
+      <input class="input" type="tel" id="phone" placeholder="010-0000-0000">
+    </div>
+  </main>
+
+  <div class="cta">
+    <div class="btn-stack">
+      <button class="btn" id="startBtn">바로 시작하기</button>
+      <button class="btn btn--ghost" data-go="index.html">로그인 화면으로</button>
+    </div>
+  </div>
+</div>
+
+<script src="assets/js/app.js"></script>
+<script>
+  document.getElementById('startBtn').addEventListener('click', function () {
+    SP.signInGuest();
+    location.href = 'home.html';
+  });
+</script>
+</body>
+</html>

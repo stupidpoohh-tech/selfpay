@@ -72,5 +72,31 @@
     if (go) location.href = go.getAttribute('data-go');
   });
 
+  /* 우측 하단 화면 맵 버튼. 맵 자신을 뺀 모든 화면에 붙는다. */
+  function addMapButton() {
+    if (/map\.html$/.test(location.pathname)) return;
+    var b = document.createElement('button');
+    var cta = document.querySelector('.cta:not([hidden])');
+    b.className = 'mapfab' + (document.querySelector('.tabbar') ? ' mapfab--nav' : '');
+    /* 아래 버튼 바가 있으면 그 높이만큼 띄운다 */
+    if (!document.querySelector('.tabbar') && cta) {
+      b.style.bottom = (cta.offsetHeight + 16) + 'px';
+    }
+    b.setAttribute('aria-label', '화면 맵');
+    b.innerHTML =
+      '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
+      'stroke-width="1.7" stroke-linejoin="round">' +
+      '<path d="M9 4 3 6.2v13.4L9 17.4l6 2.2 6-2.2V4l-6 2.2L9 4Z"/>' +
+      '<path d="M9 4v13.4"/><path d="M15 6.6V20"/></svg>';
+    b.addEventListener('click', function () { location.href = 'map.html'; });
+    document.body.appendChild(b);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', addMapButton);
+  } else {
+    addMapButton();
+  }
+
   w.SP = SP;
 })(window);

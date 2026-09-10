@@ -10,17 +10,21 @@
 </head>
 <body>
 <div class="app">
-  <header class="titlebar">
-    <button class="titlebar__back" data-go="home.html">뒤로</button>
-    <h1 class="titlebar__title">스캔</h1>
+  <header class="titlebar titlebar--flow">
+    <button class="titlebar__back" id="flowBack">뒤로</button>
+    <h1 class="titlebar__title" id="flowTitle">스캔 · 복합기 연결</h1>
     <span></span>
   </header>
 
-  <!-- 스크린샷이 없는 화면이라 내용은 비워 둔다. -->
-  <main class="page"></main>
+  <div class="stepper" id="stepper"></div>
+
+  <main class="page" id="flowBody"></main>
+
+  <div class="cta"><button class="btn" id="flowCta">다음</button></div>
 </div>
 
 <script src="assets/js/app.js"></script>
-<script>SP.requireUser();</script>
+<script src="assets/js/flow.js"></script>
+<script>SPFlow.start('scan');</script>
 </body>
 </html>

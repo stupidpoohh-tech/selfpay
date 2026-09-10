@@ -16,8 +16,20 @@
     <span></span>
   </header>
 
-  <!-- 스크린샷이 없는 화면이라 내용은 비워 둔다. -->
-  <main class="page"></main>
+  <div class="readbar">
+    <span>모든 알림을 확인했습니다</span>
+    <button type="button">모두 읽음</button>
+  </div>
+
+  <main class="page">
+    <div class="empty-state">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+        <path d="M18 8a6 6 0 1 0-12 0c0 6-2 7-2 7h16s-2-1-2-7"/><path d="M10.5 20a2 2 0 0 0 3 0"/>
+      </svg>
+      <div class="empty-state__title">알림이 없습니다</div>
+      <div class="empty-state__desc">출력 완료 등 새 소식이 여기에 표시됩니다.</div>
+    </div>
+  </main>
 </div>
 
 <script src="assets/js/app.js"></script>
