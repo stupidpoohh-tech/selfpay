@@ -61,17 +61,34 @@ Cloudflare Pages에 그대로 올립니다.
 | `map.html` | 현재 화면 맵. 우측 하단 지도 버튼으로 들어갑니다 |
 | `proposal/map.html` | 제안 화면 맵. 홈에서 시작하는 연결을 보여 줍니다 |
 
-### 제안 화면
+### 제안 화면 — 이미지 + 히트박스
 
-내용이 있는 화면 (스크린샷 그대로)
+제안 쪽은 화면을 다시 만들지 않습니다. 받은 스크린샷을 그대로 올리고, 버튼 자리에 투명한 링크
+(히트박스)만 얹습니다.
 
-| 파일 | 화면 |
-| --- | --- |
-| `proposal/index.html` | 홈 — 첫 진입 화면 |
-| `proposal/login.html` | 로그인 |
-| `proposal/guest.html` | 비회원 이용 |
-| `proposal/history.html` | 작업 이력 |
-| `proposal/settings.html` | 설정 |
+| 파일 | 화면 | 이미지 |
+| --- | --- | --- |
+| `proposal/index.html` | 홈 — 첫 진입 화면 | `proposal/shots/home.png` |
+| `proposal/login.html` | 로그인 | `proposal/shots/login.png` |
+| `proposal/guest.html` | 비회원 이용 | `proposal/shots/guest.png` |
+| `proposal/history.html` | 작업 이력 | `proposal/shots/history.png` |
+| `proposal/settings.html` | 설정 | `proposal/shots/settings.png` |
+
+**이미지는 저장소에 직접 넣어야 합니다.** `public/proposal/shots/` 에 위 이름으로 PNG를 두면 됩니다.
+파일이 없으면 그 자리에 어떤 파일이 필요한지 안내가 나오고, 히트박스는 그대로 동작합니다.
+
+히트박스 위치는 `public/assets/js/shot.js` 의 `SCREENS` 에 % 로 적혀 있어 이미지 크기와 무관합니다.
+화면 오른쪽 위(좁은 화면에서는 아래) **히트박스** 버튼을 누르면 위치가 눈에 보이므로,
+어긋난 값만 고치면 됩니다.
+
+다른 화면도 같은 방식으로 바꾸려면 `SCREENS` 에 항목을 하나 추가하고 그 화면의 HTML을
+아래 다섯 줄로 바꾸면 됩니다.
+
+```html
+<script src="../assets/js/app.js"></script>
+<script src="../assets/js/shot.js"></script>
+<script>SPShot.render('home');</script>
+```
 
 비어 있는 화면
 
@@ -91,11 +108,11 @@ public/
   assets/css/app.css     디자인 토큰과 공통 컴포넌트
   assets/css/font.css    회사 서체(Freesentation) 불러오는 곳
   assets/css/map.css     화면 맵 스타일
-  assets/css/proposal.css 제안 시안 스타일
+  assets/css/shot.css    스크린샷 화면과 히트박스 스타일
   assets/js/app.js       로그인 상태, 화면 이동, 모서리 도구(지도 버튼·현재/제안 토글)
   assets/js/flow.js      인쇄·복사·스캔·팩스 단계 이동
   assets/js/map.js       화면 맵의 노드·연결선 (현재·제안 두 그래프)
-  assets/js/proposal.js  제안 시안의 일러스트
+  assets/js/shot.js      스크린샷 화면의 히트박스 좌표
   assets/img/            로고, 파비콘
 ```
 

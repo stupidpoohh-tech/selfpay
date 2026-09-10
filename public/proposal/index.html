@@ -7,130 +7,13 @@
 <link rel="icon" href="../assets/img/favicon.svg">
 <link rel="stylesheet" href="../assets/css/font.css">
 <link rel="stylesheet" href="../assets/css/app.css">
-<link rel="stylesheet" href="../assets/css/proposal.css">
+<link rel="stylesheet" href="../assets/css/shot.css">
 </head>
 <body>
-<div class="app">
-  <header class="p-appbar">
-    <div class="p-appbar__brand"><img src="../assets/img/logo.svg" alt="">무인과금출력</div>
-    <div class="p-appbar__actions">
-      <button class="p-round" data-go="notifications.html" aria-label="알림">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9">
-          <path d="M18 8a6 6 0 1 0-12 0c0 6-2 7-2 7h16s-2-1-2-7"/><path d="M10.5 20a2 2 0 0 0 3 0"/>
-        </svg>
-      </button>
-      <button class="p-round" data-go="settings.html" aria-label="내 정보">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-          <circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6.5 8-6.5S20 17 20 21H4Z"/>
-        </svg>
-      </button>
-    </div>
-  </header>
-
-  <main class="p-page p-page--tab">
-    <div class="p-topart">
-      <div class="p-art" data-art="printer" data-note="빠르고<br>간편하게!"></div>
-      <p class="p-kicker">언제 어디서나, 간편한 출력</p>
-      <h1 class="p-h1">어떤 작업을<br>하시겠어요?</h1>
-    </div>
-
-    <nav class="p-tiles">
-      <a class="p-tile p-tile--print" href="print.html">
-        <svg class="p-tile__icon" viewBox="0 0 48 48" fill="none">
-          <rect x="10" y="6" width="28" height="36" rx="6" fill="#2870ff"/>
-          <rect x="16" y="15" width="16" height="3.4" rx="1.7" fill="#fff"/>
-          <rect x="16" y="22" width="12" height="3.4" rx="1.7" fill="#cfe0ff"/>
-          <rect x="16" y="29" width="14" height="3.4" rx="1.7" fill="#cfe0ff"/>
-        </svg>
-        <span class="p-tile__go">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 5 7 7-7 7"/></svg>
-        </span>
-        <span class="p-tile__name">인쇄</span>
-        <span class="p-tile__desc">내 파일을 인쇄해요</span>
-      </a>
-
-      <a class="p-tile p-tile--copy" href="copy.html">
-        <svg class="p-tile__icon" viewBox="0 0 48 48" fill="none">
-          <rect x="8" y="8" width="24" height="24" rx="7" fill="#00b271"/>
-          <rect x="14" y="14" width="12" height="12" rx="3.5" fill="#eafaf2"/>
-          <rect x="20" y="20" width="20" height="20" rx="6" fill="#12a06a" opacity=".35"/>
-        </svg>
-        <span class="p-tile__go">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 5 7 7-7 7"/></svg>
-        </span>
-        <span class="p-tile__name">복사</span>
-        <span class="p-tile__desc">종이를 복사해요</span>
-      </a>
-
-      <a class="p-tile p-tile--scan" href="scan.html">
-        <svg class="p-tile__icon" viewBox="0 0 48 48" fill="none">
-          <rect x="7" y="26" width="34" height="13" rx="4.5" fill="#6f36ff"/>
-          <rect x="12" y="9" width="24" height="14" rx="3" fill="#fff" stroke="#c9b6ff" stroke-width="1.6"/>
-          <rect x="16" y="14" width="16" height="2.6" rx="1.3" fill="#cbb8ff"/>
-          <rect x="13" y="31" width="22" height="3" rx="1.5" fill="#efe8ff"/>
-        </svg>
-        <span class="p-tile__go">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 5 7 7-7 7"/></svg>
-        </span>
-        <span class="p-tile__name">스캔</span>
-        <span class="p-tile__desc">종이를 메일로 보내요</span>
-      </a>
-
-      <a class="p-tile p-tile--fax" href="fax.html">
-        <svg class="p-tile__icon" viewBox="0 0 48 48" fill="none">
-          <rect x="8" y="10" width="8" height="28" rx="3" fill="#e2762f"/>
-          <rect x="19" y="18" width="21" height="20" rx="5" fill="#f0904f"/>
-          <rect x="23" y="23" width="4" height="4" rx="1.4" fill="#fff5ec"/>
-          <rect x="30" y="23" width="4" height="4" rx="1.4" fill="#fff5ec"/>
-          <rect x="23" y="30" width="4" height="4" rx="1.4" fill="#fff5ec"/>
-          <rect x="30" y="30" width="4" height="4" rx="1.4" fill="#fff5ec"/>
-        </svg>
-        <span class="p-tile__go">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 5 7 7-7 7"/></svg>
-        </span>
-        <span class="p-tile__name">팩스</span>
-        <span class="p-tile__desc">종이를 팩스로 보내요</span>
-      </a>
-    </nav>
-
-    <div class="p-sec">
-      <span class="p-sec__title">진행중 작업</span>
-      <a class="p-sec__more" href="history.html">전체보기
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 5 7 7-7 7"/></svg>
-      </a>
-    </div>
-
-    <a class="p-card p-row-link" href="history.html">
-      <span class="p-row-link__icon">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-          <path d="M6 3h8l4 4v14H6z"/><path d="M9 11h6M9 15h4"/>
-        </svg>
-      </span>
-      <span>
-        <span class="p-row-link__title">진행중인 작업이 없습니다.</span>
-        <span class="p-row-link__desc">새로운 작업을 시작해 보세요.</span>
-      </span>
-      <svg class="p-chev" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 5 7 7-7 7"/></svg>
-    </a>
-  </main>
-
-  <nav class="p-tab">
-    <a class="p-tab__item is-on" href="index.html">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3.2 3.5 10v10.3h6v-6h5v6h6V10L12 3.2Z"/></svg>
-      <span>홈</span>
-    </a>
-    <a class="p-tab__item" href="history.html">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><circle cx="12" cy="12" r="8.4"/><path d="M12 7.4V12l3.2 2" stroke-linecap="round"/></svg>
-      <span>이력</span>
-    </a>
-    <a class="p-tab__item" href="settings.html">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 13.5a7.6 7.6 0 0 0 0-3l1.8-1.3-1.8-3.2-2.1.8a7.7 7.7 0 0 0-2.6-1.5L14.4 3h-3.7l-.3 2.3c-1 .3-1.8.8-2.6 1.5l-2.1-.8-1.8 3.2 1.8 1.3a7.6 7.6 0 0 0 0 3l-1.8 1.3 1.8 3.2 2.1-.8c.8.7 1.6 1.2 2.6 1.5l.3 2.3h3.7l.3-2.3c1-.3 1.8-.8 2.6-1.5l2.1.8 1.8-3.2-1.8-1.3Z"/></svg>
-      <span>설정</span>
-    </a>
-  </nav>
-</div>
-
+<!-- 화면을 다시 만들지 않는다. 받은 스크린샷을 그대로 올리고 버튼 자리에 히트박스만 얹는다.
+     좌표는 assets/js/shot.js 의 SCREENS.home 에 있다. -->
 <script src="../assets/js/app.js"></script>
-<script src="../assets/js/proposal.js"></script>
+<script src="../assets/js/shot.js"></script>
+<script>SPShot.render('home');</script>
 </body>
 </html>

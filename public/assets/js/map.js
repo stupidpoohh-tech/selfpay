@@ -73,9 +73,9 @@
       { x: 646, y: 374, w: 520, h: 640, label: '계정' }
     ],
     nodes: [
-      { id: 'home',     x: 110, y: 300, name: '홈',        file: 'index.html',    state: 'full', start: true, note: '첫 진입 화면' },
-      { id: 'history',  x: 110, y: 450, name: '작업 이력', file: 'history.html',  state: 'full' },
-      { id: 'settings', x: 110, y: 600, name: '설정',      file: 'settings.html', state: 'full' },
+      { id: 'home',     x: 110, y: 300, name: '홈',        file: 'index.html',    state: 'full', start: true, note: '첫 진입 · 스크린샷' },
+      { id: 'history',  x: 110, y: 450, name: '작업 이력', file: 'history.html',  state: 'full', note: '스크린샷' },
+      { id: 'settings', x: 110, y: 600, name: '설정',      file: 'settings.html', state: 'full', note: '스크린샷' },
 
       { id: 'print', x: 390, y: 30,  name: '인쇄', file: 'print.html', state: 'empty' },
       { id: 'copy',  x: 390, y: 150, name: '복사', file: 'copy.html',  state: 'empty' },
@@ -84,9 +84,9 @@
       { id: 'noti',  x: 390, y: 510, name: '알림', file: 'notifications.html', state: 'empty' },
       { id: 'paper', x: 390, y: 760, name: '용지 선택', file: 'paper.html', state: 'empty' },
 
-      { id: 'login', x: 670, y: 600, name: '로그인', file: 'login.html', state: 'full' },
+      { id: 'login', x: 670, y: 600, name: '로그인', file: 'login.html', state: 'full', note: '스크린샷' },
 
-      { id: 'guest',   x: 950, y: 420, name: '비회원 이용',   file: 'guest.html',         state: 'full' },
+      { id: 'guest',   x: 950, y: 420, name: '비회원 이용',   file: 'guest.html',         state: 'full', note: '스크린샷' },
       { id: 'signup',  x: 950, y: 540, name: '회원가입',      file: 'signup.html',        state: 'empty' },
       { id: 'findpw',  x: 950, y: 660, name: '비밀번호 찾기', file: 'find-password.html', state: 'empty' },
       { id: 'help',    x: 950, y: 780, name: '도움말',        file: 'help.html',          state: 'empty' },
