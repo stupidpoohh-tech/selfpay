@@ -63,20 +63,21 @@
     pw.type = pw.type === 'password' ? 'text' : 'password';
   });
 
+  /* 껍데기라 인증은 하지 않는다. 값이 비어 있으면 그 칸에 커서만 둔다. */
   document.getElementById('loginForm').addEventListener('submit', function (e) {
     e.preventDefault();
-    var email = document.getElementById('email').value.trim();
-    var pw = document.getElementById('pw').value;
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return SP.toast('이메일 주소를 확인해 주세요');
-    if (pw.length < 4) return SP.toast('비밀번호를 4자 이상 입력해 주세요');
-    SP.signIn(email);
+    var email = document.getElementById('email');
+    var pw = document.getElementById('pw');
+    if (!email.value.trim()) return email.focus();
+    if (!pw.value) return pw.focus();
+    SP.signIn(email.value.trim());
     location.href = 'home.html';
   });
 
   var SOCIAL = {
-    kakao: { email: 'kakao.user@kakao.com', name: '카카오 사용자' },
-    naver: { email: 'naver.user@naver.com', name: '네이버 사용자' },
-    google: { email: 'google.user@gmail.com', name: 'Google 사용자' }
+    kakao: { email: 'kakao.user@kakao.com', name: '카카오' },
+    naver: { email: 'naver.user@naver.com', name: '네이버' },
+    google: { email: 'google.user@gmail.com', name: 'Google' }
   };
   document.querySelectorAll('[data-social]').forEach(function (b) {
     b.addEventListener('click', function () {

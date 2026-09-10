@@ -3,42 +3,24 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>알림함 | 무인과금출력</title>
+<title>알림 | 무인과금출력</title>
 <link rel="icon" href="assets/img/favicon.svg">
 <link rel="stylesheet" href="assets/css/font.css">
 <link rel="stylesheet" href="assets/css/app.css">
 </head>
 <body>
 <div class="app">
-  <header class="titlebar titlebar--plain">
+  <header class="titlebar">
     <button class="titlebar__back" data-go="home.html">뒤로</button>
-    <h1 class="titlebar__title">알림함</h1><span></span>
+    <h1 class="titlebar__title">알림</h1>
+    <span></span>
   </header>
 
-  <main class="page has-nav">
-    <div id="list"></div>
-  </main>
-
-  <nav class="tabbar">
-    <button class="tab" data-go="home.html">홈</button>
-    <button class="tab" data-go="history.html">이력</button>
-    <button class="tab" data-go="settings.html">설정</button>
-  </nav>
+  <!-- 스크린샷이 없는 화면이라 내용은 비워 둔다. -->
+  <main class="page"></main>
 </div>
 
 <script src="assets/js/app.js"></script>
-<script>
-  SP.requireUser();
-  var jobs = SP.state().jobs;
-  document.getElementById('list').innerHTML = jobs.length
-    ? '<div class="card">' + jobs.map(function (j) {
-        var svc = SP.SERVICE[j.type];
-        return '<div class="job">' +
-          '<span class="job__icon" style="background:' + svc.color + '">' + svc.name + '</span>' +
-          '<span><span class="job__title">' + svc.name + ' 완료</span>' +
-          '<span class="job__meta">' + SP.when(j.at) + ' · ' + j.title + '</span></span></div>';
-      }).join('') + '</div>'
-    : '<p class="empty">새로운 알림이 없습니다.</p>';
-</script>
+<script>SP.requireUser();</script>
 </body>
 </html>

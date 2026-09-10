@@ -10,7 +10,7 @@
 </head>
 <body>
 <div class="app">
-  <header class="titlebar titlebar--plain">
+  <header class="titlebar">
     <span></span><h1 class="titlebar__title">설정</h1><span></span>
   </header>
 
@@ -79,7 +79,6 @@
     sel.value = state.options[sel.getAttribute('data-opt')];
     sel.addEventListener('change', function () {
       SP.update(function (s) { s.options[sel.getAttribute('data-opt')] = sel.value; });
-      SP.toast('기본 옵션을 저장했습니다');
     });
   });
 

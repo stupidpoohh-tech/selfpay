@@ -55,7 +55,7 @@
       <span class="section-label" style="margin:0">진행중 작업</span>
       <a class="btn-link" href="history.html">전체보기 ›</a>
     </div>
-    <div id="ongoing"><p class="empty">진행중인 작업이 없습니다.</p></div>
+    <p class="empty" style="text-align:left;padding:14px 0">진행중인 작업이 없습니다.</p>
   </main>
 
   <nav class="tabbar">
@@ -66,21 +66,6 @@
 </div>
 
 <script src="assets/js/app.js"></script>
-<script>
-  SP.requireUser();
-
-  var jobs = SP.state().jobs.slice(0, 3);
-  if (jobs.length) {
-    document.getElementById('ongoing').innerHTML = '<div class="card">' + jobs.map(function (j) {
-      var svc = SP.SERVICE[j.type];
-      return '<a class="job" href="history.html">' +
-        '<span class="job__icon" style="background:' + svc.color + '">' + svc.name + '</span>' +
-        '<span><span class="job__title">' + j.title + '</span>' +
-        '<span class="job__meta">' + SP.when(j.at) + ' · ' + j.meta + '</span></span>' +
-        '<span class="job__right"><span class="badge badge--done">완료</span>' +
-        '<span class="job__price">' + SP.money(j.price) + '</span></span></a>';
-    }).join('') + '</div>';
-  }
-</script>
+<script>SP.requireUser();</script>
 </body>
 </html>
