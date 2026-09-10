@@ -24,9 +24,17 @@
       <button type="button" data-proto-side="proposal" class="is-on">TO-BE</button>
       <button type="button" data-proto-side="current">AS-IS</button>
     </div>
-    <div class="seg" id="modeSeg">
-      <button type="button" data-mode="compare" class="is-on">비교 보기</button>
-      <button type="button" data-mode="proto">프로토타입 보기</button>
+    <div class="modes" id="modeSeg" role="group" aria-label="보기 방식">
+      <button type="button" data-mode="compare" class="is-on" aria-pressed="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round" aria-hidden="true">
+          <rect x="3" y="4.5" width="7.5" height="15" rx="1.6"/><rect x="13.5" y="4.5" width="7.5" height="15" rx="1.6"/>
+        </svg>비교 보기
+      </button>
+      <button type="button" data-mode="proto" aria-pressed="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="6" y="2.6" width="12" height="18.8" rx="2.6"/><path d="M10.4 9.6v5.4l4.2-2.7-4.2-2.7Z"/>
+        </svg>프로토타입 보기
+      </button>
     </div>
     <a class="linkbtn" href="map.html">
       <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round">
@@ -37,15 +45,27 @@
 </header>
 
 <nav class="nav">
-  <div class="chips" id="chips"></div>
-  <div class="pager">
-    <button class="arrow" id="prev" type="button" aria-label="이전 화면">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 5-7 7 7 7"/></svg>
+  <span class="nav__label">화면 선택</span>
+  <div class="tabs2" id="tabs2" role="tablist" aria-label="주요 화면"></div>
+  <div class="more" id="more">
+    <button class="more__btn" id="moreBtn" type="button" aria-haspopup="true" aria-expanded="false">
+      <span id="moreLabel">기타</span>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
     </button>
-    <span class="counter" id="counter"></span>
-    <button class="arrow" id="next" type="button" aria-label="다음 화면">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 5 7 7-7 7"/></svg>
-    </button>
+    <div class="more__menu" id="moreMenu" role="menu" hidden></div>
+  </div>
+  <div class="nav__right">
+    <span class="nav__current" id="navCurrent"></span>
+    <span class="nav__div" aria-hidden="true"></span>
+    <div class="pager">
+      <button class="arrow" id="prev" type="button" aria-label="이전 화면">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 5-7 7 7 7"/></svg>
+      </button>
+      <span class="counter" id="counter"></span>
+      <button class="arrow" id="next" type="button" aria-label="다음 화면">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 5 7 7-7 7"/></svg>
+      </button>
+    </div>
   </div>
 </nav>
 

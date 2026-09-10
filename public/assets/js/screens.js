@@ -21,7 +21,7 @@ window.REVIEW = {
 
   screens: [
     {
-      id: 'home', label: '홈',
+      id: 'home', label: '홈', primary: true,
       current:  { img: 'shots/home.png',           page: 'home.html' },
       proposal: { img: 'proposal/shots/index.png', page: 'proposal/index.html' },
 
@@ -84,7 +84,7 @@ window.REVIEW = {
       ]
     },
     {
-      id: 'print', label: '인쇄',
+      id: 'print', label: '인쇄', primary: true,
       current:  { img: 'shots/print.png',          page: 'print.html' },
       proposal: { img: 'proposal/shots/print.png', page: 'proposal/print.html' },
       notes: []
@@ -199,19 +199,19 @@ window.REVIEW = {
       ]
     },
     {
-      id: 'copy', label: '복사',
+      id: 'copy', label: '복사', primary: true,
       current:  { img: 'shots/copy.png',          page: 'copy.html' },
       proposal: { img: 'proposal/shots/copy.png', page: 'proposal/copy.html' },
       notes: []
     },
     {
-      id: 'scan', label: '스캔',
+      id: 'scan', label: '스캔', primary: true,
       current:  { img: 'shots/scan.png',          page: 'scan.html' },
       proposal: { img: 'proposal/shots/scan.png', page: 'proposal/scan.html' },
       notes: []
     },
     {
-      id: 'fax', label: '팩스',
+      id: 'fax', label: '팩스', primary: true,
       current:  { img: 'shots/fax.png',          page: 'fax.html' },
       proposal: { img: 'proposal/shots/fax.png', page: 'proposal/fax.html' },
       notes: []

@@ -19,7 +19,12 @@
   };
 
   var el = {
-    chips: document.getElementById('chips'),
+    tabs2: document.getElementById('tabs2'),
+    more: document.getElementById('more'),
+    moreBtn: document.getElementById('moreBtn'),
+    moreLabel: document.getElementById('moreLabel'),
+    moreMenu: document.getElementById('moreMenu'),
+    navCurrent: document.getElementById('navCurrent'),
     counter: document.getElementById('counter'),
     stage: document.getElementById('stage'),
     modeSeg: document.getElementById('modeSeg'),
@@ -45,7 +50,14 @@
     settings:'<circle cx="12" cy="12" r="3.2"/><path d="M19.4 13.5a7.6 7.6 0 0 0 0-3l1.8-1.3-1.8-3.2-2.1.8a7.7 7.7 0 0 0-2.6-1.5L14.4 3h-3.7l-.3 2.3c-1 .3-1.8.8-2.6 1.5l-2.1-.8-1.8 3.2 1.8 1.3a7.6 7.6 0 0 0 0 3l-1.8 1.3 1.8 3.2 2.1-.8c.8.7 1.6 1.2 2.6 1.5l.3 2.3h3.7l.3-2.3c1-.3 1.8-.8 2.6-1.5l2.1.8 1.8-3.2-1.8-1.3Z"/>',
     login:  '<path d="M10 4.5H6.5a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2H10M15 8.5l4 3.5-4 3.5M19 12H9.5"/>',
     guest:  '<circle cx="12" cy="8" r="3.6"/><path d="M4.5 20c1.2-3.6 4-5.4 7.5-5.4S18.3 16.4 19.5 20"/>',
-    notifications:'<path d="M18 8a6 6 0 1 0-12 0c0 6-2 7-2 7h16s-2-1-2-7"/><path d="M10.5 20a2 2 0 0 0 3 0"/>'
+    notifications:'<path d="M18 8a6 6 0 1 0-12 0c0 6-2 7-2 7h16s-2-1-2-7"/><path d="M10.5 20a2 2 0 0 0 3 0"/>',
+    'print-confirm':'<path d="M13.5 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8.5L13.5 3Z"/><path d="M13.5 3v5.5H19"/><path d="m9.2 14.4 2 2 3.6-3.8"/>',
+    'print-options':'<path d="M4 7h9M17 7h3M4 12h3M11 12h9M4 17h9M17 17h3"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="15" cy="17" r="2"/>',
+    'print-amount':'<circle cx="12" cy="12" r="8.4"/><path d="M9.4 9.2h5.2M9.4 12h5.2M12 16.4V9.6"/>',
+    cost:'<circle cx="12" cy="12" r="8.4"/><path d="M12 7.6v8.8M14.4 9.6c-.5-.8-1.4-1.2-2.4-1.2-1.4 0-2.4.8-2.4 1.9 0 2.6 4.8 1.4 4.8 4 0 1.2-1 2-2.4 2-1 0-1.9-.4-2.4-1.2"/>',
+    payments:'<rect x="3" y="5.4" width="18" height="13.2" rx="2.4"/><path d="M3 10h18M6.6 14.6h3.4"/>',
+    refund:'<path d="M4 12a8 8 0 1 0 2.4-5.7"/><path d="M4 4.6V9h4.4"/><path d="M12 8.6v6.8M14 10.4c-.4-.6-1.2-1-2-1-1.2 0-2 .7-2 1.6 0 2.2 4 1.2 4 3.4 0 1-.8 1.7-2 1.7-.8 0-1.6-.4-2-1"/>',
+    troubleshoot:'<circle cx="12" cy="12" r="8.4"/><path d="M9.6 9.6c0-1.3 1.1-2.3 2.4-2.3s2.4 1 2.4 2.3c0 1.9-2.4 1.7-2.4 3.6"/><path d="M12 16.6h.01"/>'
   };
 
   function icon(id) {
@@ -68,15 +80,39 @@
   }
 
   /* ── 화면 목록 ─────────────────────────────── */
-  function drawChips() {
-    el.chips.innerHTML = SCREENS.map(function (s, i) {
-      var on = i === state.index;
-      return '<button class="chip' + (on ? ' is-on' : '') + '" data-i="' + i + '">' +
-        (on ? icon(s.id) : '') + s.label + '</button>';
+  /* 주요 화면은 탭으로, 나머지는 ‘기타’ 목록으로 나눈다 */
+  var MAIN = [], REST = [];
+  SCREENS.forEach(function (s, i) { (s.primary ? MAIN : REST).push(i); });
+
+  function drawNav() {
+    el.tabs2.innerHTML = MAIN.map(function (i) {
+      var s = SCREENS[i], on = i === state.index;
+      return '<button type="button" role="tab" class="tab2' + (on ? ' is-on' : '') +
+        '" data-i="' + i + '" aria-selected="' + on + '">' + icon(s.id) +
+        '<span>' + s.label + '</span></button>';
     }).join('');
+
+    el.moreMenu.innerHTML = REST.map(function (i) {
+      var s = SCREENS[i], on = i === state.index;
+      return '<button type="button" role="menuitem" class="more__item' + (on ? ' is-on' : '') +
+        '" data-i="' + i + '">' + icon(s.id) + '<span>' + s.label + '</span></button>';
+    }).join('');
+
+    var restOn = REST.indexOf(state.index) >= 0;
+    el.more.classList.toggle('is-on', restOn);
+    el.moreLabel.textContent = restOn ? SCREENS[state.index].label : '기타';
+
+    el.navCurrent.textContent = '현재: ' + screen().label + ' 화면 ' +
+      (state.mode === 'proto' ? '프로토타입' : '비교');
     el.counter.textContent = (state.index + 1) + ' / ' + SCREENS.length;
-    var on = el.chips.querySelector('.chip.is-on');
+
+    var on = el.tabs2.querySelector('.tab2.is-on');
     if (on && on.scrollIntoView) on.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+  }
+
+  function closeMore() {
+    el.moreMenu.hidden = true;
+    el.moreBtn.setAttribute('aria-expanded', 'false');
   }
 
   /* ── 개선 사항 패널 ────────────────────────── */
@@ -131,7 +167,7 @@
 
     var head = '<div class="pane__head"><span class="pane__mark"></span>' +
       '<span class="tag tag--' + (isCur ? 'as">AS-IS' : 'to">TO-BE') + '</span>' +
-      '<span class="pane__name">' + (isCur ? '현재' : '제안') + '</span></div>';
+      '<span class="pane__name">' + (isCur ? '현재 화면' : '개선 화면') + '</span></div>';
 
     /* 한쪽에만 있는 화면이면 빈 자리를 그대로 보여 준다 */
     var body = d
@@ -293,7 +329,7 @@
         return (x.current && x.current.page && path.endsWith('/' + x.current.page)) ||
                (x.proposal && x.proposal.page && path.endsWith('/' + x.proposal.page));
       });
-      if (i >= 0 && i !== state.index) { state.index = i; drawChips(); }
+      if (i >= 0 && i !== state.index) { state.index = i; drawNav(); }
       sizeFrame();
     });
   }
@@ -352,7 +388,8 @@
     document.body.classList.remove('notes-open');
     state.active = null;
     state.hover = null;
-    drawChips();
+    closeMore();
+    drawNav();
     if (state.mode === 'compare') drawCompare(); else drawProto();
     el.protoSeg.hidden = state.mode !== 'proto';
     document.body.setAttribute('data-mode', state.mode);
@@ -372,11 +409,28 @@
   }
 
   /* ── 이벤트 ────────────────────────────────── */
-  el.chips.addEventListener('click', function (e) {
+  el.tabs2.addEventListener('click', function (e) {
     var b = e.target.closest('[data-i]');
     if (!b) return;
     state.index = +b.getAttribute('data-i');
     draw();
+  });
+
+  el.moreBtn.addEventListener('click', function () {
+    var open = el.moreMenu.hidden;
+    el.moreMenu.hidden = !open;
+    el.moreBtn.setAttribute('aria-expanded', String(open));
+  });
+
+  el.moreMenu.addEventListener('click', function (e) {
+    var b = e.target.closest('[data-i]');
+    if (!b) return;
+    state.index = +b.getAttribute('data-i');
+    draw();
+  });
+
+  document.addEventListener('click', function (e) {
+    if (!el.moreMenu.hidden && !e.target.closest('#more')) closeMore();
   });
   el.prev.addEventListener('click', function () { move(-1); });
   el.next.addEventListener('click', function () { move(1); });
@@ -385,7 +439,10 @@
     var b = e.target.closest('[data-mode]');
     if (!b) return;
     state.mode = b.getAttribute('data-mode');
-    el.modeSeg.querySelectorAll('button').forEach(function (x) { x.classList.toggle('is-on', x === b); });
+    el.modeSeg.querySelectorAll('button').forEach(function (x) {
+      x.classList.toggle('is-on', x === b);
+      x.setAttribute('aria-pressed', String(x === b));
+    });
     draw();
   });
 
@@ -401,6 +458,7 @@
   document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape') {
       if (el.zoom.classList.contains('is-on')) return closeZoom();
+      if (!el.moreMenu.hidden) { closeMore(); el.moreBtn.focus(); return; }
       if (state.active || state.hover) {
         state.active = null;
         state.hover = null;
@@ -427,7 +485,9 @@
   if (params.get('mode') === 'proto') {
     state.mode = 'proto';
     el.modeSeg.querySelectorAll('button').forEach(function (x) {
-      x.classList.toggle('is-on', x.getAttribute('data-mode') === 'proto');
+      var on = x.getAttribute('data-mode') === 'proto';
+      x.classList.toggle('is-on', on);
+      x.setAttribute('aria-pressed', String(on));
     });
   }
 
