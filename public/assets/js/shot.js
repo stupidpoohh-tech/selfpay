@@ -219,5 +219,6 @@
     document.body.insertBefore(wrap, document.body.firstChild);
   }
 
-  w.SPShot = { render: render, screens: SCREENS };
+  /* 비교 보드에서도 이 좌표를 그대로 써서 화면 사이 이동을 만든다 */
+  w.SPShot = { render: render, screens: SCREENS, CURRENT: CURRENT, PROPOSAL: PROPOSAL };
 })(window);

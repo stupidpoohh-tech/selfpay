@@ -24,6 +24,22 @@ window.REVIEW = {
   title: '무인과금 서비스 UI/UX 개선',
   subtitle: 'AS-IS · TO-BE 비교 검토',
 
+  /* 상단에서 고를 수 있는 대표 화면과, 그 아래 딸린 화면들.
+   * 딸린 화면을 보고 있어도 상단에서는 대표 화면이 선택된 것으로 보인다.
+   * 이전·다음 이동도 이 순서를 따른다. */
+  groups: [
+    { id: 'home',          label: '홈',            screens: ['home'] },
+    { id: 'login',         label: '로그인',         screens: ['login', 'guest'] },
+    { id: 'print',         label: '인쇄',           screens: ['print', 'print-flow', 'print-confirm', 'print-options', 'print-amount'] },
+    { id: 'work',          label: '복사·스캔·팩스',  screens: ['copy', 'scan', 'fax'] },
+    { id: 'settings',      label: '설정',           screens: ['settings', 'cost', 'payments', 'refund', 'troubleshoot'] },
+    { id: 'notifications', label: '알림',           screens: ['notifications'] },
+    { id: 'history',       label: '이력',           screens: ['history'] }
+  ],
+
+  /* 첫 진입은 목록에 끼우지 않고 팝업으로 따로 띄운다 */
+  entry: 'entry',
+
   screens: [
     {
       /* 개별 화면 디자인이 아니라 서비스에 들어오는 순서를 비교하는 항목이다.

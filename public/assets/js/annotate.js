@@ -139,6 +139,7 @@
 
   w.SPAnno = {
     types: TYPES,
+    boxesOf: boxesOf,
     overlayHtml: overlayHtml,
     apply: apply,
     drawLinks: drawLinks,

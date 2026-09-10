@@ -45,15 +45,13 @@
 </header>
 
 <nav class="nav">
-  <span class="nav__label">화면 선택</span>
-  <div class="tabs2" id="tabs2" role="tablist" aria-label="주요 화면"></div>
-  <div class="more" id="more">
-    <button class="more__btn" id="moreBtn" type="button" aria-haspopup="true" aria-expanded="false">
-      <span id="moreLabel">기타</span>
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
-    </button>
-    <div class="more__menu" id="moreMenu" role="menu" hidden></div>
-  </div>
+  <button class="entrybtn" id="entryBtn" type="button">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M4 20.5V6.2L13 3.5v17.8L4 20.5Z"/><path d="M13 6.2h6.2a1.8 1.8 0 0 1 1.8 1.8v10.8a1.8 1.8 0 0 1-1.8 1.8H13"/><path d="M10.2 12.2h.01"/>
+    </svg>첫 진입
+  </button>
+  <span class="nav__sep" aria-hidden="true"></span>
+  <div class="tabs2" id="tabs2" role="tablist" aria-label="화면 선택"></div>
   <div class="nav__right">
     <span class="nav__current" id="navCurrent"></span>
     <span class="nav__div" aria-hidden="true"></span>
@@ -71,12 +69,26 @@
 
 <main class="stage" id="stage"></main>
 
+<div class="modal" id="entryModal" hidden>
+  <div class="modal__box" role="dialog" aria-modal="true" aria-labelledby="entryTitle">
+    <div class="modal__head">
+      <div>
+        <h2 id="entryTitle">첫 진입</h2>
+        <p>서비스에 들어오는 순서를 AS-IS · TO-BE로 비교합니다.</p>
+      </div>
+      <button class="modal__close" id="entryClose" type="button">닫고 비교 보기</button>
+    </div>
+    <div class="modal__body" id="entryBody"></div>
+  </div>
+</div>
+
 <div class="zoom" id="zoom">
   <button class="zoom__close" type="button">닫기</button>
   <img id="zoomImg" alt="원본 크기 화면">
 </div>
 
 <script src="assets/js/screens.js"></script>
+<script src="assets/js/shot.js"></script>
 <script src="assets/js/annotate.js"></script>
 <script src="assets/js/board.js"></script>
 </body>

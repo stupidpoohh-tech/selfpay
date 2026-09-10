@@ -3,7 +3,28 @@
   'use strict';
 
   var R = w.REVIEW;
-  var SCREENS = R.screens;
+  var ALL = R.screens;
+
+  function byId(id) {
+    return ALL.filter(function (x) { return x.id === id; })[0] || null;
+  }
+
+  /* 상단에서 고를 수 있는 대표 화면 묶음. 이전·다음도 이 순서를 따른다.
+   * 첫 진입은 목록에 넣지 않고 팝업으로 띄운다. */
+  var GROUPS = (R.groups || []).map(function (g) {
+    return { id: g.id, label: g.label, screens: g.screens.filter(byId) };
+  }).filter(function (g) { return g.screens.length; });
+
+  var SCREENS = [];
+  var GROUP_OF = {};
+  GROUPS.forEach(function (g, gi) {
+    g.from = SCREENS.length;
+    g.screens.forEach(function (id) { GROUP_OF[id] = gi; SCREENS.push(byId(id)); });
+  });
+  /* groups 가 비어 있으면 예전처럼 전체 목록을 쓴다 */
+  if (!SCREENS.length) SCREENS = ALL.slice();
+
+  var ENTRY = byId(R.entry || 'entry');
 
   var params = new URLSearchParams(location.search);
   var DEBUG = params.get('debug') === 'hits';
@@ -20,10 +41,10 @@
 
   var el = {
     tabs2: document.getElementById('tabs2'),
-    more: document.getElementById('more'),
-    moreBtn: document.getElementById('moreBtn'),
-    moreLabel: document.getElementById('moreLabel'),
-    moreMenu: document.getElementById('moreMenu'),
+    entryBtn: document.getElementById('entryBtn'),
+    entryModal: document.getElementById('entryModal'),
+    entryBody: document.getElementById('entryBody'),
+    entryClose: document.getElementById('entryClose'),
     navCurrent: document.getElementById('navCurrent'),
     counter: document.getElementById('counter'),
     stage: document.getElementById('stage'),
@@ -87,6 +108,7 @@
     guest:  '<circle cx="12" cy="8" r="3.6"/><path d="M4.5 20c1.2-3.6 4-5.4 7.5-5.4S18.3 16.4 19.5 20"/>',
     notifications:'<path d="M18 8a6 6 0 1 0-12 0c0 6-2 7-2 7h16s-2-1-2-7"/><path d="M10.5 20a2 2 0 0 0 3 0"/>',
     entry:'<path d="M4 20.5V6.2L13 3.5v17.8L4 20.5Z"/><path d="M13 6.2h6.2a1.8 1.8 0 0 1 1.8 1.8v10.8a1.8 1.8 0 0 1-1.8 1.8H13"/><path d="M10.2 12.2h.01"/>',
+    work:'<path d="M4 4h11v11H4zM9 17h11V6"/>',
     'print-flow':'<path d="M3.6 5.6h5.2M3.6 12h5.2M3.6 18.4h5.2"/><path d="M8.8 5.6c0 4 2.4 6.4 6.2 6.4M8.8 18.4c0-4 2.4-6.4 6.2-6.4M8.8 12H15"/><path d="m16.8 8.8 3.2 3.2-3.2 3.2"/>',
     'print-confirm':'<path d="M13.5 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8.5L13.5 3Z"/><path d="M13.5 3v5.5H19"/><path d="m9.2 14.4 2 2 3.6-3.8"/>',
     'print-options':'<path d="M4 7h9M17 7h3M4 12h3M11 12h9M4 17h9M17 17h3"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="15" cy="17" r="2"/>',
@@ -117,40 +139,26 @@
   }
 
   /* ── 화면 목록 ─────────────────────────────── */
-  /* 주요 화면은 탭으로, 나머지는 ‘기타’ 목록으로 나눈다 */
-  var MAIN = [], REST = [];
-  SCREENS.forEach(function (s, i) { (s.primary ? MAIN : REST).push(i); });
-
+  /* 대표 화면 탭. 딸린 화면을 보고 있어도 대표 화면이 선택된 것으로 보인다. */
   function drawNav() {
-    el.tabs2.innerHTML = MAIN.map(function (i) {
-      var s = SCREENS[i], on = i === state.index;
-      return '<button type="button" role="tab" class="tab2' + (on ? ' is-on' : '') +
-        '" data-i="' + i + '" aria-selected="' + on + '">' + icon(s.id) +
-        '<span>' + s.label + '</span></button>';
-    }).join('');
-
-    el.moreMenu.innerHTML = REST.map(function (i) {
-      var s = SCREENS[i], on = i === state.index;
-      return '<button type="button" role="menuitem" class="more__item' + (on ? ' is-on' : '') +
-        '" data-i="' + i + '">' + icon(s.id) + '<span>' + s.label + '</span></button>';
-    }).join('');
-
-    var restOn = REST.indexOf(state.index) >= 0;
-    el.more.classList.toggle('is-on', restOn);
-    el.moreLabel.textContent = restOn ? SCREENS[state.index].label : '기타';
-
     var cs = screen();
+    var gi = GROUP_OF[cs.id];
+
+    el.tabs2.innerHTML = GROUPS.map(function (g, i) {
+      var on = i === gi;
+      var sub = on && g.screens.length > 1 && g.screens[0] !== cs.id
+        ? '<em class="tab2__sub">' + cs.label + '</em>' : '';
+      return '<button type="button" role="tab" class="tab2' + (on ? ' is-on' : '') +
+        '" data-go="' + g.from + '" aria-selected="' + on + '">' + icon(g.id) +
+        '<span>' + g.label + '</span>' + sub + '</button>';
+    }).join('');
+
     el.navCurrent.textContent = '현재: ' + cs.label + (cs.kind === 'flow' ? ' 흐름 ' : ' 화면 ') +
       (state.mode === 'proto' ? '프로토타입' : '비교');
     el.counter.textContent = (state.index + 1) + ' / ' + SCREENS.length;
 
     var on = el.tabs2.querySelector('.tab2.is-on');
     if (on && on.scrollIntoView) on.scrollIntoView({ block: 'nearest', inline: 'nearest' });
-  }
-
-  function closeMore() {
-    el.moreMenu.hidden = true;
-    el.moreBtn.setAttribute('aria-expanded', 'false');
   }
 
   /* ── 개선 사항 패널 ────────────────────────── */
@@ -232,6 +240,51 @@
       title + list + foot + '</div></div>';
   }
 
+  /* 화면 안의 버튼을 눌러 그 화면 비교로 옮겨 간다.
+   * 좌표는 프로토타입에서 쓰는 shot.js 의 히트박스를 그대로 다시 쓴다. */
+  /* 그 좌표를 덮고 있는 변경점 */
+  function changeAt(s, side, x, y) {
+    var cs = s.changes || [];
+    for (var i = 0; i < cs.length; i++) {
+      var bs = SPAnno.boxesOf(cs[i], side);
+      for (var j = 0; j < bs.length; j++) {
+        var b = bs[j];
+        if (x >= b.x && x <= b.x + b.w && y >= b.y && y <= b.y + b.h) return cs[i].id;
+      }
+    }
+    return null;
+  }
+
+  function navHitsHtml(s, side) {
+    var shot = w.SPShot;
+    var d = s[side];
+    if (!shot || !d || !d.page) return '';
+
+    var map = side === 'proposal' ? shot.PROPOSAL : shot.CURRENT;
+    var key = d.page.replace(/^.*\//, '').replace(/\.html?$/, '');
+    var entry = map && map[key];
+    if (!entry || !entry.hits) return '';
+
+    var dir = side === 'proposal' ? '/proposal/' : '/';
+    var seen = {};
+    var boxes = entry.hits.map(function (h) {
+      var hit = findByPath(dir + h.to);
+      if (!hit || hit.index === state.index) return '';
+      var k = h.l + ',' + h.t + ',' + h.w + ',' + h.h;
+      if (seen[k]) return '';
+      seen[k] = 1;
+      var label = SCREENS[hit.index].label + ' 비교로 이동';
+      /* 이동 영역이 변경점 위에 겹치면, 올렸을 때 그 변경점도 함께 강조한다 */
+      var anno = changeAt(s, side, h.l + h.w / 2, h.t + h.h / 2);
+      return '<button type="button" class="navhit" data-go="' + hit.index + '"' +
+        (anno ? ' data-anno="' + anno + '"' : '') +
+        ' title="' + label + '" aria-label="' + label + '"' +
+        ' style="left:' + h.l + '%;top:' + h.t + '%;width:' + h.w + '%;height:' + h.h + '%"></button>';
+    }).join('');
+
+    return boxes ? '<div class="navhits">' + boxes + '</div>' : '';
+  }
+
   function paneHtml(s, side) {
     var isCur = side === 'current';
     var d = s[isCur ? 'current' : 'proposal'];
@@ -254,6 +307,7 @@
           '<div class="device"><div class="shotbox">' +
             '<img class="shotimg" src="' + d.img + '" alt="' + s.label + ' ' +
             (isCur ? 'AS-IS' : 'TO-BE') + '" data-zoom="' + d.img + '">' +
+            navHitsHtml(s, side) +
             '<div class="anno" data-side="' + side + '">' + SPAnno.overlayHtml(s, side, s.id) + '</div>' +
           '</div></div>' +
           '<span class="caption">' + (isCur ? '현재 서비스 화면 (AS-IS)' : '개선 제안 화면 (TO-BE)') + '</span>' +
@@ -288,6 +342,17 @@
           className: 'pane__miss',
           textContent: img.getAttribute('src') + ' 를 찾을 수 없습니다.'
         }));
+      });
+    });
+    el.stage.querySelectorAll('.navhit[data-go]').forEach(function (b) {
+      var anno = b.getAttribute('data-anno');
+      if (anno) {
+        b.addEventListener('mouseenter', function () { state.hover = anno; syncAnno(); });
+        b.addEventListener('mouseleave', function () { state.hover = null; syncAnno(); });
+      }
+      b.addEventListener('click', function (e) {
+        e.stopPropagation();
+        goTo(+b.getAttribute('data-go'));
       });
     });
     el.stage.querySelectorAll('.fstep__shot img[data-zoom]').forEach(function (im) {
@@ -480,7 +545,6 @@
     document.body.classList.remove('notes-open');
     state.active = null;
     state.hover = null;
-    closeMore();
     drawNav();
     if (state.mode === 'compare') drawCompare(); else drawProto();
     el.protoSeg.hidden = state.mode !== 'proto';
@@ -500,33 +564,43 @@
   }
 
   function move(step) {
-    state.index = (state.index + step + SCREENS.length) % SCREENS.length;
+    goTo((state.index + step + SCREENS.length) % SCREENS.length);
+  }
+
+  function goTo(i) {
+    if (i < 0 || i >= SCREENS.length || i === state.index) return;
+    state.index = i;
     draw();
+  }
+
+  /* ── 첫 진입 팝업 ──────────────────────────── */
+  function openEntry() {
+    if (!ENTRY) return;
+    el.entryBody.innerHTML = '<div class="cmp cmp--entry">' +
+      paneHtml(ENTRY, 'current') + paneHtml(ENTRY, 'proposal') + notesHtml(ENTRY) + '</div>';
+    el.entryModal.hidden = false;
+    document.body.classList.add('modal-open');
+    el.entryClose.focus();
+  }
+
+  function closeEntry() {
+    el.entryModal.hidden = true;
+    el.entryBody.innerHTML = '';
+    document.body.classList.remove('modal-open');
+    el.entryBtn.focus();
   }
 
   /* ── 이벤트 ────────────────────────────────── */
   el.tabs2.addEventListener('click', function (e) {
-    var b = e.target.closest('[data-i]');
+    var b = e.target.closest('[data-go]');
     if (!b) return;
-    state.index = +b.getAttribute('data-i');
-    draw();
+    goTo(+b.getAttribute('data-go'));
   });
 
-  el.moreBtn.addEventListener('click', function () {
-    var open = el.moreMenu.hidden;
-    el.moreMenu.hidden = !open;
-    el.moreBtn.setAttribute('aria-expanded', String(open));
-  });
-
-  el.moreMenu.addEventListener('click', function (e) {
-    var b = e.target.closest('[data-i]');
-    if (!b) return;
-    state.index = +b.getAttribute('data-i');
-    draw();
-  });
-
-  document.addEventListener('click', function (e) {
-    if (!el.moreMenu.hidden && !e.target.closest('#more')) closeMore();
+  el.entryBtn.addEventListener('click', openEntry);
+  el.entryClose.addEventListener('click', closeEntry);
+  el.entryModal.addEventListener('click', function (e) {
+    if (e.target === el.entryModal) closeEntry();
   });
   el.prev.addEventListener('click', function () { move(-1); });
   el.next.addEventListener('click', function () { move(1); });
@@ -554,7 +628,7 @@
   document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape') {
       if (el.zoom.classList.contains('is-on')) return closeZoom();
-      if (!el.moreMenu.hidden) { closeMore(); el.moreBtn.focus(); return; }
+      if (!el.entryModal.hidden) return closeEntry();
       if (state.active || state.hover) {
         state.active = null;
         state.hover = null;
@@ -588,4 +662,5 @@
   }
 
   draw();
+  if (!params.get('screen') && params.get('mode') !== 'proto') openEntry();
 })(window);
