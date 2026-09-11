@@ -62,6 +62,7 @@
       { id: 'print-checkout', x: 390, y: 150, name: '파일 확인 및 결제', file: 'print-checkout.html', state: 'full' },
       { id: 'payment',        x: 390, y: 270, name: '모바일 결제',       file: 'payment.html',        state: 'full' },
       { id: 'copy',  x: 390, y: 420, name: '복사', file: 'copy.html',  state: 'full', note: '복합기 연결' },
+      { id: 'qr',    x: 670, y: 420, name: '연결 확인', file: 'qr.html', state: 'full', note: '팝업' },
       { id: 'scan',  x: 390, y: 540, name: '스캔', file: 'scan.html',  state: 'full', note: '복합기 연결' },
       { id: 'fax',   x: 390, y: 660, name: '팩스', file: 'fax.html',   state: 'full', note: '복합기 연결' },
       { id: 'noti',  x: 390, y: 780, name: '알림', file: 'notifications.html', state: 'full' },

@@ -49,6 +49,9 @@ function ok(cond, name, extra) {
   await step('/print-confirm.html?embed=1', '금액 확인', '/print-amount');
   await step('/print-amount.html?embed=1', '모바일로 결제', '/payment');
   await step('/proposal/print-checkout.html?embed=1', '250원 결제하기', '/proposal/payment');
+  await step('/proposal/copy.html?embed=1', 'QR 스캔', '/proposal/qr');
+  await step('/proposal/copy.html?embed=1', '다음 단계로', '/proposal/qr');
+  await step('/proposal/qr.html?embed=1', '확인', '/proposal/copy');
 
   /* 결제 수단은 화면을 옮기지 않고 고른 것만 표시한다 */
   for (const url of ['/payment.html?embed=1', '/proposal/payment.html?embed=1']) {
@@ -59,8 +62,8 @@ function ok(cond, name, extra) {
     ok(picked === 'false,true', `결제 수단 고르기 ${url}`, picked);
   }
 
-  /* 복합기 연결은 이동이 아니라 상태 변화다 */
-  for (const svc of ['copy', 'scan', 'fax']) {
+  /* 복사는 연결 결과 화면으로 넘어가고, 스캔·팩스는 연결된 상태만 보여 준다 */
+  for (const svc of ['scan', 'fax']) {
     await p.goto(`${BASE}/proposal/${svc}.html?embed=1`); await p.waitForTimeout(400);
     await p.click('.hit[data-name="QR 스캔"]'); await p.waitForTimeout(300);
     ok(!!(await p.$('.sheet')), `${svc} · QR 스캔 → 연결됨`);

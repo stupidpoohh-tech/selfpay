@@ -244,12 +244,19 @@
     },
     copy: {
       img: 'shots/copy.png', alt: '복사 · 복합기 연결',
-      connect: '무인과금 복합기 A01',
+      /* 연결 결과를 보여 주는 화면이 따로 있어서 그리로 넘긴다 */
       hits: P_APPBAR.concat([
-        { l: 5.5,  t: 43.3, w: 89.0, h: 22.0, act: 'connect', name: 'QR 스캔' },
-        { l: 8.0,  t: 65.4, w: 40.0, h: 5.6,  act: 'connect', name: '사진에서 선택' },
-        { l: 52.0, t: 65.4, w: 40.5, h: 5.6,  act: 'connect', name: '시리얼번호 직접 입력' }
+        { l: 5.5,  t: 43.3, w: 89.0, h: 22.0, to: 'qr.html', name: 'QR 스캔' },
+        { l: 8.0,  t: 65.4, w: 40.0, h: 5.6,  to: 'qr.html', name: '사진에서 선택' },
+        { l: 52.0, t: 65.4, w: 40.5, h: 5.6,  to: 'qr.html', name: '시리얼번호 직접 입력' },
+        { l: 4.0,  t: 81.4, w: 92.0, h: 6.0,  to: 'qr.html', name: '다음 단계로', next: true }
       ], taskTab(P_TAB))
+    },
+    qr: {
+      img: 'shots/qr.png', alt: '복사 · 복합기 연결 확인',
+      hits: [
+        { l: 12.5, t: 61.3, w: 71.0, h: 7.0, to: 'copy.html', name: '확인' }
+      ]
     },
     scan: {
       img: 'shots/scan.png', alt: '스캔 · 복합기 연결',

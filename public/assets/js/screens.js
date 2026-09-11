@@ -31,7 +31,7 @@ window.REVIEW = {
     { id: 'home',          label: '홈',            screens: ['home'] },
     { id: 'login',         label: '로그인',         screens: ['login', 'guest'] },
     { id: 'print',         label: '인쇄',           screens: ['print', 'print-flow', 'print-confirm', 'print-options', 'print-amount', 'payment'] },
-    { id: 'work',          label: '복사·스캔·팩스',  screens: ['copy', 'scan', 'fax'] },
+    { id: 'work',          label: '복사·스캔·팩스',  screens: ['copy', 'qr', 'scan', 'fax'] },
     { id: 'settings',      label: '설정',           screens: ['settings', 'cost', 'payments', 'refund', 'troubleshoot'] },
     { id: 'notifications', label: '알림',           screens: ['notifications'] },
     { id: 'history',       label: '이력',           screens: ['history'] }
@@ -394,6 +394,36 @@ window.REVIEW = {
       current:  { img: 'shots/copy.png',          page: 'copy.html' },
       proposal: { img: 'proposal/shots/copy.png', page: 'proposal/copy.html' },
       notes: []
+    },
+    {
+      /* AS-IS 에는 연결 결과를 보여 주는 화면이 없다. TO-BE 에만 있는 항목이다 */
+      id: 'qr', label: '연결 확인',
+      proposal: { img: 'proposal/shots/qr.png', page: 'proposal/qr.html' },
+      changes: [
+        {
+          id: 'result', type: 'add', shortLabel: '신규',
+          title: '연결 결과 확인 추가',
+          description: 'AS-IS에서는 QR 스캔 후 연결 성공 여부를 별도로 확인하는 단계가 없었습니다. ' +
+            'TO-BE에서는 복합기 연결이 완료되면 연결된 기기를 확인하는 팝업을 표시해, ' +
+            '올바른 기기와 연결되었는지 확인한 뒤 다음 단계로 이동하도록 했습니다.',
+          targets: {
+            proposal: [{ x: 12.0, y: 34.3, w: 72.0, h: 37.0 }]
+          }
+        },
+        {
+          id: 'device', type: 'add', shortLabel: '신규',
+          title: '오연결 방지',
+          description: 'TO-BE에서는 연결된 복합기 번호를 명시하고 사용자가 확인하도록 해, ' +
+            '주변의 다른 기기와 잘못 연결된 상태로 작업을 진행하는 것을 줄일 수 있도록 했습니다.',
+          targets: {
+            proposal: [{ x: 14.0, y: 50.4, w: 68.0, h: 9.0 }]
+          }
+        }
+      ],
+      effects: [
+        '올바른 기기와 연결되었는지 확인한 뒤 넘어갈 수 있습니다',
+        '주변의 다른 복합기와 잘못 연결된 채로 진행하는 경우를 줄일 수 있습니다'
+      ]
     },
     {
       id: 'scan', label: '스캔', primary: true,
