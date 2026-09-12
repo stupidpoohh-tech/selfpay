@@ -45,6 +45,8 @@
     entryModal: document.getElementById('entryModal'),
     entryBody: document.getElementById('entryBody'),
     entryClose: document.getElementById('entryClose'),
+    pcBtn: document.getElementById('pcBtn'),
+    pcBtnText: document.getElementById('pcBtnText'),
     navCurrent: document.getElementById('navCurrent'),
     counter: document.getElementById('counter'),
     stage: document.getElementById('stage'),
@@ -590,6 +592,41 @@
     });
   }
 
+  /* ── PC 화면으로 보기 ──────────────────────── */
+  /* 좁은 화면에서 데스크톱 배치를 그대로 줄여 보여 준다.
+   * 화면을 다시 만들지 않고 뷰포트 폭만 1440 으로 바꿔 브라우저가 축소하게 한다. */
+  var PC_W = 1440;
+  var VP_PC = 'width=' + PC_W + ',viewport-fit=cover';
+  var VP_MOBILE = 'width=device-width,initial-scale=1,viewport-fit=cover';
+  var vpMeta = document.querySelector('meta[name="viewport"]');
+  var pcOn = false;
+
+  function narrow() {
+    return w.matchMedia('(max-width:980px)').matches;
+  }
+
+  function setPc(on) {
+    pcOn = on;
+    document.documentElement.classList.toggle('pcview', on);
+    document.body.classList.toggle('pcview', on);
+    el.pcBtn.classList.toggle('is-on', on);
+    el.pcBtn.setAttribute('aria-pressed', String(on));
+    el.pcBtnText.textContent = on ? '모바일 화면으로' : 'PC 화면으로 보기';
+
+    /* iOS 사파리는 content 만 바꾸면 반영이 늦어서 태그를 갈아 끼운다 */
+    var m = document.createElement('meta');
+    m.setAttribute('name', 'viewport');
+    m.setAttribute('content', on ? VP_PC : VP_MOBILE);
+    if (vpMeta && vpMeta.parentNode) { vpMeta.parentNode.replaceChild(m, vpMeta); vpMeta = m; }
+
+    try { localStorage.setItem('sp-pcview', on ? '1' : '0'); } catch (e) {}
+
+    /* 배치가 바뀌었으니 위치를 다시 잡는다 */
+    w.setTimeout(function () {
+      if (state.mode === 'proto') sizeFrame(); else syncAnno();
+    }, 60);
+  }
+
   /* ── 원본 크기 보기 ────────────────────────── */
   function openZoom(src) {
     el.zoomImg.src = src;
@@ -711,6 +748,8 @@
     if (e.key === 'ArrowRight') move(1);
   });
 
+  el.pcBtn.addEventListener('click', function () { setPc(!pcOn); });
+
   w.addEventListener('resize', function () {
     if (state.mode === 'proto') sizeFrame();
     else syncAnno();
@@ -727,6 +766,14 @@
       x.classList.toggle('is-on', on);
       x.setAttribute('aria-pressed', String(on));
     });
+  }
+
+  /* 좁은 화면에서만 'PC 화면으로 보기' 를 내놓는다 */
+  var wantPc = false;
+  try { wantPc = localStorage.getItem('sp-pcview') === '1'; } catch (e) {}
+  if (narrow() || wantPc) {
+    el.pcBtn.classList.add('is-ready');
+    if (wantPc) setPc(true);
   }
 
   /* 낡은 사본이 섞이면 화면이 통째로 비어 버린다. 그때는 흰 화면 대신 이유를 알린다. */

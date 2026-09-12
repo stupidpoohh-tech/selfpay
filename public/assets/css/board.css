@@ -458,87 +458,117 @@ button.note:focus-visible{outline:2px solid rgba(47,109,246,.55);outline-offset:
 
 /* ── 모바일 ───────────────────────────────────── */
 @media (max-width:980px){
-  .bar{height:auto;padding:11px 14px;flex-wrap:wrap;gap:9px}
-  .bar__sub{display:none}
-  .bar__title h1{font-size:15.5px}
-  .bar__right{width:100%;margin-left:0;flex-wrap:wrap;row-gap:8px}
+  body:not(.pcview) .bar{height:auto;padding:11px 14px;flex-wrap:wrap;gap:9px}
+  body:not(.pcview) .bar__sub{display:none}
+  body:not(.pcview) .bar__title h1{font-size:15.5px}
+  body:not(.pcview) .bar__right{width:100%;margin-left:0;flex-wrap:wrap;row-gap:8px}
   /* 프로토타입 보기에서 AS-IS/TO-BE 토글까지 한 줄에 넣으면 넘친다 */
-  .bar__right .seg{flex:1 1 100%}
-  .bar__right .seg button{flex:1;padding:0 10px;height:32px}
-  .bar__right .modes{flex:1}
-  .modes button{flex:1;justify-content:center;padding:0 8px;height:32px;font-size:13px}
-  .linkbtn{height:40px;flex:none}
-  .nav{height:48px;padding:0 14px;gap:8px}
-  .nav__current,.nav__div{display:none}
-  .tab2{padding:0 10px;font-size:13px;gap:5px}
-  .tab2 svg{width:15px;height:15px}
-  .entrybtn{height:30px;padding:0 10px;font-size:12.5px}
-  .tab2__sub{display:none}
-  .modal{padding:0}
-  .modal__box{width:100%;height:100dvh;border-radius:0}
-  .modal__head{padding:11px 14px}
-  .modal__body{padding:10px 12px 12px}
-  .arrow{width:30px;height:30px}
-  .counter{min-width:40px;font-size:12.5px}
-  .stage{padding:10px 14px 12px}
+  body:not(.pcview) .bar__right .seg{flex:1 1 100%}
+  body:not(.pcview) .bar__right .seg button{flex:1;padding:0 10px;height:32px}
+  body:not(.pcview) .bar__right .modes{flex:1}
+  body:not(.pcview) .modes button{flex:1;justify-content:center;padding:0 8px;height:32px;font-size:13px}
+  body:not(.pcview) .linkbtn{height:40px;flex:none}
+  body:not(.pcview) .nav{height:48px;padding:0 14px;gap:8px}
+  body:not(.pcview) .nav__current,
+  body:not(.pcview) .nav__div{display:none}
+  body:not(.pcview) .tab2{padding:0 10px;font-size:13px;gap:5px}
+  body:not(.pcview) .tab2 svg{width:15px;height:15px}
+  body:not(.pcview) .entrybtn{height:30px;padding:0 10px;font-size:12.5px}
+  body:not(.pcview) .tab2__sub{display:none}
+  body:not(.pcview) .modal{padding:0}
+  body:not(.pcview) .modal__box{width:100%;height:100dvh;border-radius:0}
+  body:not(.pcview) .modal__head{padding:11px 14px}
+  body:not(.pcview) .modal__body{padding:10px 12px 12px}
+  body:not(.pcview) .arrow{width:30px;height:30px}
+  body:not(.pcview) .counter{min-width:40px;font-size:12.5px}
+  body:not(.pcview) .stage{padding:10px 14px 12px}
 
-  /* 스크린샷이 높이를 최대한 쓰도록, 노트는 아래에서 올라오는 시트로 */
-  .cmp{grid-template-columns:1fr;grid-template-rows:auto minmax(0,1fr);gap:10px}
-  .tabrow{display:flex;align-items:center;gap:10px}
-  .tabs{display:inline-flex;gap:2px;background:#f1f4f9;border-radius:10px;padding:3px}
-  .tabs button{
+  /* 스크린샷이 높이를 최대한 쓰도록,
+  body:not(.pcview) 노트는 아래에서 올라오는 시트로 */
+  body:not(.pcview) .cmp{grid-template-columns:1fr;grid-template-rows:auto minmax(0,1fr);gap:10px}
+  body:not(.pcview) .tabrow{display:flex;align-items:center;gap:10px}
+  body:not(.pcview) .tabs{display:inline-flex;gap:2px;background:#f1f4f9;border-radius:10px;padding:3px}
+  body:not(.pcview) .tabs button{
     height:32px;padding:0 18px;border:0;border-radius:8px;background:none;
     font-size:13px;font-weight:700;color:var(--muted);
   }
-  .tabs button.is-on{background:var(--accent);color:#fff}
-  .notesbtn{
+  body:not(.pcview) .tabs button.is-on{background:var(--accent);color:#fff}
+  body:not(.pcview) .notesbtn{
     margin-left:auto;height:36px;padding:0 14px;border:1px solid var(--line);border-radius:10px;
     background:var(--panel);font-size:13px;font-weight:700;color:var(--text);
     display:inline-flex;align-items:center;gap:6px;
   }
-  .notesbtn b{
+  body:not(.pcview) .notesbtn b{
     font-size:11px;font-weight:800;color:var(--accent);
     background:var(--accent-soft);border-radius:999px;padding:2px 7px;
   }
-  .pane__head{display:none}
+  body:not(.pcview) .pane__head{display:none}
   /* 흐름 항목은 단계 수 배지가 핵심이라 머리말을 남긴다 */
-  .pane--flow .pane__head{display:flex;padding:10px 13px}
-  .pane--flow .pane__mark{display:none}
-  .pane--flow .pane__body--flow{padding:12px 13px 14px}
+  body:not(.pcview) .pane--flow .pane__head{display:flex;padding:10px 13px}
+  body:not(.pcview) .pane--flow .pane__mark{display:none}
+  body:not(.pcview) .pane--flow .pane__body--flow{padding:12px 13px 14px}
   /* 화면 밖 여백이 좁아 표시도 함께 줄인다 */
-  .pane__body{padding-left:6px;padding-right:6px}
-  .anno__num{right:calc(100% + 10px);min-width:17px;height:17px;padding:0 4px;font-size:9.5px}
-  .anno__label{left:calc(100% + 10px);height:17px;padding:0 6px;font-size:9.5px}
-  .anno__num::after,.anno__label::after{width:7px}
-  .navhit--next::after{width:16px;height:16px;font-size:10px;line-height:16px;right:-8px}
-  .fstep__shot{width:78px}
-  .pane__body{padding:12px 12px 10px;gap:9px}
-  .caption{font-size:11px;padding:5px 12px}
-  body[data-side="current"]  .pane--proposal{display:none}
-  body[data-side="proposal"] .pane--current{display:none}
+  body:not(.pcview) .pane__body{padding-left:6px;padding-right:6px}
+  body:not(.pcview) .anno__num{right:calc(100% + 10px);min-width:17px;height:17px;padding:0 4px;font-size:9.5px}
+  body:not(.pcview) .anno__label{left:calc(100% + 10px);height:17px;padding:0 6px;font-size:9.5px}
+  body:not(.pcview) .anno__num::after,
+  body:not(.pcview) .anno__label::after{width:7px}
+  body:not(.pcview) .navhit--next::after{width:16px;height:16px;font-size:10px;line-height:16px;right:-8px}
+  body:not(.pcview) .fstep__shot{width:78px}
+  body:not(.pcview) .pane__body{padding:12px 12px 10px;gap:9px}
+  body:not(.pcview) .caption{font-size:11px;padding:5px 12px}
+  body:not(.pcview)[data-side="current"]  .pane--proposal{display:none}
+  body:not(.pcview)[data-side="proposal"] .pane--current{display:none}
 
-  .notes{
+  body:not(.pcview) .notes{
     position:fixed;left:0;right:0;bottom:0;z-index:70;
     max-height:66dvh;border-radius:18px 18px 0 0;border-bottom:0;
     transform:translateY(102%);transition:transform .2s ease;
     box-shadow:0 -10px 34px rgba(16,24,40,.18);
   }
-  body.notes-open .notes{transform:none}
-  .notes__close{
+  body:not(.pcview).notes-open .notes{transform:none}
+  body:not(.pcview) .notes__close{
     display:inline-flex;align-items:center;height:30px;padding:0 12px;margin-left:12px;
     border:1px solid var(--line);border-radius:8px;background:var(--panel);
     font-size:12.5px;font-weight:700;color:var(--muted);
   }
-  .notes__count{margin-left:auto}
+  body:not(.pcview) .notes__count{margin-left:auto}
 
   /* 팝업 안에서는 AS-IS·TO-BE·개선 사항을 위아래로 이어서 보여 준다 */
-  .modal .cmp--entry{display:block;height:100%;overflow:auto}
-  .modal .cmp--entry .pane{display:flex;margin-bottom:10px}
-  .modal .cmp--entry .pane__head{display:flex}
-  .modal .cmp--entry .pane--flow .pane__body--flow{overflow:visible}
-  .modal .cmp--entry .notes{
+  body:not(.pcview) .modal .cmp--entry{display:block;height:100%;overflow:auto}
+  body:not(.pcview) .modal .cmp--entry .pane{display:flex;margin-bottom:10px}
+  body:not(.pcview) .modal .cmp--entry .pane__head{display:flex}
+  body:not(.pcview) .modal .cmp--entry .pane--flow .pane__body--flow{overflow:visible}
+  body:not(.pcview) .modal .cmp--entry .notes{
     position:static;transform:none;max-height:none;
     border-radius:16px;border:1px solid var(--line);box-shadow:var(--shadow);
   }
-  .modal .cmp--entry .notes__close{display:none}
+  body:not(.pcview) .modal .cmp--entry .notes__close{display:none}
 }
+
+
+/* ── PC 화면으로 보기 ──────────────────────────── */
+/* 좁은 화면에서만 쓰는 버튼. 켜면 데스크톱 배치를 그대로 축소해서 보여 준다 */
+.pcbtn{
+  display:none;flex:none;height:34px;padding:0 12px;border:1px solid var(--line);
+  border-radius:10px;background:var(--panel);font-size:13px;font-weight:700;color:var(--text);
+  align-items:center;gap:6px;white-space:nowrap;
+}
+.pcbtn svg{width:16px;height:16px;color:var(--muted)}
+.pcbtn.is-on{border-color:#c9d8f6;background:var(--accent-soft);color:var(--accent)}
+.pcbtn.is-on svg{color:var(--accent)}
+.pcbtn.is-ready{display:inline-flex}
+
+/* 켜면 바탕을 1440×900 데스크톱 배치로 고정한다.
+ * 줄이는 일은 뷰포트 폭을 바꾼 브라우저가 한다. */
+/* 폰은 세로로 길어서 1440×900 이 화면 위쪽에만 붙는다. 가운데로 올린다 */
+html.pcview{
+  height:auto;min-height:100dvh;background:var(--bg);
+  display:flex;align-items:center;
+}
+body.pcview{
+  width:1440px;min-width:1440px;height:900px;overflow:hidden;
+  box-shadow:0 0 0 1px var(--line);
+}
+body.pcview .board{height:900px}
+body.pcview .modal__box{width:min(1240px,96%);height:min(840px,860px)}

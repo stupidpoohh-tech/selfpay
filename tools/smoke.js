@@ -127,6 +127,23 @@ function ok(cond, name, extra) {
       `모바일에서 가로로 넘치지 않는다 ${u}`);
   }
 
+  /* PC 화면으로 보기 */
+  await mob.goto(BASE + '/?screen=home'); await mob.waitForTimeout(700);
+  ok(await mob.$eval('#pcBtn', e => getComputedStyle(e).display !== 'none'), '좁은 화면에 PC 보기 버튼이 있다');
+  await mob.click('#pcBtn'); await mob.waitForTimeout(700);
+  const pc = await mob.evaluate(() => ({
+    on: document.body.classList.contains('pcview'),
+    cols: getComputedStyle(document.getElementById('cmp')).gridTemplateColumns.split(' ').length,
+    notes: document.querySelector('.notes').getBoundingClientRect().width > 0
+  }));
+  ok(pc.on && pc.cols === 3 && pc.notes, 'PC 보기에서 3단 배치가 된다', JSON.stringify(pc));
+  await mob.reload(); await mob.waitForTimeout(700);
+  ok(await mob.$eval('body', e => e.classList.contains('pcview')), 'PC 보기가 새로고침 뒤에도 남는다');
+  await mob.click('#pcBtn'); await mob.waitForTimeout(700);
+  ok(!(await mob.$eval('body', e => e.classList.contains('pcview'))), '모바일 화면으로 되돌아온다');
+
+  ok(await d.$eval('#pcBtn', e => getComputedStyle(e).display === 'none'), '넓은 화면에는 PC 보기 버튼이 없다');
+
   ok(errors.length === 0, '콘솔 오류 없음', errors.join(' / '));
   await browser.close();
   console.log(fails ? `\n실패 ${fails}건` : '\n전부 통과');
