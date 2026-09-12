@@ -118,31 +118,53 @@ function ok(cond, name, extra) {
     await m.close();
   }
 
-  /* 모바일 */
-  const mob = await browser.newPage({ viewport: { width: 390, height: 780 } });
+  /* 폰에서는 PC 배치가 기본이다 */
+  const phone = await browser.newContext({ viewport: { width: 390, height: 780 }, isMobile: true, hasTouch: true });
+  const mob = await phone.newPage();
   mob.on('pageerror', e => errors.push('mobile: ' + e));
-  for (const u of ['/', '/?screen=settings', '/?screen=print&mode=proto']) {
+  const isPc = () => mob.evaluate(() => document.documentElement.classList.contains('pcview'));
+
+  await mob.goto(BASE + '/?screen=home'); await mob.waitForTimeout(800);
+  const pc = await mob.evaluate(() => ({
+    on: document.documentElement.classList.contains('pcview'),
+    cols: getComputedStyle(document.getElementById('cmp')).gridTemplateColumns.split(' ').length,
+    notes: document.querySelector('.notes').getBoundingClientRect().width > 0,
+    btn: document.getElementById('pcBtnText').textContent
+  }));
+  ok(pc.on && pc.cols === 3 && pc.notes, '폰에서 PC 배치로 열린다', JSON.stringify(pc));
+  ok(pc.btn === '모바일 화면으로', '버튼이 되돌리기를 가리킨다', pc.btn);
+
+  /* 모바일 배치로 되돌리고 그 상태를 확인한다 */
+  await mob.click('#pcBtn'); await mob.waitForTimeout(700);
+  ok(!(await isPc()), '모바일 화면으로 되돌아온다');
+  for (const u of ['/?screen=home', '/?screen=settings', '/?screen=print&mode=proto']) {
     await mob.goto(BASE + u); await mob.waitForTimeout(700);
+    ok(!(await isPc()), `되돌린 선택이 남는다 ${u}`);
     ok(!(await mob.evaluate(() => document.documentElement.scrollWidth > window.innerWidth + 1)),
       `모바일에서 가로로 넘치지 않는다 ${u}`);
   }
 
-  /* PC 화면으로 보기 */
+  /* 다시 PC 배치로 */
   await mob.goto(BASE + '/?screen=home'); await mob.waitForTimeout(700);
-  ok(await mob.$eval('#pcBtn', e => getComputedStyle(e).display !== 'none'), '좁은 화면에 PC 보기 버튼이 있다');
   await mob.click('#pcBtn'); await mob.waitForTimeout(700);
-  const pc = await mob.evaluate(() => ({
-    on: document.body.classList.contains('pcview'),
-    cols: getComputedStyle(document.getElementById('cmp')).gridTemplateColumns.split(' ').length,
-    notes: document.querySelector('.notes').getBoundingClientRect().width > 0
-  }));
-  ok(pc.on && pc.cols === 3 && pc.notes, 'PC 보기에서 3단 배치가 된다', JSON.stringify(pc));
+  ok(await isPc(), '다시 PC 배치로 켜진다');
   await mob.reload(); await mob.waitForTimeout(700);
-  ok(await mob.$eval('body', e => e.classList.contains('pcview')), 'PC 보기가 새로고침 뒤에도 남는다');
-  await mob.click('#pcBtn'); await mob.waitForTimeout(700);
-  ok(!(await mob.$eval('body', e => e.classList.contains('pcview'))), '모바일 화면으로 되돌아온다');
+  ok(await isPc(), 'PC 배치가 새로고침 뒤에도 남는다');
+  await phone.close();
 
   ok(await d.$eval('#pcBtn', e => getComputedStyle(e).display === 'none'), '넓은 화면에는 PC 보기 버튼이 없다');
+  ok(!(await d.evaluate(() => document.documentElement.classList.contains('pcview'))),
+    '넓은 화면은 PC 배치를 강제하지 않는다');
+
+  /* 좁은 데스크톱 창은 축소가 되지 않으므로 기본으로 켜지 않는다 */
+  const nw = await browser.newPage({ viewport: { width: 390, height: 780 } });
+  nw.on('pageerror', e => errors.push('narrow: ' + e));
+  await nw.goto(BASE + '/?screen=home'); await nw.waitForTimeout(700);
+  ok(!(await nw.evaluate(() => document.documentElement.classList.contains('pcview'))),
+    '좁은 데스크톱 창은 PC 배치를 기본으로 켜지 않는다');
+  ok(await nw.$eval('#pcBtn', e => getComputedStyle(e).display !== 'none'),
+    '좁은 데스크톱 창에도 버튼은 있다');
+  await nw.close();
 
   ok(errors.length === 0, '콘솔 오류 없음', errors.join(' / '));
   await browser.close();

@@ -599,7 +599,8 @@
   var VP_PC = 'width=' + PC_W + ',viewport-fit=cover';
   var VP_MOBILE = 'width=device-width,initial-scale=1,viewport-fit=cover';
   var vpMeta = document.querySelector('meta[name="viewport"]');
-  var pcOn = false;
+  /* 첫 그림 전에 <head> 스크립트가 이미 정해 두었다 */
+  var pcOn = document.documentElement.classList.contains('pcview');
 
   function narrow() {
     return w.matchMedia('(max-width:980px)').matches;
@@ -608,7 +609,6 @@
   function setPc(on) {
     pcOn = on;
     document.documentElement.classList.toggle('pcview', on);
-    document.body.classList.toggle('pcview', on);
     el.pcBtn.classList.toggle('is-on', on);
     el.pcBtn.setAttribute('aria-pressed', String(on));
     el.pcBtnText.textContent = on ? '모바일 화면으로' : 'PC 화면으로 보기';
@@ -768,12 +768,13 @@
     });
   }
 
-  /* 좁은 화면에서만 'PC 화면으로 보기' 를 내놓는다 */
-  var wantPc = false;
-  try { wantPc = localStorage.getItem('sp-pcview') === '1'; } catch (e) {}
-  if (narrow() || wantPc) {
+  /* 좁은 화면에서만 'PC 화면으로 보기' 를 내놓는다.
+   * 켜고 끄는 판단은 <head> 스크립트가 이미 했고, 여기서는 버튼만 맞춘다. */
+  if (pcOn || narrow()) {
     el.pcBtn.classList.add('is-ready');
-    if (wantPc) setPc(true);
+    el.pcBtn.classList.toggle('is-on', pcOn);
+    el.pcBtn.setAttribute('aria-pressed', String(pcOn));
+    el.pcBtnText.textContent = pcOn ? '모바일 화면으로' : 'PC 화면으로 보기';
   }
 
   /* 낡은 사본이 섞이면 화면이 통째로 비어 버린다. 그때는 흰 화면 대신 이유를 알린다. */
