@@ -189,11 +189,16 @@ function ok(cond, name, extra) {
 
   await d.goto(BASE + '/?surface=flow&screen=device-flow'); await d.waitForTimeout(700);
   f = await fx();
-  ok(f.nodes === 7 && f.panes === 1 && f.none === 0,
-    '모바일 ↔ 복합기는 일곱 단계가 늘 보이고 빈 자리가 없다', `단계 ${f.nodes} · 화면 ${f.panes}`);
+  ok(f.nodes === 6 && f.panes === 1 && f.none === 0,
+    '모바일 ↔ 복합기는 여섯 단계가 늘 보이고 빈 자리가 없다', `단계 ${f.nodes} · 화면 ${f.panes}`);
+  const dup = await d.evaluate(() => {
+    const st = REVIEW.screens.find(x => x.id === 'device-flow').proposal.steps.map(x => x.img);
+    return st.filter((v, i) => v && st.indexOf(v) !== i);
+  });
+  ok(dup.length === 0, '같은 그림을 두 단계에 쓰지 않는다', dup.join(' · ') || '없음');
   await d.click('.fnode[data-fside="proposal"][data-fstep="4"]'); await d.waitForTimeout(350);
   f = await fx();
-  ok(f.src[0] === 'proposal/shots/payment.png' && f.nodes === 7, '단계를 누르면 그 화면으로 바뀐다',
+  ok(f.src[0] === 'proposal/shots/payment.png' && f.nodes === 6, '단계를 누르면 그 화면으로 바뀐다',
     f.src[0] + ' · 단계 ' + f.nodes);
 
   /* 영역별 화면 수가 데이터와 맞는다 */

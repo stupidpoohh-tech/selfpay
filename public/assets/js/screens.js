@@ -270,7 +270,7 @@ window.REVIEW = {
        * 세부 개선 문구는 다음 단계에 채운다. */
       id: 'device-flow', label: '모바일 ↔ 복합기 연결·결제', kind: 'flow',
       proposal: {
-        summary: '7단계',
+        summary: '6단계',
         title: '모바일과 복합기를 오가는 순서',
         steps: [
           { where: '모바일', label: '서비스 선택', img: 'proposal/shots/index.png',
@@ -285,9 +285,7 @@ window.REVIEW = {
             note: '복합기에는 결제 대기 중 상태가 표시되고, 사용자는 휴대폰에서 해당 금액을 결제합니다.',
             ref: [0, 1] },
           { where: '복합기', label: '결제 완료', img: 'proposal/shots/device-pay.png',
-            note: '모바일 결제가 완료되면 복합기 화면이 결제 완료 상태로 전환됩니다.', ref: [0, 1] },
-          { where: '복합기', label: '서비스 실행', img: 'proposal/shots/device-pay.png',
-            note: '복사는 복사 시작, 스캔은 스캔 시작, 팩스는 전송 시작으로 이어집니다.', ref: [0, 2] }
+            note: '모바일 결제가 완료되면 복합기 화면이 결제 완료 상태로 전환됩니다.', ref: [0, 1, 2] }
         ],
         foot: '복합기 단계 그림은 복합기 영역의 화면을 작게 다시 쓴 것입니다.'
       },
