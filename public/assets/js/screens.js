@@ -17,8 +17,11 @@
  *
  * kind: 'flow' 인 항목은 개별 화면 비교가 아니라 진입·작업 흐름 비교다.
  * 이 항목은 img 대신 steps 를 갖는다. 실제 서비스 페이지가 아니므로 page 는 없다.
- *   { summary, title, steps:[{ where, label, note, items:[…], img, ref:[…] }], foot }
+ *   { summary, title, steps:[{ where, label, note, items:[…], img, hl, ref:[…] }], foot }
  *   img 는 기존 스크린샷을 다시 쓰는 용도다. 새 이미지를 만들지 않는다.
+ *   화면이 따로 없는 행동 단계도 그 행동이 일어나는 화면을 그대로 쓰고 hl 로 자리를 짚는다.
+ *   hl 은 { screen, change, side } 로, 그 화면에 이미 적어 둔 변경점 좌표를 그대로 가져온다.
+ *   새 좌표를 만들지 않는다. 짚을 자리가 분명하지 않으면 hl 을 두지 않는다.
  *   where 는 그 단계를 보는 기기(모바일 · 복합기), ref 는 이 단계와 관련된 notes 의 번호다.
  */
 window.REVIEW = {
@@ -73,10 +76,14 @@ window.REVIEW = {
         steps: [
           { label: '로그인 화면', note: '첫 진입 시 먼저 노출됩니다.', img: 'shots/index.png', ref: [0] },
           { label: '로그인 또는 비회원 이용 선택',
-            note: '로그인·간편 로그인과 비회원으로 이용하기 중에서 고릅니다.', ref: [0] },
+            note: '로그인·간편 로그인과 비회원으로 이용하기 중에서 고릅니다.',
+            img: 'shots/index.png',
+            hl: { screen: 'login', change: 'methods', side: 'current' }, ref: [0] },
           { label: '홈', note: '인쇄·복사·스캔·팩스 카드가 여기서 처음 보입니다.',
             img: 'shots/home.png', ref: [0] },
-          { label: '작업 선택', ref: [0] }
+          { label: '작업 선택', note: '홈에서 인쇄·복사·스캔·팩스 가운데 하나를 고릅니다.',
+            img: 'shots/home.png',
+            hl: { screen: 'home', change: 'cards', side: 'current' }, ref: [0] }
         ],
         foot: '비회원 사용자는 로그인 화면 → 비회원 이용 → 홈 경로를 거칩니다.'
       },
@@ -86,7 +93,9 @@ window.REVIEW = {
         steps: [
           { label: '홈', note: '인쇄·복사·스캔·팩스를 첫 화면에서 바로 보여 줍니다.',
             img: 'proposal/shots/index.png', ref: [1] },
-          { label: '작업 선택', ref: [1] }
+          { label: '작업 선택', note: '홈에서 인쇄·복사·스캔·팩스 가운데 하나를 고릅니다.',
+            img: 'proposal/shots/index.png',
+            hl: { screen: 'home', change: 'cards', side: 'proposal' }, ref: [1] }
         ],
         foot: '로그인 화면은 그대로 있으나 첫 화면은 아닙니다.'
       },
@@ -277,7 +286,7 @@ window.REVIEW = {
             ref: [0, 1] },
           { where: '복합기', label: '결제 완료', img: 'proposal/shots/device-pay.png',
             note: '모바일 결제가 완료되면 복합기 화면이 결제 완료 상태로 전환됩니다.', ref: [0, 1] },
-          { where: '복합기', label: '서비스 실행',
+          { where: '복합기', label: '서비스 실행', img: 'proposal/shots/device-pay.png',
             note: '복사는 복사 시작, 스캔은 스캔 시작, 팩스는 전송 시작으로 이어집니다.', ref: [0, 2] }
         ],
         foot: '복합기 단계 그림은 복합기 영역의 화면을 작게 다시 쓴 것입니다.'
