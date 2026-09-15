@@ -161,18 +161,21 @@ function ok(cond, name, extra) {
   const fhits = () => d.$$eval('.fxpane .navhit', els => els.map(e => ({
     to: e.getAttribute('data-screen'), go: e.getAttribute('data-fgo') })));
   let hs = await fhits();
-  ok(hs.length >= 5 && hs.some(h => h.go), '흐름 그림에도 이동 자리가 얹힌다',
-    `${hs.length}개 · 흐름 안 ${hs.filter(h => h.go).length}개`);
+  ok(hs.length >= 4 && hs.every(h => h.go), '흐름 그림에는 흐름 안으로 이어지는 자리만 얹힌다',
+    `${hs.length}개 · 흐름 밖 ${hs.filter(h => !h.go).length}개`);
 
   await d.click('.fxpane[data-fpane="current"] .navhit[data-fgo]'); await d.waitForTimeout(400);
   f = await fx();
   ok(f.on[0] === '3홈' && f.url === '?surface=flow&screen=entry',
     '흐름 안으로 이어지는 자리는 그 단계로 간다', f.on.join(' / ') + ' ' + f.url);
 
+  /* 전체 흐름에서 누른 것이 모바일·복합기로 건너뛰지 않는다 */
+  for (const id of ['entry', 'print-flow', 'device-flow']) {
+    await d.goto(BASE + '/?surface=flow&screen=' + id); await d.waitForTimeout(700);
+    const out = await d.$$eval('.fxpane .navhit:not([data-fgo])', els => els.length);
+    ok(out === 0, `${id} · 흐름 밖으로 나가는 자리를 두지 않는다`, out + '개');
+  }
   await d.goto(BASE + '/?surface=flow&screen=entry'); await d.waitForTimeout(700);
-  await d.click('.fxpane[data-fpane="current"] .navhit:not([data-fgo])'); await d.waitForTimeout(500);
-  ok((await d.evaluate(() => location.search)) === '?surface=mobile&screen=guest',
-    '흐름 밖 화면으로 이어지는 자리는 그 화면 비교로 간다', await d.evaluate(() => location.search));
 
   /* 눌리지 않는 자리를 눌러도 아무것도 바뀌지 않는다 */
   await d.goto(BASE + '/?surface=flow&screen=entry'); await d.waitForTimeout(700);

@@ -679,18 +679,21 @@
     var html = navHitsHtml(byId(o.id), o.side);
     if (!html) return '';
 
-    /* 가는 곳이 이 흐름 안의 단계면 흐름에 머문다. 아니면 그 화면 비교로 간다 */
+    /* 이 흐름 안의 단계로 이어지는 자리만 남긴다.
+     * 전체 흐름에서 누른 것이 모바일·복합기 화면으로 건너뛰지 않게 한다. */
     var box = document.createElement('div');
     box.innerHTML = html;
     box.querySelectorAll('.navhit[data-screen]').forEach(function (b) {
       var at = flowStepFor(s, side, b.getAttribute('data-screen'));
-      if (at < 0) return;
+      if (at < 0) return b.remove();
       var label = '다음 단계: ' + s[side].steps[at].label;
+      b.className = 'navhit';        /* 흐름 밖으로 가는 빨간 표시는 여기서 쓰지 않는다 */
+      b.removeAttribute('data-anno');
       b.setAttribute('data-fgo', side + ':' + at);
       b.setAttribute('title', label);
       b.setAttribute('aria-label', label);
     });
-    return box.innerHTML;
+    return box.querySelector('.navhit') ? box.innerHTML : '';
   }
 
   /* 첫 문장만 굵게 둔다. 문구 자체는 그대로다 */
@@ -773,17 +776,13 @@
         return redrawFlow(sd);
       }
 
-      /* 그림 안의 이동 자리 */
-      var hit = e.target.closest('.navhit[data-screen]');
+      /* 그림 안의 이동 자리. 이 흐름 안의 단계로만 이어진다 */
+      var hit = e.target.closest('.navhit[data-fgo]');
       if (hit) {
         e.stopPropagation();
-        var go = hit.getAttribute('data-fgo');
-        if (go) {
-          var p = go.split(':');
-          state.fstep[p[0]] = +p[1];
-          return redrawFlow(p[0]);
-        }
-        return goToId(hit.getAttribute('data-screen'));
+        var p = hit.getAttribute('data-fgo').split(':');
+        state.fstep[p[0]] = +p[1];
+        return redrawFlow(p[0]);
       }
       /* 그 밖의 자리는 눌러도 아무 일이 없다. 화면이 바뀌지 않는다 */
     });
