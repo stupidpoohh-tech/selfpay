@@ -50,7 +50,7 @@ window.REVIEW = {
       ]
     },
     {
-      /* 물리 복합기 쪽 화면. 스크린샷이 들어오기 전이라 자리만 잡아 둔다 */
+      /* 물리 복합기 쪽 화면. 화면 비교만 먼저 올리고 개선 문구는 다음 단계에 채운다 */
       id: 'device', label: '복합기',
       groups: [
         { id: 'device-home', label: '대기·연결', screens: ['device-home'] },
@@ -254,27 +254,27 @@ window.REVIEW = {
       ]
     },
     {
-      /* 모바일과 복합기를 오가는 순서만 적어 둔 자리다.
-       * 복합기 쪽 스크린샷이 아직 없어 그 단계는 글로만 둔다.
-       * 세부 개선 문구는 자료가 들어온 뒤에 채운다. */
+      /* 모바일과 복합기를 오가는 순서를 적어 둔 자리다.
+       * 단계 그림은 양쪽에 이미 있는 스크린샷을 작게 다시 쓴다.
+       * 세부 개선 문구는 다음 단계에 채운다. */
       id: 'device-flow', label: '모바일 ↔ 복합기 연결·결제', kind: 'flow',
       proposal: {
         summary: '6단계',
         title: '모바일과 복합기를 오가는 순서',
         steps: [
           { where: '모바일', label: '서비스 선택',        img: 'proposal/shots/index.png' },
-          { where: '복합기', label: '기기 QR 확인' },
+          { where: '복합기', label: '기기 QR 확인',      img: 'proposal/shots/device-home.png' },
           { where: '모바일', label: 'QR 스캔 및 연결 확인', img: 'proposal/shots/qr.png' },
-          { where: '복합기', label: '복사 / 스캔 / 팩스 설정' },
+          { where: '복합기', label: '복사 / 스캔 / 팩스 설정', img: 'proposal/shots/device-copy.png' },
           { where: '모바일', label: '결제',              img: 'proposal/shots/payment.png' },
-          { where: '복합기', label: '작업 실행' }
+          { where: '복합기', label: '작업 실행',         img: 'proposal/shots/device-pay.png' }
         ],
-        foot: '복합기 단계는 스크린샷이 들어오면 채웁니다.'
+        foot: '복합기 단계 그림은 복합기 영역의 화면을 작게 다시 쓴 것입니다.'
       },
       notes: [
         { title: '이 항목의 상태',
-          body: '두 기기를 오가는 순서만 먼저 적어 둔 자리입니다. ' +
-                '복합기 화면 자료가 들어온 뒤에 개선 문구를 채웁니다.' }
+          body: '두 기기를 오가는 순서를 먼저 적어 둔 자리입니다. ' +
+                '단계별 개선 문구는 다음 단계에 채웁니다.' }
       ]
     },
     {
@@ -848,9 +848,9 @@ window.REVIEW = {
   ]
 };
 
-/* 복합기 쪽 비교 화면. 스크린샷이 들어오기 전이라 자리만 만들어 둔다.
- * 이미지가 없으면 비교 화면에 '찾을 수 없습니다' 안내가 그대로 뜬다.
- * 개선 문구는 자료가 들어온 뒤에 채운다. */
+/* 복합기 쪽 비교 화면. AS-IS 는 shots/, TO-BE 는 proposal/shots/ 의 device-*.png 다.
+ * 네 화면 모두 양쪽 이미지가 있고, 변경점 좌표와 개선 문구는 다음 단계에 채운다.
+ * 한쪽 이미지가 없으면 비교 화면에 '찾을 수 없습니다' 안내가 그대로 뜬다. */
 (function (R) {
   [
     { id: 'device-home', label: '대기·연결', file: 'device-home' },
@@ -859,12 +859,12 @@ window.REVIEW = {
     { id: 'device-fax',  label: '팩스',      file: 'device-fax' }
   ].forEach(function (d) {
     R.screens.push({
-      id: d.id, label: d.label,
+      id: d.id, label: d.label, wide: true,
       current:  { img: 'shots/' + d.file + '.png' },
       proposal: { img: 'proposal/shots/' + d.file + '.png' },
       notes: [
-        { title: '자료 준비 중',
-          body: '복합기 화면 스크린샷이 들어오면 비교와 개선 문구를 채웁니다.' }
+        { title: '개선 사항 정리 예정',
+          body: '복합기 화면 비교를 먼저 올려 두었습니다. 변경점 표시와 개선 문구는 다음 단계에 채웁니다.' }
       ]
     });
   });

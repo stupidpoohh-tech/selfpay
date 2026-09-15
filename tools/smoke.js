@@ -105,6 +105,16 @@ function ok(cond, name, extra) {
   for (let i = 0; i < 5; i++) { ring.push((await surfState()).n); await d.click('#next'); await d.waitForTimeout(250); }
   ok(ring.join(' ') === '1 / 4 2 / 4 3 / 4 4 / 4 1 / 4', '복합기 안에서만 순환한다', ring.join(' '));
 
+  /* 복합기 네 화면은 AS-IS·TO-BE 이미지가 모두 붙어 있다 */
+  for (const id of ['device-home', 'device-copy', 'device-scan', 'device-fax']) {
+    await d.goto(BASE + '/?surface=device&screen=' + id);
+    await d.waitForTimeout(500);
+    const shots = await d.$$eval('.stage .shotimg', els =>
+      els.map(e => ({ src: e.getAttribute('src'), on: e.naturalWidth > 0 })));
+    ok(shots.length === 2 && shots.every(x => x.on), `${id} 양쪽 화면이 보인다`,
+      shots.map(x => x.src + (x.on ? '' : ' 없음')).join(' · '));
+  }
+
   /* 영역별 화면 수가 데이터와 맞는다 */
   const counts = await d.evaluate(() =>
     REVIEW.surfaces.map(sf => sf.groups.reduce((n, g) => n + g.screens.length, 0)));

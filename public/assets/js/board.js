@@ -352,7 +352,7 @@
     /* 한쪽에만 있는 화면이면 빈 자리를 그대로 보여 준다 */
     var body = d
       ? '<div class="pane__body">' +
-          '<div class="device"><div class="shotbox">' +
+          '<div class="device' + (s.wide ? ' device--wide' : '') + '"><div class="shotbox">' +
             '<img class="shotimg" src="' + d.img + '" alt="' + s.label + ' ' +
             (isCur ? 'AS-IS' : 'TO-BE') + '" data-zoom="' + d.img + '">' +
             navHitsHtml(s, side) +
@@ -371,7 +371,7 @@
   function drawCompare() {
     var s = screen();
     el.stage.innerHTML =
-      '<div class="cmp" id="cmp">' +
+      '<div class="cmp' + (s.wide ? ' cmp--wide' : '') + '" id="cmp">' +
         '<div class="tabrow">' +
           '<div class="tabs" id="tabs">' +
             '<button data-side="current"' + (state.side === 'current' ? ' class="is-on"' : '') + '>AS-IS</button>' +
