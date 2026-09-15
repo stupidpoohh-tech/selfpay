@@ -259,22 +259,43 @@ window.REVIEW = {
        * 세부 개선 문구는 다음 단계에 채운다. */
       id: 'device-flow', label: '모바일 ↔ 복합기 연결·결제', kind: 'flow',
       proposal: {
-        summary: '6단계',
+        summary: '7단계',
         title: '모바일과 복합기를 오가는 순서',
         steps: [
-          { where: '모바일', label: '서비스 선택',        img: 'proposal/shots/index.png' },
-          { where: '복합기', label: '기기 QR 확인',      img: 'proposal/shots/device-home.png' },
-          { where: '모바일', label: 'QR 스캔 및 연결 확인', img: 'proposal/shots/qr.png' },
-          { where: '복합기', label: '복사 / 스캔 / 팩스 설정', img: 'proposal/shots/device-copy.png' },
-          { where: '모바일', label: '결제',              img: 'proposal/shots/payment.png' },
-          { where: '복합기', label: '작업 실행',         img: 'proposal/shots/device-pay.png' }
+          { where: '모바일', label: '서비스 선택', img: 'proposal/shots/index.png',
+            note: '인쇄·복사·스캔·팩스 중에서 할 작업을 고릅니다.' },
+          { where: '복합기', label: '기기 QR 스캔', img: 'proposal/shots/device-home.png',
+            note: '복합기 화면의 QR을 휴대폰으로 스캔합니다.' },
+          { where: '모바일', label: '연결 확인', img: 'proposal/shots/qr.png',
+            note: '어느 복합기에 연결되었는지 확인합니다.' },
+          { where: '복합기', label: '서비스 설정', img: 'proposal/shots/device-copy.png',
+            note: '복합기에서 서비스 옵션을 설정하고 예상 결제 금액을 확인합니다.' },
+          { where: '모바일', label: '결제', img: 'proposal/shots/payment.png',
+            note: '복합기에는 결제 대기 중 상태가 표시되고, 사용자는 휴대폰에서 해당 금액을 결제합니다.' },
+          { where: '복합기', label: '결제 완료', img: 'proposal/shots/device-pay.png',
+            note: '모바일 결제가 완료되면 복합기 화면이 결제 완료 상태로 전환됩니다.' },
+          { where: '복합기', label: '서비스 실행',
+            note: '복사는 복사 시작, 스캔은 스캔 시작, 팩스는 전송 시작으로 이어집니다.' }
         ],
         foot: '복합기 단계 그림은 복합기 영역의 화면을 작게 다시 쓴 것입니다.'
       },
       notes: [
-        { title: '이 항목의 상태',
-          body: '두 기기를 오가는 순서를 먼저 적어 둔 자리입니다. ' +
-                '단계별 개선 문구는 다음 단계에 채웁니다.' }
+        { title: '관찰한 문제',
+          body: '기존 복합기 화면에서는 결제와 작업 시작 버튼이 같은 화면에 함께 있어, ' +
+                '사용자가 어느 기기에서 결제를 진행해야 하는지와 결제 후 언제 작업이 실행되는지가 ' +
+                '명확하지 않았습니다.' },
+        { title: '변경한 내용',
+          body: 'TO-BE에서는 복합기가 서비스 설정과 작업 실행을 담당하고, 휴대폰이 결제를 담당하도록 ' +
+                '역할을 분리했습니다. 복합기에는 결제 대기 상태를 표시하고, 모바일 결제가 확인된 뒤 ' +
+                '작업 시작 버튼이 활성화되는 흐름으로 변경했습니다.' },
+        { title: '적용 범위',
+          body: '이 결제 상태 흐름은 복사·스캔·팩스에 공통으로 적용합니다. ' +
+                '서비스별로 동일한 결제 상태 화면을 반복해서 추가하지 않습니다.' }
+      ],
+      effects: [
+        '사용자가 어느 기기에서 결제해야 하는지 이해하기 쉬워집니다',
+        '결제 완료 전과 완료 후의 상태를 구분할 수 있습니다',
+        '복사·스캔·팩스에 동일한 결제 원칙을 적용할 수 있습니다'
       ]
     },
     {
@@ -849,23 +870,203 @@ window.REVIEW = {
 };
 
 /* 복합기 쪽 비교 화면. AS-IS 는 shots/, TO-BE 는 proposal/shots/ 의 device-*.png 다.
- * 네 화면 모두 양쪽 이미지가 있고, 변경점 좌표와 개선 문구는 다음 단계에 채운다.
- * 한쪽 이미지가 없으면 비교 화면에 '찾을 수 없습니다' 안내가 그대로 뜬다. */
+ * 기기 화면은 가로로 길어 wide: true 로 표시한다.
+ * 좌표는 다른 화면과 같은 % 이고, 실제 이미지에서 확인한 영역만 적었다. */
 (function (R) {
-  [
-    { id: 'device-home', label: '대기·연결', file: 'device-home' },
-    { id: 'device-copy', label: '복사',      file: 'device-copy' },
-    { id: 'device-scan', label: '스캔',      file: 'device-scan' },
-    { id: 'device-fax',  label: '팩스',      file: 'device-fax' }
-  ].forEach(function (d) {
+  var DEVICE = [
+    {
+      id: 'device-home', label: '대기·연결',
+      changes: [
+        {
+          id: 'qr-single', type: 'restructure', shortLabel: '단순화',
+          title: 'QR 진입 구조 단순화',
+          description: 'AS-IS에서는 최초 접속용 QR과 복합기 연결용 QR이 한 화면에 함께 노출되어, ' +
+            '처음 이용하는 사용자가 어떤 QR을 먼저 스캔해야 하는지 구분해야 했습니다. ' +
+            'TO-BE에서는 복합기 연결용 QR 하나를 중심으로 구성해 현재 단계에서 해야 할 행동을 ' +
+            '명확하게 했습니다.',
+          targets: {
+            current: [
+              { x: 4.0, y: 30.3, w: 57.9, h: 18.6 },
+              { x: 70.0, y: 33.0, w: 22.5, h: 42.5 }
+            ],
+            proposal: [{ x: 54.1, y: 17.4, w: 25.2, h: 52.6 }]
+          }
+        },
+        {
+          id: 'target', type: 'add', shortLabel: '정보 추가',
+          title: '연결 대상 명확화',
+          description: 'AS-IS에서는 QR을 스캔했을 때 어떤 기기와 연결되는지 화면에서 바로 확인하기 ' +
+            '어려웠습니다. TO-BE에서는 `4번 복합기`와 사용 가능 상태를 함께 표시하고, ' +
+            'QR 안내에도 연결될 기기를 명시했습니다.',
+          targets: {
+            proposal: [
+              { x: 65.7, y: 4.8, w: 16.6, h: 4.5 },
+              { x: 57.5, y: 62.7, w: 18.5, h: 4.0 }
+            ]
+          }
+        },
+        {
+          id: 'order', type: 'restructure', shortLabel: '재구성',
+          title: '이용 순서 재구성',
+          description: 'AS-IS에서는 앱 작업 선택, 복합기 조작, 결제의 세 단계 안내와 두 개의 QR이 ' +
+            '동시에 제시되었습니다. TO-BE에서는 `모바일에서 서비스 선택 → QR 스캔 → 연결 후 ' +
+            '복합기에서 설정` 순서로 정리해 모바일과 복합기의 역할을 단계별로 구분했습니다.',
+          targets: {
+            current:  [{ x: 4.0, y: 51.5, w: 57.9, h: 36.3 }],
+            proposal: [{ x: 4.7, y: 74.5, w: 71.5, h: 13.5 }]
+          }
+        }
+      ],
+      effects: [
+        '한 화면에서 스캔해야 할 QR을 구분하는 부담을 줄일 수 있습니다',
+        '연결할 복합기를 스캔 전에 확인할 수 있습니다',
+        '모바일과 복합기에서 각각 해야 할 행동을 순서대로 이해하기 쉬워집니다'
+      ]
+    },
+    {
+      id: 'device-copy', label: '복사',
+      changes: [
+        {
+          id: 'options', type: 'restructure', shortLabel: '재구성',
+          title: '복사 설정 구조화',
+          description: 'AS-IS에서는 컬러·흑백, 단면·양면, 부수 설정이 작은 선택 영역에 나뉘어 ' +
+            '있었습니다. TO-BE에서는 원본 미리보기와 함께 컬러, 출력 방식, 부수를 단계별 설정 ' +
+            '영역으로 구성해 현재 선택값을 한 화면에서 확인할 수 있도록 했습니다.',
+          targets: {
+            current:  [{ x: 29.8, y: 15.6, w: 67.5, h: 55.9 }],
+            proposal: [{ x: 31.0, y: 13.3, w: 65.4, h: 71.7 }]
+          }
+        },
+        {
+          id: 'price', type: 'add', shortLabel: '정보 추가',
+          title: '요금 확인 강화',
+          description: 'AS-IS에서는 복사 설정 화면에서 현재 선택에 따른 결제 금액을 바로 확인하기 ' +
+            '어려웠습니다. TO-BE에서는 장당 요금과 현재 설정 기준의 예상 금액을 함께 표시해 ' +
+            '설정과 비용을 같은 화면에서 확인할 수 있도록 했습니다.',
+          targets: {
+            proposal: [
+              { x: 61.9, y: 16.5, w: 34.3, h: 5.3 },
+              { x: 4.5, y: 67.5, w: 23.9, h: 15.0 }
+            ]
+          }
+        },
+        {
+          id: 'pay-role', type: 'restructure', shortLabel: '분리',
+          title: '모바일 결제 역할 분리',
+          description: 'AS-IS에서는 복합기 화면에서 `결제하기`와 `복사 시작`이 함께 제공되어 ' +
+            '결제와 실행의 관계가 분명하지 않았습니다. TO-BE에서는 설정을 마친 뒤 휴대폰에서 ' +
+            '결제하도록 안내하고, 결제가 완료되기 전에는 `결제 대기 중` 상태를 표시하도록 ' +
+            '변경했습니다.',
+          targets: {
+            current:  [{ x: 69.3, y: 87.8, w: 26.8, h: 8.4 }],
+            proposal: [{ x: 30.5, y: 87.7, w: 66.1, h: 8.5 }]
+          }
+        }
+      ],
+      effects: [
+        '현재 복사 설정과 예상 비용을 함께 확인할 수 있습니다',
+        '결제를 모바일에서 진행한다는 역할을 명확하게 구분할 수 있습니다',
+        '결제 전 복사가 실행되는 것으로 오해하는 경우를 줄일 수 있습니다'
+      ]
+    },
+    {
+      id: 'device-scan', label: '스캔',
+      changes: [
+        {
+          id: 'merge', type: 'restructure', shortLabel: '재구성',
+          title: '스캔 설정 통합',
+          description: 'AS-IS에서는 전송 이메일과 해상도·컬러·단면·파일 형식 설정이 각각 작은 ' +
+            '영역으로 배치되어 있었습니다. TO-BE에서는 전송 이메일과 스캔 미리보기, ' +
+            '해상도·색상·스캔면·파일 형식을 하나의 설정 화면 안에서 계층적으로 정리했습니다.',
+          targets: {
+            current:  [{ x: 2.9, y: 15.5, w: 94.3, h: 63.1 }],
+            proposal: [
+              { x: 3.7, y: 15.9, w: 92.6, h: 10.1 },
+              { x: 3.7, y: 27.4, w: 92.6, h: 55.0 }
+            ]
+          }
+        },
+        {
+          id: 'selected', type: 'restructure', shortLabel: '강조',
+          title: '선택 상태 명확화',
+          description: 'AS-IS에서는 선택된 옵션이 배경색 변화 중심으로 표현되었습니다. ' +
+            'TO-BE에서는 선택 카드의 테두리, 체크 표시, 권장 표시를 함께 사용해 현재 적용될 ' +
+            '스캔 조건을 확인하기 쉽게 구성했습니다.',
+          targets: {
+            current:  [{ x: 30.2, y: 29.9, w: 66.6, h: 47.8 }],
+            proposal: [{ x: 30.2, y: 36.1, w: 65.5, h: 44.6 }]
+          }
+        },
+        {
+          id: 'pay-role', type: 'restructure', shortLabel: '분리',
+          title: '모바일 결제 연동',
+          description: 'AS-IS에서는 복합기에서 `결제하기`와 `스캔 시작`을 직접 선택하는 ' +
+            '구조였습니다. TO-BE에서는 예상 결제 금액을 먼저 보여주고 휴대폰에서 결제를 ' +
+            '완료하도록 안내하며, 결제 전에는 `결제 대기 중` 상태를 표시하도록 변경했습니다.',
+          targets: {
+            current:  [{ x: 69.4, y: 87.6, w: 26.8, h: 8.4 }],
+            proposal: [{ x: 3.7, y: 84.5, w: 92.6, h: 12.2 }]
+          }
+        }
+      ],
+      effects: [
+        '적용될 스캔 조건을 한 화면에서 확인하기 쉬워집니다',
+        '선택된 옵션과 권장값을 구분하기 쉬워집니다',
+        '설정과 모바일 결제의 역할을 분리할 수 있습니다'
+      ]
+    },
+    {
+      id: 'device-fax', label: '팩스',
+      changes: [
+        {
+          id: 'recipients', type: 'restructure', shortLabel: '재구성',
+          title: '수신처 관리 강화',
+          description: 'AS-IS에서는 팩스 번호 입력과 숫자 키패드, 추가된 수신처가 좁은 영역 안에 ' +
+            '배치되어 있었습니다. TO-BE에서는 번호 입력·키패드와 추가된 수신처 목록을 분리해 ' +
+            '여러 수신처를 입력하고 확인하는 과정을 명확하게 구성했습니다.',
+          targets: {
+            current:  [{ x: 3.2, y: 15.9, w: 24.2, h: 67.7 }],
+            proposal: [{ x: 3.7, y: 12.5, w: 45.5, h: 72.5 }]
+          }
+        },
+        {
+          id: 'summary', type: 'restructure', shortLabel: '정보 통합',
+          title: '전송 조건과 요금 통합',
+          description: 'AS-IS에서는 해상도와 단면·양면 설정은 확인할 수 있었지만, 현재 원고 상태와 ' +
+            '예상 요금을 함께 확인하기 어려웠습니다. TO-BE에서는 전송 설정 아래에 감지된 원고 수, ' +
+            '수신처 수, 적용 설정과 예상 금액을 함께 요약했습니다.',
+          targets: {
+            current:  [{ x: 48.0, y: 15.9, w: 49.0, h: 62.7 }],
+            proposal: [{ x: 50.5, y: 62.2, w: 46.1, h: 22.8 }]
+          }
+        },
+        {
+          id: 'pay-role', type: 'restructure', shortLabel: '분리',
+          title: '모바일 결제 후 전송',
+          description: 'AS-IS에서는 복합기 화면에서 `결제하기`와 `팩스 시작`이 함께 제공되었습니다. ' +
+            'TO-BE에서는 설정을 완료한 뒤 휴대폰에서 결제를 진행하도록 안내하고, 결제가 완료되기 ' +
+            '전에는 전송하지 않는 `결제 대기 중` 상태로 변경했습니다.',
+          targets: {
+            current:  [{ x: 68.7, y: 87.6, w: 27.3, h: 8.4 }],
+            proposal: [{ x: 3.7, y: 88.2, w: 92.9, h: 8.0 }]
+          }
+        }
+      ],
+      effects: [
+        '여러 수신처를 입력하고 확인하는 과정을 구분하기 쉬워집니다',
+        '전송 전에 원고·수신처·설정·예상 금액을 함께 확인할 수 있습니다',
+        '모바일 결제와 실제 팩스 전송 순서를 명확하게 할 수 있습니다'
+      ]
+    }
+  ];
+
+  DEVICE.forEach(function (d) {
     R.screens.push({
       id: d.id, label: d.label, wide: true,
-      current:  { img: 'shots/' + d.file + '.png' },
-      proposal: { img: 'proposal/shots/' + d.file + '.png' },
-      notes: [
-        { title: '개선 사항 정리 예정',
-          body: '복합기 화면 비교를 먼저 올려 두었습니다. 변경점 표시와 개선 문구는 다음 단계에 채웁니다.' }
-      ]
+      current:  { img: 'shots/' + d.id + '.png' },
+      proposal: { img: 'proposal/shots/' + d.id + '.png' },
+      changes: d.changes,
+      effects: d.effects
     });
   });
 })(window.REVIEW);

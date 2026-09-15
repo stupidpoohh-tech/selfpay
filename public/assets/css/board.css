@@ -228,11 +228,14 @@ a{color:inherit;text-decoration:none}
  * 두 화면이 가로 폭을 나눠 갖고 노트는 아래로 내린다. */
 .cmp--wide{
   grid-template-columns:1fr 1fr;
-  grid-template-rows:minmax(0,1fr) auto;
+  grid-template-rows:minmax(0,2.1fr) minmax(0,1fr);
 }
 .cmp--wide .pane--current{grid-area:1 / 1}
 .cmp--wide .pane--proposal{grid-area:1 / 2}
-.cmp--wide .notes{grid-area:2 / 1 / 3 / 3;max-height:34vh}
+.cmp--wide .notes{grid-area:2 / 1 / 3 / 3}
+.cmp--wide .note{padding:14px 0}
+/* 변경점 번호·라벨이 화면 밖 여백에 서므로 좌우를 그만큼 비워 둔다 */
+.cmp--wide .pane__body{padding-left:52px;padding-right:52px}
 .tabs{display:none}
 
 /* 패널 */
@@ -485,10 +488,13 @@ button.note:focus-visible{outline:2px solid rgba(47,109,246,.55);outline-offset:
   /* 스크린샷이 높이를 최대한 쓰도록,
   html:not(.pcview) 노트는 아래에서 올라오는 시트로 */
   html:not(.pcview) .cmp{grid-template-columns:1fr;grid-template-rows:auto minmax(0,1fr);gap:10px}
-  /* 한 장씩 보는 배치에서는 복합기용 2열 배치를 쓰지 않는다 */
+  /* 한 장씩 보는 배치에서는 복합기용 2열 배치를 쓰지 않는다.
+   * 다만 가로로 긴 화면은 변경점 번호·라벨이 설 자리를 좌우에 남긴다 */
   html:not(.pcview) .cmp--wide .pane,
   html:not(.pcview) .cmp--wide .notes{grid-area:auto}
-  html:not(.pcview) .cmp--wide .notes{max-height:none}
+  html:not(.pcview) .cmp--wide .pane__body{padding-left:34px;padding-right:60px}
+  /* 아래로 밀린 번호가 자막과 겹친다. 위의 AS-IS / TO-BE 가 같은 것을 말해 준다 */
+  html:not(.pcview) .cmp--wide .caption{display:none}
   html:not(.pcview) .tabrow{display:flex;align-items:center;gap:10px}
   html:not(.pcview) .tabs{display:inline-flex;gap:2px;background:#f1f4f9;border-radius:10px;padding:3px}
   html:not(.pcview) .tabs button{
