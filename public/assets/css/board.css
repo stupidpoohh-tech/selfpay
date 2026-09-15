@@ -290,6 +290,129 @@ a{color:inherit;text-decoration:none}
 .pane__none b{font-size:14.5px;font-weight:800;color:var(--muted)}
 .pane__none span{font-size:12.5px;color:var(--muted-2)}
 
+/* ── 전체 흐름 전용 보기 ─────────────────────────
+ * 화면 한 장이 아니라 구조 변화를 본다. 왼쪽에서 단계를 고르고,
+ * 가운데에서 그 단계를 크게 보고, 오른쪽에서 관련 개선 사항을 읽는다. */
+.fx{
+  height:100%;min-height:0;display:grid;
+  grid-template-columns:252px minmax(0,1fr) minmax(300px,336px);gap:14px;
+}
+
+/* 단계 목록 — 고르지 않은 단계도 지우지 않고 낮은 강도로 남긴다 */
+.fx__rails{
+  background:var(--panel);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);
+  padding:14px;overflow:auto;min-height:0;display:flex;flex-direction:column;gap:11px;
+}
+.fxrail__head{display:flex;align-items:center;gap:7px}
+.fxrail__sum,
+.fxrail__solo{
+  font-style:normal;font-size:11.5px;font-weight:800;border-radius:999px;padding:3px 9px;
+  background:var(--soft);color:#5b6577;
+}
+.fxrail__solo{background:var(--accent-soft);color:var(--accent)}
+.fxrail__title{margin:9px 0 9px;font-size:13.5px;font-weight:800;letter-spacing:-.01em}
+.fxrail__list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.fxrail__item + .fxrail__item::before{
+  content:"";display:block;width:1px;height:9px;margin:0 0 0 19px;background:#d7dee9;
+}
+.fxrail__foot{
+  margin:10px 0 0;font-size:11.5px;line-height:1.6;color:var(--muted-2);
+  border-top:1px dashed var(--line);padding-top:9px;
+}
+.fxchip{
+  width:100%;display:flex;align-items:center;gap:9px;text-align:left;
+  border:1px solid var(--line);border-radius:11px;background:#fcfdff;padding:8px 10px;
+  transition:border-color .16s ease,background .16s ease,box-shadow .16s ease;
+}
+.fxchip:hover{border-color:#cdd8ea;background:#fff}
+.fxchip.is-on{
+  border-color:var(--accent);background:var(--accent-soft);
+  box-shadow:0 0 0 3px rgba(47,109,246,.13);
+}
+.fxchip__n{
+  flex:none;width:20px;height:20px;border-radius:6px;display:grid;place-items:center;
+  font-size:11px;font-weight:800;background:#eef1f5;color:#5b6577;
+}
+.fxchip.is-on .fxchip__n{background:var(--accent);color:#fff}
+.fxchip__t{font-size:13px;font-weight:700;line-height:1.35;color:#5b6577;min-width:0}
+.fxchip.is-on .fxchip__t{color:var(--text)}
+
+/* 기기 구분 — 모바일은 파란 계열, 복합기는 초록 계열 */
+.fxwhere{
+  font-style:normal;font-size:10.5px;font-weight:800;border-radius:5px;padding:1px 5px;
+  margin-right:5px;background:var(--accent-soft);color:var(--accent);
+}
+.fxwhere--device{background:var(--green-soft);color:#0b7a51}
+
+/* 두 줄 사이에 무엇이 달라졌는지 한 마디 */
+.fx__merge{display:flex;align-items:center;gap:8px}
+.fx__merge i{flex:1;height:1px;background:var(--line)}
+.fx__merge span{
+  font-size:11.5px;font-weight:800;color:var(--accent);
+  background:var(--accent-soft);border-radius:999px;padding:3px 10px;
+}
+
+/* 고른 단계를 크게 */
+.fx__stage{display:flex;flex-direction:column;gap:12px;min-height:0;min-width:0}
+.fx__panes{flex:1;min-height:0;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.fx--solo{grid-template-columns:272px minmax(0,1fr) minmax(340px,400px)}
+.fx--solo .fx__panes{grid-template-columns:minmax(0,1fr)}
+.fxpane{
+  display:flex;flex-direction:column;gap:10px;min-height:0;min-width:0;
+  background:var(--panel);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);
+  padding:14px 16px 12px;transition:border-color .16s ease,box-shadow .16s ease;
+}
+.fxpane.is-focus{border-color:#bcd0f8;box-shadow:0 0 0 3px rgba(47,109,246,.16),var(--shadow)}
+.fxpane__head{flex:none;display:flex;align-items:center;gap:9px}
+.fxpane__label{
+  font-size:14.5px;font-weight:800;letter-spacing:-.01em;min-width:0;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.fxpane__n{margin-left:auto;flex:none;font-size:12px;font-weight:800;color:var(--muted)}
+.fxpane__fig{flex:1;min-height:0;position:relative;display:grid;place-items:center}
+/* 높이가 늘어나는 것을 막으려면 그림을 흐름에서 빼야 한다 */
+.fxshot{
+  position:absolute;inset:0;margin:auto;max-width:100%;max-height:100%;width:auto;height:auto;
+  display:block;cursor:zoom-in;border:1px solid var(--line);border-radius:12px;background:#fff;
+}
+.fxstate{
+  width:100%;max-width:340px;display:grid;justify-items:center;gap:7px;text-align:center;
+  border:1px dashed var(--line);border-radius:14px;background:#fbfcfe;padding:26px 20px;
+}
+.fxstate__tag{font-size:11px;font-weight:800;color:var(--muted-2);letter-spacing:.02em}
+.fxstate b{font-size:15px;font-weight:800}
+.fxstate span{font-size:12.5px;line-height:1.6;color:var(--muted)}
+.fxpane__desc{flex:none;font-size:12.5px;line-height:1.6;color:var(--muted)}
+.fxpane__desc p{margin:0}
+.fxpane__items{
+  margin:6px 0 0;padding:0;list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:3px 12px;
+}
+.fxpane__items li{font-size:12px;color:#5b6577;display:flex;gap:7px}
+.fxpane__items li::before{
+  content:"";flex:none;width:4px;height:4px;border-radius:50%;background:#c3cbd8;margin-top:7px;
+}
+
+/* 흐름 안에서의 이전·다음. 위쪽 이전·다음은 흐름 항목을 넘긴다 */
+.fx__pager{flex:none;display:flex;align-items:center;justify-content:center;gap:12px}
+.fxnav{
+  display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 14px;
+  border:1px solid var(--line);border-radius:10px;background:var(--panel);
+  font-size:13px;font-weight:700;color:#5b6577;box-shadow:var(--shadow);
+}
+.fxnav:hover:not(:disabled){border-color:#cdd8ea;color:var(--text)}
+.fxnav:disabled{opacity:.4;cursor:default;box-shadow:none}
+.fx__pos{font-size:13px;font-weight:800;color:var(--muted);min-width:82px;text-align:center}
+
+/* 고른 단계와 관련된 항목만 진하게 */
+.notes--flow .note__body{max-width:46ch}
+.notes--flow .note__body b{color:var(--text);font-weight:800}
+.notes--flow .note--static{transition:opacity .18s ease,background .18s ease}
+.notes--flow.has-hit .note--static{opacity:.42}
+.notes--flow.has-hit .note--static.is-hit{
+  opacity:1;background:#f7faff;border-radius:12px;
+  box-shadow:inset 3px 0 0 var(--accent);padding-left:13px;
+}
+
 /* ── 개선 노트 ─────────────────────────────────── */
 .notes{
   background:var(--panel);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);
@@ -484,6 +607,28 @@ button.note:focus-visible{outline:2px solid rgba(47,109,246,.55);outline-offset:
   html:not(.pcview) .arrow{width:30px;height:30px}
   html:not(.pcview) .counter{min-width:40px;font-size:12.5px}
   html:not(.pcview) .stage{padding:10px 14px 12px}
+
+  /* 전체 흐름: 좌우 → 위아래, 단계 목록은 가로 스크롤, 개선 사항은 아래로 */
+  html:not(.pcview) .board{overflow:visible}
+  html:not(.pcview) .stage{overflow:visible}
+  html:not(.pcview) .fx{grid-template-columns:minmax(0,1fr);height:auto;gap:10px}
+  html:not(.pcview) .fx__rails{overflow:hidden;min-width:0;padding:12px 12px 10px}
+  html:not(.pcview) .fxrail{min-width:0}
+  html:not(.pcview) .fxrail__list{flex-direction:row;overflow-x:auto;gap:0;padding-bottom:2px}
+  html:not(.pcview) .fxrail__item{flex:none;max-width:58vw}
+  html:not(.pcview) .fxrail__item + .fxrail__item::before{width:9px;height:1px;margin:auto 0}
+  html:not(.pcview) .fxchip{width:auto;white-space:nowrap}
+  html:not(.pcview) .fxchip__t{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  html:not(.pcview) .fx__panes{grid-template-columns:1fr;gap:10px}
+  html:not(.pcview) .fx__panes{flex:0 0 auto}
+  html:not(.pcview) .fxpane__fig{flex:0 0 auto;min-height:0;height:56vh}
+  html:not(.pcview) .fxpane__items{grid-template-columns:1fr}
+  html:not(.pcview) .fx .notes{
+    position:static;transform:none;max-height:none;z-index:auto;
+    border-radius:16px;border:1px solid var(--line);box-shadow:var(--shadow);
+  }
+  html:not(.pcview) .fx .notes__close{display:none}
+  html:not(.pcview) .fx .notes__body{overflow:visible}
 
   /* 스크린샷이 높이를 최대한 쓰도록,
   html:not(.pcview) 노트는 아래에서 올라오는 시트로 */

@@ -50,7 +50,12 @@
     protoSide: 'proposal',
     active: null,           /* 클릭·포커스로 고정한 변경점 */
     hover: null,            /* 마우스가 올라간 변경점 */
-    showAnno: true          /* 변경점 보기. 처음부터 켜 둔다 */
+    showAnno: true,         /* 변경점 보기. 처음부터 켜 둔다 */
+
+    /* 전체 흐름 전용. 어느 쪽 몇 번째 단계를 크게 보고 있는지 */
+    fscreen: null,
+    fside: 'current',
+    fstep: { current: 0, proposal: 0 }
   };
 
   var el = {
@@ -517,6 +522,264 @@
     });
   }
 
+  /* ── 전체 흐름 전용 보기 ───────────────────── */
+  /* 전체 흐름은 화면 한 장의 비교가 아니라 구조 변화다. 단계를 하나 골라
+   * 크게 보고, 나머지 단계는 옆 목록에 낮은 강도로 남겨 현재 위치를 알린다. */
+  function flowSides(s) {
+    return ['current', 'proposal'].filter(function (k) {
+      return s[k] && (s[k].steps || []).length;
+    });
+  }
+
+  function flowSeq(s) {
+    var out = [];
+    flowSides(s).forEach(function (sd) {
+      s[sd].steps.forEach(function (_, i) { out.push({ side: sd, i: i }); });
+    });
+    return out;
+  }
+
+  function stepAt(s, side) {
+    var n = s[side].steps.length;
+    return Math.max(0, Math.min(n - 1, state.fstep[side] || 0));
+  }
+
+  function curStep(s) {
+    return s[state.fside] ? s[state.fside].steps[stepAt(s, state.fside)] : null;
+  }
+
+  function resetFlow(s) {
+    state.fscreen = s.id;
+    state.fstep = { current: 0, proposal: 0 };
+    state.fside = flowSides(s)[0] || 'proposal';
+  }
+
+  function whereHtml(st, cls) {
+    return st.where
+      ? '<em class="' + cls + ' ' + cls + '--' + (st.where === '복합기' ? 'device' : 'mobile') +
+        '">' + st.where + '</em>' : '';
+  }
+
+  /* 단계 목록. 고르지 않은 단계도 지우지 않고 낮은 강도로 남긴다 */
+  function railHtml(s, side) {
+    var d = s[side];
+    var solo = flowSides(s).length === 1;
+    var cur = stepAt(s, side);
+    var items = d.steps.map(function (st, i) {
+      var on = state.fside === side && i === cur;
+      return '<li class="fxrail__item">' +
+        '<button type="button" class="fxchip' + (on ? ' is-on' : '') +
+          '" data-fside="' + side + '" data-fstep="' + i + '" aria-pressed="' + on + '">' +
+          '<span class="fxchip__n">' + (i + 1) + '</span>' +
+          '<span class="fxchip__t">' + whereHtml(st, 'fxwhere') + st.label + '</span>' +
+        '</button></li>';
+    }).join('');
+
+    return '<section class="fxrail fxrail--' + side + '">' +
+      '<div class="fxrail__head">' +
+        '<span class="tag tag--' + (side === 'current' ? 'as">AS-IS' : 'to">TO-BE') + '</span>' +
+        (d.summary ? '<em class="fxrail__sum">' + d.summary + '</em>' : '') +
+        (solo ? '<em class="fxrail__solo">신규 흐름</em>' : '') +
+      '</div>' +
+      (d.title ? '<p class="fxrail__title">' + d.title + '</p>' : '') +
+      '<ol class="fxrail__list">' + items + '</ol>' +
+      (d.foot ? '<p class="fxrail__foot">' + d.foot + '</p>' : '') +
+    '</section>';
+  }
+
+  /* 두 줄 사이에 무엇이 달라졌는지 한 마디로 둔다. 데이터에서 그대로 나온다 */
+  function mergeHtml(s) {
+    if (flowSides(s).length < 2) return '';
+    var a = s.current.steps.length, b = s.proposal.steps.length;
+    if (b >= a) return '<div class="fx__merge" aria-hidden="true"><i></i></div>';
+    var word = b === 1 ? '하나로 통합' : a - b + '단계 축소';
+    return '<div class="fx__merge"><i></i><span>' + word + '</span><i></i></div>';
+  }
+
+  /* 고른 단계를 크게 본다 */
+  function fpaneHtml(s, side) {
+    var d = s[side];
+    var i = stepAt(s, side);
+    var st = d.steps[i];
+    var focus = state.fside === side;
+    var fig = st.img
+      ? '<img class="fxshot" src="' + st.img + '" alt="' + st.label + '" data-zoom="' + st.img + '">'
+      : '<div class="fxstate"><span class="fxstate__tag">화면 없이 상태만 바뀌는 단계</span>' +
+        '<b>' + whereHtml(st, 'fxwhere') + st.label + '</b>' +
+        (st.note ? '<span>' + st.note + '</span>' : '') + '</div>';
+
+    var items = (st.items && st.items.length)
+      ? '<ul class="fxpane__items">' + st.items.map(function (t) {
+          return '<li>' + t + '</li>';
+        }).join('') + '</ul>'
+      : '';
+
+    return '<section class="fxpane' + (focus ? ' is-focus' : '') + '" data-fpane="' + side + '">' +
+      '<div class="fxpane__head">' +
+        '<span class="tag tag--' + (side === 'current' ? 'as">AS-IS' : 'to">TO-BE') + '</span>' +
+        '<b class="fxpane__label">' + whereHtml(st, 'fxwhere') + st.label + '</b>' +
+        '<span class="fxpane__n">' + (i + 1) + ' / ' + d.steps.length + '</span>' +
+      '</div>' +
+      '<div class="fxpane__fig">' + fig + '</div>' +
+      '<div class="fxpane__desc">' +
+        (st.note && st.img ? '<p>' + st.note + '</p>' : '') + items +
+      '</div>' +
+    '</section>';
+  }
+
+  /* 첫 문장만 굵게 둔다. 문구 자체는 그대로다 */
+  function lead(t) {
+    return String(t).replace(/^([\s\S]{6,140}?다\.)(\s)/, '<b>$1</b>$2');
+  }
+
+  function flowNotesHtml(s) {
+    var notes = s.notes || [];
+    var list = notes.length
+      ? notes.map(function (n, i) {
+          return '<div class="note note--static" data-note="' + i + '">' +
+            '<span class="note__num">' + SPAnno.pad(i + 1) + '</span>' +
+            '<span class="note__text"><span class="note__title">' + n.title + '</span>' +
+            '<span class="note__body">' + lead(n.body) + '</span></span></div>';
+        }).join('')
+      : '<div class="notes__empty">개선사항 정리 예정</div>';
+
+    var effects = (s.effects && s.effects.length)
+      ? '<div class="effects"><h3>기대 효과</h3><ul>' +
+        s.effects.map(function (t) { return '<li>' + t + '</li>'; }).join('') + '</ul></div>'
+      : '';
+
+    return '<aside class="notes notes--flow">' +
+      '<div class="notes__head"><h2>개선 사항</h2>' +
+      '<span class="notes__count">' + (notes.length ? '총 ' + notes.length + '개' : '작성 전') + '</span></div>' +
+      '<div class="notes__body">' + list + effects + '</div></aside>';
+  }
+
+  function pagerHtml(s) {
+    var seq = flowSeq(s);
+    var at = seqIndex(s, seq);
+    var d = s[state.fside];
+    var pos = (state.fside === 'current' ? 'AS-IS ' : (flowSides(s).length > 1 ? 'TO-BE ' : '')) +
+      (stepAt(s, state.fside) + 1) + ' / ' + d.steps.length;
+    return '<div class="fx__pager">' +
+      '<button type="button" class="fxnav" data-fmove="-1"' + (at <= 0 ? ' disabled' : '') + '>' +
+        '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
+        'stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 5-7 7 7 7"/></svg>' +
+        '이전 단계</button>' +
+      '<span class="fx__pos">' + pos + '</span>' +
+      '<button type="button" class="fxnav" data-fmove="1"' + (at >= seq.length - 1 ? ' disabled' : '') + '>' +
+        '다음 단계' +
+        '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
+        'stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 5 7 7-7 7"/></svg>' +
+      '</button></div>';
+  }
+
+  function seqIndex(s, seq) {
+    for (var i = 0; i < seq.length; i++) {
+      if (seq[i].side === state.fside && seq[i].i === stepAt(s, state.fside)) return i;
+    }
+    return 0;
+  }
+
+  function drawFlow() {
+    var s = screen();
+    if (state.fscreen !== s.id) resetFlow(s);
+    var sides = flowSides(s);
+
+    el.stage.innerHTML =
+      '<div class="fx' + (sides.length === 1 ? ' fx--solo' : '') + '" id="fx">' +
+        '<div class="fx__rails">' +
+          railHtml(s, sides[0]) + (sides.length > 1 ? mergeHtml(s) + railHtml(s, sides[1]) : '') +
+        '</div>' +
+        '<div class="fx__stage">' +
+          '<div class="fx__panes" id="fxPanes">' +
+            sides.map(function (sd) { return fpaneHtml(s, sd); }).join('') +
+          '</div>' +
+          pagerHtml(s) +
+        '</div>' +
+        flowNotesHtml(s) +
+      '</div>';
+
+    bindFlow();
+    syncFlowNotes();
+  }
+
+  function bindFlow() {
+    var root = document.getElementById('fx');
+    if (!root) return;
+
+    root.addEventListener('click', function (e) {
+      var chip = e.target.closest('[data-fstep]');
+      if (chip) {
+        state.fside = chip.getAttribute('data-fside');
+        state.fstep[state.fside] = +chip.getAttribute('data-fstep');
+        return redrawFlow();
+      }
+      var nav = e.target.closest('[data-fmove]');
+      if (nav && !nav.disabled) return moveStep(+nav.getAttribute('data-fmove'));
+      /* 크게 본 화면을 누르면 기존 원본 보기를 그대로 쓴다 */
+      var im = e.target.closest('.fxshot[data-zoom]');
+      if (im) openZoom(im.getAttribute('data-zoom'));
+      /* 포커스가 없는 쪽 화면을 누르면 그쪽으로 옮겨 간다 */
+      var pane = e.target.closest('[data-fpane]');
+      if (pane && !im) {
+        var sd = pane.getAttribute('data-fpane');
+        if (sd !== state.fside) { state.fside = sd; redrawFlow(); }
+      }
+    });
+
+    el.stage.querySelectorAll('.fxshot').forEach(function (img) {
+      img.addEventListener('error', function () {
+        img.replaceWith(Object.assign(document.createElement('p'), {
+          className: 'pane__miss',
+          textContent: img.getAttribute('src') + ' 를 찾을 수 없습니다.'
+        }));
+      });
+    });
+  }
+
+  /* 단계만 바뀌므로 목록·화면·쪽수만 다시 그린다 */
+  function redrawFlow() {
+    var s = screen();
+    var root = document.getElementById('fx');
+    if (!root) return draw();
+    var sides = flowSides(s);
+
+    root.querySelector('.fx__rails').innerHTML =
+      railHtml(s, sides[0]) + (sides.length > 1 ? mergeHtml(s) + railHtml(s, sides[1]) : '');
+    root.querySelector('.fx__panes').innerHTML =
+      sides.map(function (sd) { return fpaneHtml(s, sd); }).join('');
+    root.querySelector('.fx__pager').outerHTML = pagerHtml(s);
+
+    syncFlowNotes();
+    syncUrl();
+  }
+
+  /* 고른 단계와 관련된 개선 사항만 진하게 둔다 */
+  function syncFlowNotes() {
+    var s = screen();
+    var st = curStep(s);
+    var refs = (st && st.ref) || [];
+    var notes = el.stage.querySelectorAll('.note[data-note]');
+    var any = false;
+    notes.forEach(function (n) {
+      var hit = refs.indexOf(+n.getAttribute('data-note')) >= 0;
+      n.classList.toggle('is-hit', hit);
+      if (hit) any = true;
+    });
+    var box = el.stage.querySelector('.notes--flow');
+    if (box) box.classList.toggle('has-hit', any);
+  }
+
+  function moveStep(step) {
+    var s = screen();
+    var seq = flowSeq(s);
+    var at = seqIndex(s, seq) + step;
+    if (at < 0 || at >= seq.length) return move(step);   /* 끝에서는 흐름 항목을 넘긴다 */
+    state.fside = seq[at].side;
+    state.fstep[state.fside] = seq[at].i;
+    redrawFlow();
+  }
+
   /* ── 프로토타입 보기 ───────────────────────── */
   /* 고른 쪽에 페이지가 없으면 반대쪽을 대신 보여 주지 않는다.
    * AS-IS 와 TO-BE 의 있고 없음이 섞이면 안 된다. */
@@ -683,7 +946,9 @@
     if (flowOnly && state.mode !== 'compare') setMode('compare');
     el.modeSeg.hidden = flowOnly;
     drawNav();
-    if (state.mode === 'compare') drawCompare(); else drawProto();
+    if (state.mode !== 'compare') drawProto();
+    else if (flowOnly) drawFlow();
+    else drawCompare();
     el.protoSeg.hidden = flowOnly || state.mode !== 'proto';
     document.body.setAttribute('data-mode', state.mode);
     document.body.setAttribute('data-side', state.side);
@@ -697,6 +962,13 @@
     q.set('surface', surf().id);
     q.set('screen', s.id);
     if (state.mode !== 'compare') q.set('mode', state.mode);
+    /* 전체 흐름은 고른 단계까지 남겨야 새로 고쳐도 같은 자리에서 이어진다 */
+    if (surf().kind === 'flow' && state.mode === 'compare' && state.fscreen === s.id) {
+      var at = stepAt(s, state.fside);
+      if (state.fside !== flowSides(s)[0] || at > 0) {
+        q.set('step', (state.fside === 'current' ? 'a' : 'b') + (at + 1));
+      }
+    }
     if (DEBUG) q.set('debug', 'hits');
     history.replaceState(null, '', '?' + q.toString());
   }
@@ -719,6 +991,7 @@
   function goTo(i) {
     if (i < 0 || i >= list().length || i === state.index) return;
     state.index = i;
+    state.fscreen = null;
     draw();
   }
 
@@ -728,6 +1001,7 @@
     if (at.surface === state.surface && at.index === state.index) return;
     state.surface = at.surface;
     state.index = at.index;
+    state.fscreen = null;
     draw();
   }
 
@@ -735,6 +1009,7 @@
     if (si === state.surface || si < 0 || si >= SURFACES.length) return;
     state.surface = si;
     state.index = 0;
+    state.fscreen = null;
     draw();
   }
 
@@ -785,8 +1060,10 @@
     if (e.target.closest('.note')) return;      /* 목록 안에서는 좌우키를 넘기지 않는다 */
     /* 원본 보기가 열려 있으면 뒤 화면을 건드리지 않는다 */
     if (el.zoom.classList.contains('is-on')) return;
-    if (e.key === 'ArrowLeft') move(-1);
-    if (e.key === 'ArrowRight') move(1);
+    /* 전체 흐름에서는 좌우키가 단계를 넘기고, 끝에서만 흐름 항목으로 넘어간다 */
+    var inFlow = surf().kind === 'flow' && state.mode === 'compare' && document.getElementById('fx');
+    if (e.key === 'ArrowLeft') inFlow ? moveStep(-1) : move(-1);
+    if (e.key === 'ArrowRight') inFlow ? moveStep(1) : move(1);
   });
 
   el.pcBtn.addEventListener('click', function () { setPc(!pcOn); });
@@ -813,6 +1090,20 @@
   if (!at && wantSurface) state.index = 0;
 
   if (params.get('mode') === 'proto') setMode('proto');
+
+  /* ?step=a2 · b3 → AS-IS 2번째 · TO-BE 3번째 단계 */
+  var wantStep = /^([ab])(\d{1,2})$/.exec(params.get('step') || '');
+  if (wantStep) {
+    var cur = list()[state.index];
+    if (cur && cur.kind === 'flow') {
+      var sd = wantStep[1] === 'a' ? 'current' : 'proposal';
+      if (flowSides(cur).indexOf(sd) >= 0) {
+        resetFlow(cur);
+        state.fside = sd;
+        state.fstep[sd] = +wantStep[2] - 1;
+      }
+    }
+  }
 
   /* 좁은 화면에서만 'PC 화면으로 보기' 를 내놓는다.
    * 켜고 끄는 판단은 <head> 스크립트가 이미 했고, 여기서는 버튼만 맞춘다. */

@@ -115,6 +115,51 @@ function ok(cond, name, extra) {
       shots.map(x => x.src + (x.on ? '' : ' 없음')).join(' · '));
   }
 
+  /* 전체 흐름은 단계를 골라 크게 보는 전용 화면이다 */
+  const fx = () => d.evaluate(() => {
+    const on = document.querySelector('.fxchip.is-on');
+    const shot = document.querySelector('.fxpane.is-focus .fxshot');
+    return {
+      chips: document.querySelectorAll('.fxchip').length,
+      panes: document.querySelectorAll('.fxpane').length,
+      on: on && on.textContent.trim(),
+      pos: (document.querySelector('.fx__pos') || {}).textContent,
+      w: shot ? Math.round(shot.getBoundingClientRect().width) : 0,
+      hit: [...document.querySelectorAll('.note.is-hit .note__title')].map(e => e.textContent),
+      none: document.querySelectorAll('.fx .pane__none').length,
+      url: location.search
+    };
+  });
+
+  await d.goto(BASE + '/?surface=flow&screen=entry'); await d.waitForTimeout(700);
+  let f = await fx();
+  ok(f.chips === 6 && f.panes === 2, '첫 진입은 단계 목록과 두 화면으로 열린다', `칩 ${f.chips} · 화면 ${f.panes}`);
+  ok(f.w >= 260, '고른 단계 화면이 크게 보인다', f.w + 'px');
+  ok(f.hit.length > 0, '고른 단계와 관련된 개선 사항이 강조된다', f.hit.join('·'));
+
+  await d.click('.fxrail--proposal .fxrail__item:nth-child(1) .fxchip'); await d.waitForTimeout(350);
+  f = await fx();
+  ok(f.pos === 'TO-BE 1 / 2' && f.url.includes('step=b1'), '단계를 누르면 그 단계로 옮겨 간다', f.pos + ' ' + f.url);
+
+  await d.goto(BASE + '/?surface=flow&screen=entry&step=a3'); await d.waitForTimeout(700);
+  f = await fx();
+  ok(f.pos === 'AS-IS 3 / 4', '주소에 남은 단계로 다시 열린다', f.pos);
+
+  await d.click('[data-fmove="1"]'); await d.waitForTimeout(300);
+  ok((await fx()).pos === 'AS-IS 4 / 4', '흐름 안에서 다음 단계로 간다', (await fx()).pos);
+  await d.click('[data-fmove="-1"]'); await d.waitForTimeout(300);
+  ok((await fx()).pos === 'AS-IS 3 / 4', '흐름 안에서 이전 단계로 간다', (await fx()).pos);
+  await d.keyboard.press('ArrowRight'); await d.waitForTimeout(300);
+  ok((await fx()).pos === 'AS-IS 4 / 4', '좌우키로도 단계를 넘긴다', (await fx()).pos);
+
+  await d.goto(BASE + '/?surface=flow&screen=device-flow'); await d.waitForTimeout(700);
+  f = await fx();
+  ok(f.chips === 7 && f.panes === 1 && f.none === 0,
+    '모바일 ↔ 복합기는 빈 AS-IS 자리 없이 한 흐름으로 나온다', `칩 ${f.chips} · 화면 ${f.panes} · 빈자리 ${f.none}`);
+  const ring2 = [];
+  for (let i = 0; i < 7; i++) { ring2.push((await fx()).pos); await d.click('[data-fmove="1"]').catch(() => {}); await d.waitForTimeout(160); }
+  ok(ring2.join(' ') === '1 / 7 2 / 7 3 / 7 4 / 7 5 / 7 6 / 7 7 / 7', '일곱 단계를 차례로 넘긴다', ring2.join(' '));
+
   /* 영역별 화면 수가 데이터와 맞는다 */
   const counts = await d.evaluate(() =>
     REVIEW.surfaces.map(sf => sf.groups.reduce((n, g) => n + g.screens.length, 0)));

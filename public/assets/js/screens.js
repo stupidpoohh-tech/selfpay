@@ -17,8 +17,9 @@
  *
  * kind: 'flow' 인 항목은 개별 화면 비교가 아니라 진입·작업 흐름 비교다.
  * 이 항목은 img 대신 steps 를 갖는다. 실제 서비스 페이지가 아니므로 page 는 없다.
- *   { summary, title, steps:[{ label, note, items:[…], img }], foot }
- *   img 는 기존 스크린샷을 작게 다시 쓰는 용도다. 새 이미지를 만들지 않는다.
+ *   { summary, title, steps:[{ where, label, note, items:[…], img, ref:[…] }], foot }
+ *   img 는 기존 스크린샷을 다시 쓰는 용도다. 새 이미지를 만들지 않는다.
+ *   where 는 그 단계를 보는 기기(모바일 · 복합기), ref 는 이 단계와 관련된 notes 의 번호다.
  */
 window.REVIEW = {
   title: '무인과금 서비스 UI/UX 개선',
@@ -70,11 +71,12 @@ window.REVIEW = {
         summary: '4단계',
         title: '로그인 화면에서 시작',
         steps: [
-          { label: '로그인 화면', note: '첫 진입 시 먼저 노출됩니다.', img: 'shots/index.png' },
+          { label: '로그인 화면', note: '첫 진입 시 먼저 노출됩니다.', img: 'shots/index.png', ref: [0] },
           { label: '로그인 또는 비회원 이용 선택',
-            note: '로그인·간편 로그인과 비회원으로 이용하기 중에서 고릅니다.' },
-          { label: '홈', note: '인쇄·복사·스캔·팩스 카드가 여기서 처음 보입니다.', img: 'shots/home.png' },
-          { label: '작업 선택' }
+            note: '로그인·간편 로그인과 비회원으로 이용하기 중에서 고릅니다.', ref: [0] },
+          { label: '홈', note: '인쇄·복사·스캔·팩스 카드가 여기서 처음 보입니다.',
+            img: 'shots/home.png', ref: [0] },
+          { label: '작업 선택', ref: [0] }
         ],
         foot: '비회원 사용자는 로그인 화면 → 비회원 이용 → 홈 경로를 거칩니다.'
       },
@@ -83,8 +85,8 @@ window.REVIEW = {
         title: '홈에서 시작',
         steps: [
           { label: '홈', note: '인쇄·복사·스캔·팩스를 첫 화면에서 바로 보여 줍니다.',
-            img: 'proposal/shots/index.png' },
-          { label: '작업 선택' }
+            img: 'proposal/shots/index.png', ref: [1] },
+          { label: '작업 선택', ref: [1] }
         ],
         foot: '로그인 화면은 그대로 있으나 첫 화면은 아닙니다.'
       },
@@ -218,10 +220,10 @@ window.REVIEW = {
         summary: '3개 화면·상태',
         title: '여러 화면·상태로 나뉜 과정',
         steps: [
-          { label: '파일 확인', img: 'shots/print-confirm.png' },
+          { label: '파일 확인', img: 'shots/print-confirm.png', ref: [0] },
           { label: '인쇄 옵션', note: '독립된 페이지가 아니라 화면 위에 열리는 시트 상태입니다.',
-            img: 'shots/print-options.png' },
-          { label: '금액 확인', img: 'shots/print-amount.png' }
+            img: 'shots/print-options.png', ref: [0] },
+          { label: '금액 확인', img: 'shots/print-amount.png', ref: [0] }
         ]
       },
       proposal: {
@@ -232,7 +234,7 @@ window.REVIEW = {
             note: '시안에서 한 화면 안에 함께 놓인 것들입니다.',
             items: ['선택 파일 확인', '파일 미리보기', '인쇄 옵션 확인·변경',
                     '예상 결제 금액 확인', '결제 진입'],
-            img: 'proposal/shots/print-checkout.png' }
+            img: 'proposal/shots/print-checkout.png', ref: [1] }
         ]
       },
       notes: [
@@ -263,19 +265,20 @@ window.REVIEW = {
         title: '모바일과 복합기를 오가는 순서',
         steps: [
           { where: '모바일', label: '서비스 선택', img: 'proposal/shots/index.png',
-            note: '인쇄·복사·스캔·팩스 중에서 할 작업을 고릅니다.' },
+            note: '인쇄·복사·스캔·팩스 중에서 할 작업을 고릅니다.', ref: [1] },
           { where: '복합기', label: '기기 QR 스캔', img: 'proposal/shots/device-home.png',
-            note: '복합기 화면의 QR을 휴대폰으로 스캔합니다.' },
+            note: '복합기 화면의 QR을 휴대폰으로 스캔합니다.', ref: [1] },
           { where: '모바일', label: '연결 확인', img: 'proposal/shots/qr.png',
-            note: '어느 복합기에 연결되었는지 확인합니다.' },
+            note: '어느 복합기에 연결되었는지 확인합니다.', ref: [1] },
           { where: '복합기', label: '서비스 설정', img: 'proposal/shots/device-copy.png',
-            note: '복합기에서 서비스 옵션을 설정하고 예상 결제 금액을 확인합니다.' },
+            note: '복합기에서 서비스 옵션을 설정하고 예상 결제 금액을 확인합니다.', ref: [0, 1] },
           { where: '모바일', label: '결제', img: 'proposal/shots/payment.png',
-            note: '복합기에는 결제 대기 중 상태가 표시되고, 사용자는 휴대폰에서 해당 금액을 결제합니다.' },
+            note: '복합기에는 결제 대기 중 상태가 표시되고, 사용자는 휴대폰에서 해당 금액을 결제합니다.',
+            ref: [0, 1] },
           { where: '복합기', label: '결제 완료', img: 'proposal/shots/device-pay.png',
-            note: '모바일 결제가 완료되면 복합기 화면이 결제 완료 상태로 전환됩니다.' },
+            note: '모바일 결제가 완료되면 복합기 화면이 결제 완료 상태로 전환됩니다.', ref: [0, 1] },
           { where: '복합기', label: '서비스 실행',
-            note: '복사는 복사 시작, 스캔은 스캔 시작, 팩스는 전송 시작으로 이어집니다.' }
+            note: '복사는 복사 시작, 스캔은 스캔 시작, 팩스는 전송 시작으로 이어집니다.', ref: [0, 2] }
         ],
         foot: '복합기 단계 그림은 복합기 영역의 화면을 작게 다시 쓴 것입니다.'
       },
