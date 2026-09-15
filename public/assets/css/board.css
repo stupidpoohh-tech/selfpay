@@ -91,14 +91,20 @@ a{color:inherit;text-decoration:none}
   flex:none;height:var(--nav-h);display:flex;align-items:center;gap:14px;
   padding:0 20px;background:var(--panel);border-bottom:1px solid var(--line);
 }
-/* 첫 진입은 화면 비교가 아니라 흐름 팝업이라 따로 세워 둔다 */
-.entrybtn{
-  flex:none;height:34px;padding:0 13px;border:1px solid #cfe6d9;border-radius:9px;
-  background:var(--green-soft);color:#0b7a51;font-size:13.5px;font-weight:800;
-  display:inline-flex;align-items:center;gap:7px;white-space:nowrap;
+/* 가장 높은 단계. 전체 흐름 · 모바일 · 복합기 */
+.surfs{
+  flex:none;display:inline-flex;align-items:center;gap:2px;
+  background:#eef1f6;border-radius:10px;padding:3px;
 }
-.entrybtn svg{width:16px;height:16px;flex:none}
-.entrybtn:hover{background:#d8f2e6;border-color:#b6dcc9}
+.surf{
+  height:30px;padding:0 13px;border:0;border-radius:8px;background:none;
+  font-size:13px;font-weight:800;color:#6b7688;white-space:nowrap;
+}
+.surf:hover{color:var(--text)}
+.surf.is-on{
+  background:var(--panel);color:var(--text);
+  box-shadow:0 1px 3px rgba(16,24,40,.14);
+}
 .nav__sep{flex:none;width:1px;height:20px;background:var(--line)}
 
 /* 주요 화면: 밑줄 탭 */
@@ -165,32 +171,6 @@ a{color:inherit;text-decoration:none}
   background:rgba(229,72,77,.14);box-shadow:inset 0 0 0 2px var(--go);
 }
 .navhit--next:hover::after{transform:translateY(-50%) scale(1.15)}
-
-/* ── 팝업 ─────────────────────────────────────── */
-.modal{
-  position:fixed;inset:0;z-index:90;background:rgba(17,22,31,.5);
-  display:flex;align-items:center;justify-content:center;padding:22px;
-}
-body.modal-open{overflow:hidden}
-.modal__box{
-  width:min(1240px,96vw);height:min(880px,92dvh);
-  display:flex;flex-direction:column;min-height:0;
-  background:var(--bg);border-radius:18px;overflow:hidden;
-  box-shadow:0 24px 60px rgba(16,24,40,.3);
-}
-.modal__head{
-  flex:none;display:flex;align-items:center;gap:14px;
-  padding:15px 18px;background:var(--panel);border-bottom:1px solid var(--line);
-}
-.modal__head h2{margin:0;font-size:16px;font-weight:800;letter-spacing:-.01em}
-.modal__head p{margin:2px 0 0;font-size:12.5px;color:var(--muted)}
-.modal__close{
-  margin-left:auto;flex:none;height:36px;padding:0 15px;border:1px solid var(--line);
-  border-radius:10px;background:var(--panel);font-size:13.5px;font-weight:700;color:var(--text);
-}
-.modal__close:hover{border-color:#d8dee7;background:#fbfcfe}
-.modal__body{flex:1;min-height:0;padding:14px 16px 16px}
-.cmp--entry{height:100%}
 
 /* ── 흐름 비교 (첫 진입 · 인쇄 설정·결제 통합) ── */
 .pane__badge{
@@ -468,17 +448,18 @@ button.note:focus-visible{outline:2px solid rgba(47,109,246,.55);outline-offset:
   html:not(.pcview) .bar__right .modes{flex:1}
   html:not(.pcview) .modes button{flex:1;justify-content:center;padding:0 8px;height:32px;font-size:13px}
   html:not(.pcview) .linkbtn{height:40px;flex:none}
-  html:not(.pcview) .nav{height:48px;padding:0 14px;gap:8px}
+  /* 영역 · 화면 목록 · 페이저를 한 줄에 다 넣으면 글자가 잘린다. 두 줄로 나눈다 */
+  html:not(.pcview) .nav{height:auto;padding:6px 14px 0;gap:8px;flex-wrap:wrap;row-gap:2px}
+  html:not(.pcview) .nav__sep{display:none}
+  html:not(.pcview) .nav__right{order:1;margin-left:auto}
+  html:not(.pcview) .tabs2{order:2;flex:1 0 100%;height:40px}
   html:not(.pcview) .nav__current,
   html:not(.pcview) .nav__div{display:none}
   html:not(.pcview) .tab2{padding:0 10px;font-size:13px;gap:5px}
   html:not(.pcview) .tab2 svg{width:15px;height:15px}
-  html:not(.pcview) .entrybtn{height:30px;padding:0 10px;font-size:12.5px}
+  html:not(.pcview) .surfs{padding:2px}
+  html:not(.pcview) .surf{height:28px;padding:0 9px;font-size:12px}
   html:not(.pcview) .tab2__sub{display:none}
-  html:not(.pcview) .modal{padding:0}
-  html:not(.pcview) .modal__box{width:100%;height:100dvh;border-radius:0}
-  html:not(.pcview) .modal__head{padding:11px 14px}
-  html:not(.pcview) .modal__body{padding:10px 12px 12px}
   html:not(.pcview) .arrow{width:30px;height:30px}
   html:not(.pcview) .counter{min-width:40px;font-size:12.5px}
   html:not(.pcview) .stage{padding:10px 14px 12px}
@@ -533,17 +514,6 @@ button.note:focus-visible{outline:2px solid rgba(47,109,246,.55);outline-offset:
     font-size:12.5px;font-weight:700;color:var(--muted);
   }
   html:not(.pcview) .notes__count{margin-left:auto}
-
-  /* 팝업 안에서는 AS-IS·TO-BE·개선 사항을 위아래로 이어서 보여 준다 */
-  html:not(.pcview) .modal .cmp--entry{display:block;height:100%;overflow:auto}
-  html:not(.pcview) .modal .cmp--entry .pane{display:flex;margin-bottom:10px}
-  html:not(.pcview) .modal .cmp--entry .pane__head{display:flex}
-  html:not(.pcview) .modal .cmp--entry .pane--flow .pane__body--flow{overflow:visible}
-  html:not(.pcview) .modal .cmp--entry .notes{
-    position:static;transform:none;max-height:none;
-    border-radius:16px;border:1px solid var(--line);box-shadow:var(--shadow);
-  }
-  html:not(.pcview) .modal .cmp--entry .notes__close{display:none}
 }
 
 
@@ -573,8 +543,14 @@ html.pcview body{
 html.pcview .board{height:900px}
 /* 바탕이 화면보다 작으므로 팝업·원본 보기도 바탕 안에만 덮는다 */
 html.pcview body{position:relative}
-html.pcview .modal,
 html.pcview .zoom{position:absolute}
-html.pcview .modal__box{width:min(1240px,96%);height:min(840px,860px)}
 html.pcview .zoom{padding:20px}
 html.pcview .zoom__close{position:absolute;top:14px;right:18px}
+
+/* 흐름 단계가 어느 기기에서 일어나는지 */
+.fstep__where{
+  font-style:normal;font-size:10.5px;font-weight:800;letter-spacing:.02em;
+  border-radius:999px;padding:2px 7px;margin-right:7px;vertical-align:2px;
+}
+.fstep__where--mobile{background:var(--accent-soft);color:var(--accent)}
+.fstep__where--device{background:var(--green-soft);color:#0b7a51}

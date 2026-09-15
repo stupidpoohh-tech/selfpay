@@ -76,22 +76,62 @@ function ok(cond, name, extra) {
   d.on('pageerror', e => errors.push('board: ' + e));
   await d.goto(BASE + '/'); await d.waitForTimeout(900);
 
-  ok(await d.$eval('#entryModal', e => !e.hidden), '첫 진입 팝업이 열린다');
-  ok((await d.evaluate(() => location.search)).includes('entry=1'), '팝업 상태가 주소에 남는다');
-  const n0 = await d.$eval('#counter', e => e.textContent);
-  await d.keyboard.press('ArrowRight'); await d.waitForTimeout(250);
-  ok(n0 === await d.$eval('#counter', e => e.textContent), '팝업 위에서는 좌우키가 화면을 넘기지 않는다');
-  await d.click('.modal .fstep__shot img'); await d.waitForTimeout(350);
-  ok(await d.$eval('#zoom', e => e.classList.contains('is-on')), '팝업 안 스크린샷이 확대된다');
-  await d.keyboard.press('Escape'); await d.waitForTimeout(250);
-  ok(!(await d.$eval('#zoom', e => e.classList.contains('is-on'))) &&
-     await d.$eval('#entryModal', e => !e.hidden), 'Escape 는 위에 열린 것부터 닫는다');
-  await d.keyboard.press('Escape'); await d.waitForTimeout(250);
-  ok(await d.$eval('#entryModal', e => e.hidden), 'Escape 로 팝업이 닫힌다');
+  /* 전체 흐름 · 모바일 · 복합기 세 영역 */
+  const surfState = () => d.evaluate(() => ({
+    on: (document.querySelector('.surf.is-on') || {}).textContent,
+    surfs: [...document.querySelectorAll('.surf')].map(e => e.textContent.trim()),
+    tabs: [...document.querySelectorAll('.tab2 span')].map(e => e.textContent.trim()),
+    n: document.getElementById('counter').textContent.trim(),
+    url: location.search,
+    modeHidden: document.getElementById('modeSeg').hidden
+  }));
 
-  const total = await d.evaluate(() => REVIEW.groups.reduce((n, g) => n + g.screens.length, 0));
-  ok((await d.$eval('#counter', e => e.textContent)).trim().endsWith('/ ' + total), '화면 수가 맞는다',
-    await d.$eval('#counter', e => e.textContent));
+  let sv = await surfState();
+  ok(sv.surfs.join('|') === '전체 흐름|모바일|복합기', '영역이 셋이다', sv.surfs.join('|'));
+  ok(sv.on === '전체 흐름' && sv.tabs.length === 3, '처음에는 전체 흐름이 열린다', sv.on + ' / ' + sv.tabs.join('·'));
+  ok(sv.modeHidden, '전체 흐름에서는 프로토타입 제어를 내놓지 않는다');
+  ok(sv.url.includes('surface=flow') && sv.url.includes('screen=entry'), '주소에 영역이 남는다', sv.url);
+
+  await d.click('.surf:text-is("모바일")'); await d.waitForTimeout(600);
+  sv = await surfState();
+  ok(sv.on === '모바일' && sv.tabs.length === 7 && !sv.modeHidden, '모바일로 바꾸면 목록이 교체된다', sv.tabs.join('·'));
+
+  await d.click('.surf:text-is("복합기")'); await d.waitForTimeout(600);
+  sv = await surfState();
+  ok(sv.on === '복합기' && sv.tabs.join('·') === '대기·연결·복사·스캔·팩스', '복합기 목록이 나온다', sv.tabs.join('·'));
+
+  /* 이전·다음은 고른 영역 안에서만 돈다 */
+  const ring = [];
+  for (let i = 0; i < 5; i++) { ring.push((await surfState()).n); await d.click('#next'); await d.waitForTimeout(250); }
+  ok(ring.join(' ') === '1 / 4 2 / 4 3 / 4 4 / 4 1 / 4', '복합기 안에서만 순환한다', ring.join(' '));
+
+  /* 영역별 화면 수가 데이터와 맞는다 */
+  const counts = await d.evaluate(() =>
+    REVIEW.surfaces.map(sf => sf.groups.reduce((n, g) => n + g.screens.length, 0)));
+  for (let i = 0; i < counts.length; i++) {
+    await d.goto(BASE + '/?surface=' + (await d.evaluate(j => REVIEW.surfaces[j].id, i)));
+    await d.waitForTimeout(600);
+    ok((await d.$eval('#counter', e => e.textContent)).trim().endsWith('/ ' + counts[i]),
+      `영역 ${i + 1} 화면 수가 맞는다`, await d.$eval('#counter', e => e.textContent));
+  }
+
+  /* 예전 주소도 그대로 열린다 */
+  for (const [u, want] of [['/?screen=home', 'surface=mobile'], ['/?screen=entry', 'surface=flow'],
+                           ['/?screen=device-fax', 'surface=device']]) {
+    await d.goto(BASE + u); await d.waitForTimeout(600);
+    ok((await d.evaluate(() => location.search)).includes(want), `예전 주소에서 영역을 알아낸다 ${u}`,
+      await d.evaluate(() => location.search));
+  }
+
+  /* 원본 크기 보기 */
+  await d.goto(BASE + '/?screen=home'); await d.waitForTimeout(700);
+  await d.click('.pane--proposal .shotbox', { position: { x: 8, y: 300 } }); await d.waitForTimeout(400);
+  ok(await d.$eval('#zoom', e => e.classList.contains('is-on')), '원본 크기 보기가 열린다');
+  const nz = await d.$eval('#counter', e => e.textContent);
+  await d.keyboard.press('ArrowRight'); await d.waitForTimeout(250);
+  ok(nz === await d.$eval('#counter', e => e.textContent), '원본 보기 위에서는 좌우키가 넘기지 않는다');
+  await d.keyboard.press('Escape'); await d.waitForTimeout(250);
+  ok(!(await d.$eval('#zoom', e => e.classList.contains('is-on'))), 'Escape 로 원본 보기가 닫힌다');
 
   /* AS-IS / TO-BE 가 서로를 대신하지 않는다 */
   await d.goto(BASE + '/?screen=cost&mode=proto'); await d.waitForTimeout(600);

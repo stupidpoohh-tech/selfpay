@@ -9,28 +9,42 @@
     return ALL.filter(function (x) { return x.id === id; })[0] || null;
   }
 
-  /* 상단에서 고를 수 있는 대표 화면 묶음. 이전·다음도 이 순서를 따른다.
-   * 첫 진입은 목록에 넣지 않고 팝업으로 띄운다. */
-  var GROUPS = (R.groups || []).map(function (g) {
-    return { id: g.id, label: g.label, screens: g.screens.filter(byId) };
-  }).filter(function (g) { return g.screens.length; });
+  /* 화면 선택의 가장 높은 단계. 전체 흐름 · 모바일 · 복합기.
+   * 그 아래가 대표 화면 묶음이고, 이전·다음은 고른 영역 안에서만 돈다. */
+  var SURFACES = (R.surfaces || []).map(function (sf) {
+    var groups = (sf.groups || []).map(function (g) {
+      return { id: g.id, label: g.label, screens: g.screens.filter(byId) };
+    }).filter(function (g) { return g.screens.length; });
 
-  var SCREENS = [];
-  var GROUP_OF = {};
-  GROUPS.forEach(function (g, gi) {
-    g.from = SCREENS.length;
-    g.screens.forEach(function (id) { GROUP_OF[id] = gi; SCREENS.push(byId(id)); });
-  });
-  /* groups 가 비어 있으면 예전처럼 전체 목록을 쓴다 */
-  if (!SCREENS.length) SCREENS = ALL.slice();
+    var screens = [], groupOf = {};
+    groups.forEach(function (g, gi) {
+      g.from = screens.length;
+      g.screens.forEach(function (id) { groupOf[id] = gi; screens.push(byId(id)); });
+    });
+    return { id: sf.id, label: sf.label, kind: sf.kind, groups: groups, screens: screens, groupOf: groupOf };
+  }).filter(function (sf) { return sf.screens.length; });
 
-  var ENTRY = byId(R.entry || 'entry');
+  /* surfaces 가 없으면 예전처럼 전체 목록 하나로 둔다 */
+  if (!SURFACES.length) {
+    SURFACES = [{ id: 'all', label: '화면', groups: [], screens: ALL.slice(), groupOf: {} }];
+  }
+
+  /* 화면 id 로 어느 영역 몇 번째인지 찾는다 */
+  function locate(id) {
+    for (var si = 0; si < SURFACES.length; si++) {
+      for (var ii = 0; ii < SURFACES[si].screens.length; ii++) {
+        if (SURFACES[si].screens[ii].id === id) return { surface: si, index: ii };
+      }
+    }
+    return null;
+  }
 
   var params = new URLSearchParams(location.search);
   var DEBUG = params.get('debug') === 'hits';
 
   var state = {
-    index: 0,
+    surface: 0,             /* flow | mobile | device */
+    index: 0,               /* 그 영역 안에서의 순서 */
     mode: 'compare',        /* compare | proto */
     side: 'proposal',       /* 모바일 탭 */
     protoSide: 'proposal',
@@ -40,11 +54,8 @@
   };
 
   var el = {
+    surfs: document.getElementById('surfs'),
     tabs2: document.getElementById('tabs2'),
-    entryBtn: document.getElementById('entryBtn'),
-    entryModal: document.getElementById('entryModal'),
-    entryBody: document.getElementById('entryBody'),
-    entryClose: document.getElementById('entryClose'),
     pcBtn: document.getElementById('pcBtn'),
     pcBtnText: document.getElementById('pcBtnText'),
     navCurrent: document.getElementById('navCurrent'),
@@ -77,23 +88,25 @@
     if (got.slice(-6) !== '/index') cands.push(got + '/index');   /* /proposal → /proposal/index */
     var loose = null;
 
-    for (var i = 0; i < SCREENS.length; i++) {
+    for (var i = 0; i < ALL.length; i++) {
       var sides = ['proposal', 'current'];
       for (var k = 0; k < sides.length; k++) {
-        var d = SCREENS[i][sides[k]];
+        var d = ALL[i][sides[k]];
         if (!d || !d.page) continue;
         var want = normPath(d.page);
         for (var c = 0; c < cands.length; c++) {
-          if (cands[c] === want) return { index: i, side: sides[k] };
+          if (cands[c] === want) return { id: ALL[i].id, side: sides[k] };
           /* 하위 경로에 올려도 맞도록. want 가 '/' 로 시작하므로 경계는 안전하다 */
-          if (!loose && cands[c].slice(-want.length) === want) loose = { index: i, side: sides[k] };
+          if (!loose && cands[c].slice(-want.length) === want) loose = { id: ALL[i].id, side: sides[k] };
         }
       }
     }
     return loose;
   }
 
-  function screen() { return SCREENS[state.index]; }
+  function surf() { return SURFACES[state.surface]; }
+  function list() { return surf().screens; }
+  function screen() { return list()[state.index]; }
   function changes() { return screen().changes || []; }
   function activeId() { return state.hover || state.active; }
 
@@ -111,6 +124,11 @@
     notifications:'<path d="M18 8a6 6 0 1 0-12 0c0 6-2 7-2 7h16s-2-1-2-7"/><path d="M10.5 20a2 2 0 0 0 3 0"/>',
     entry:'<path d="M4 20.5V6.2L13 3.5v17.8L4 20.5Z"/><path d="M13 6.2h6.2a1.8 1.8 0 0 1 1.8 1.8v10.8a1.8 1.8 0 0 1-1.8 1.8H13"/><path d="M10.2 12.2h.01"/>',
     work:'<path d="M4 4h11v11H4zM9 17h11V6"/>',
+    'device-flow':'<rect x="2.6" y="4.4" width="8" height="15.2" rx="1.8"/><rect x="13.4" y="7.4" width="8" height="9.2" rx="1.4"/><path d="M10.6 12h2.8"/>',
+    'device-home':'<rect x="3" y="5" width="18" height="11" rx="1.8"/><path d="M7.4 20h9.2M12 16v4"/><path d="M9.6 10.2h4.8"/>',
+    'device-copy':'<path d="M4 4h11v11H4zM9 17h11V6"/>',
+    'device-scan':'<path d="M3 8V5a2 2 0 0 1 2-2h3M16 3h3a2 2 0 0 1 2 2v3M21 16v3a2 2 0 0 1-2 2h-3M8 21H5a2 2 0 0 1-2-2v-3M3 12h18"/>',
+    'device-fax':'<path d="M6 4h5v5H6zM4 10h16a1.5 1.5 0 0 1 1.5 1.5V19a1.5 1.5 0 0 1-1.5 1.5H4A1.5 1.5 0 0 1 2.5 19v-7.5A1.5 1.5 0 0 1 4 10Z"/>',
     'print-flow':'<path d="M3.6 5.6h5.2M3.6 12h5.2M3.6 18.4h5.2"/><path d="M8.8 5.6c0 4 2.4 6.4 6.2 6.4M8.8 18.4c0-4 2.4-6.4 6.2-6.4M8.8 12H15"/><path d="m16.8 8.8 3.2 3.2-3.2 3.2"/>',
     'print-confirm':'<path d="M13.5 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8.5L13.5 3Z"/><path d="M13.5 3v5.5H19"/><path d="m9.2 14.4 2 2 3.6-3.8"/>',
     'print-options':'<path d="M4 7h9M17 7h3M4 12h3M11 12h9M4 17h9M17 17h3"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="15" cy="17" r="2"/>',
@@ -144,20 +162,27 @@
   /* 대표 화면 탭. 딸린 화면을 보고 있어도 대표 화면이 선택된 것으로 보인다. */
   function drawNav() {
     var cs = screen();
-    var gi = GROUP_OF[cs.id];
+    var sf = surf();
+    var gi = sf.groupOf[cs.id];
 
-    el.tabs2.innerHTML = GROUPS.map(function (g, i) {
+    el.surfs.innerHTML = SURFACES.map(function (x, i) {
+      var on = i === state.surface;
+      return '<button type="button" class="surf' + (on ? ' is-on' : '') +
+        '" data-surface="' + i + '" aria-pressed="' + on + '">' + x.label + '</button>';
+    }).join('');
+
+    el.tabs2.innerHTML = sf.groups.map(function (g, i) {
       var on = i === gi;
       var sub = on && g.screens.length > 1 && g.screens[0] !== cs.id
         ? '<em class="tab2__sub">' + cs.label + '</em>' : '';
       return '<button type="button" role="tab" class="tab2' + (on ? ' is-on' : '') +
-        '" data-go="' + g.from + '" aria-selected="' + on + '">' + icon(g.id) +
+        '" data-group="' + g.from + '" aria-selected="' + on + '">' + icon(g.id) +
         '<span>' + g.label + '</span>' + sub + '</button>';
     }).join('');
 
     el.navCurrent.textContent = '현재: ' + cs.label + (cs.kind === 'flow' ? ' 흐름 ' : ' 화면 ') +
       (state.mode === 'proto' ? '프로토타입' : '비교');
-    el.counter.textContent = (state.index + 1) + ' / ' + SCREENS.length;
+    el.counter.textContent = (state.index + 1) + ' / ' + sf.screens.length;
 
     var on = el.tabs2.querySelector('.tab2.is-on');
     if (on && on.scrollIntoView) on.scrollIntoView({ block: 'nearest', inline: 'nearest' });
@@ -216,6 +241,11 @@
   /* 흐름 비교 항목: 화면 한 장이 아니라 거쳐 가는 단계를 보여 준다 */
   function flowHtml(d, side) {
     var steps = (d && d.steps) || [];
+    if (!steps.length) {
+      return '<div class="pane__body"><div class="pane__none">' +
+        '<b>' + (side === 'current' ? '현재 흐름' : '개선 흐름') + ' 자료 준비 전</b>' +
+        '<span>비교할 단계가 아직 없습니다.</span></div></div>';
+    }
 
     var list = steps.map(function (st, i) {
       var shot = st.img
@@ -233,9 +263,12 @@
             'stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v14"/><path d="m6 13 6 6 6-6"/></svg>' +
           '</span>'
         : '';
+      var where = st.where
+        ? '<em class="fstep__where fstep__where--' + (st.where === '복합기' ? 'device' : 'mobile') + '">' +
+          st.where + '</em>' : '';
       return '<div class="fstep' + (st.img ? '' : ' fstep--text') + '">' +
           '<span class="fstep__n">' + (i + 1) + '</span>' + shot +
-          '<span class="fstep__text"><b>' + st.label + '</b>' + note + items + '</span>' +
+          '<span class="fstep__text"><b>' + where + st.label + '</b>' + note + items + '</span>' +
         '</div>' + arrow;
     }).join('');
 
@@ -266,7 +299,7 @@
     if (!d) return '';
 
     /* 화면 사이 이동 좌표는 shot.js 히트박스 한 곳에서만 가져온다 */
-    var list = [];
+    var hits = [];
     var shot = w.SPShot;
     var map = shot && (side === 'proposal' ? shot.PROPOSAL : shot.CURRENT);
     var key = d.page ? d.page.replace(/^.*\//, '').replace(/\.html?$/, '') : null;
@@ -276,20 +309,22 @@
     if (entry && entry.hits) {
       entry.hits.forEach(function (h) {
         var hit = findByPath(dir + h.to);
-        if (hit) list.push({ l: h.l, t: h.t, w: h.w, h: h.h, i: hit.index, next: !!h.next });
+        if (hit) hits.push({ l: h.l, t: h.t, w: h.w, h: h.h, id: hit.id, next: !!h.next });
       });
     }
     var seen = {};
-    var boxes = list.map(function (h) {
-      if (h.i === state.index) return '';
+    var boxes = hits.map(function (h) {
+      if (h.id === s.id) return '';
+      var to = byId(h.id);
+      if (!to) return '';
       var k = h.l + ',' + h.t + ',' + h.w + ',' + h.h;
       if (seen[k]) return '';
       seen[k] = 1;
-      var label = SCREENS[h.i].label + ' 비교로 이동';
+      var label = to.label + ' 비교로 이동';
       /* 이동 영역이 변경점 위에 겹치면, 올렸을 때 그 변경점도 함께 강조한다 */
       var anno = changeAt(s, side, h.l + h.w / 2, h.t + h.h / 2);
       return '<button type="button" class="navhit' + (h.next ? ' navhit--next' : '') +
-        '" data-go="' + h.i + '"' +
+        '" data-screen="' + h.id + '"' +
         (anno ? ' data-anno="' + anno + '"' : '') +
         ' title="' + label + '" aria-label="' + label + '"' +
         ' style="left:' + h.l + '%;top:' + h.t + '%;width:' + h.w + '%;height:' + h.h + '%"></button>';
@@ -357,7 +392,7 @@
         }));
       });
     });
-    el.stage.querySelectorAll('.navhit[data-go]').forEach(function (b) {
+    el.stage.querySelectorAll('.navhit[data-screen]').forEach(function (b) {
       var anno = b.getAttribute('data-anno');
       if (anno) {
         b.addEventListener('mouseenter', function () { state.hover = anno; syncAnno(); });
@@ -365,7 +400,7 @@
       }
       b.addEventListener('click', function (e) {
         e.stopPropagation();
-        goTo(+b.getAttribute('data-go'));
+        goToId(b.getAttribute('data-screen'));
       });
     });
     bindZoomShots(el.stage);
@@ -539,7 +574,8 @@
       try { path = frame.contentWindow.location.pathname; } catch (e) { return; }
       var hit = findByPath(path);
       if (hit) {
-        state.index = hit.index;
+        var at = locate(hit.id);
+        if (at) { state.surface = at.surface; state.index = at.index; }
         if (hit.side !== state.protoSide) {
           state.protoSide = hit.side;
           el.protoSeg.querySelectorAll('button').forEach(function (x) {
@@ -642,9 +678,13 @@
     document.body.classList.remove('notes-open');
     state.active = null;
     state.hover = null;
+    /* 전체 흐름은 눌러 볼 페이지가 없는 비교라 프로토타입 제어를 내놓지 않는다 */
+    var flowOnly = surf().kind === 'flow';
+    if (flowOnly && state.mode !== 'compare') setMode('compare');
+    el.modeSeg.hidden = flowOnly;
     drawNav();
     if (state.mode === 'compare') drawCompare(); else drawProto();
-    el.protoSeg.hidden = state.mode !== 'proto';
+    el.protoSeg.hidden = flowOnly || state.mode !== 'proto';
     document.body.setAttribute('data-mode', state.mode);
     document.body.setAttribute('data-side', state.side);
     syncUrl();
@@ -654,68 +694,70 @@
     var s = screen();
     document.title = s.label + ' · ' + R.title;
     var q = new URLSearchParams();
+    q.set('surface', surf().id);
     q.set('screen', s.id);
     if (state.mode !== 'compare') q.set('mode', state.mode);
-    if (el.entryModal && !el.entryModal.hidden) q.set('entry', '1');
     if (DEBUG) q.set('debug', 'hits');
     history.replaceState(null, '', '?' + q.toString());
   }
 
+  function setMode(m) {
+    state.mode = m;
+    el.modeSeg.querySelectorAll('button').forEach(function (x) {
+      var on = x.getAttribute('data-mode') === m;
+      x.classList.toggle('is-on', on);
+      x.setAttribute('aria-pressed', String(on));
+    });
+  }
+
+  /* 이전·다음은 고른 영역 안에서만 돈다 */
   function move(step) {
-    goTo((state.index + step + SCREENS.length) % SCREENS.length);
+    var n = list().length;
+    goTo((state.index + step + n) % n);
   }
 
   function goTo(i) {
-    if (i < 0 || i >= SCREENS.length || i === state.index) return;
+    if (i < 0 || i >= list().length || i === state.index) return;
     state.index = i;
     draw();
   }
 
-  /* ── 첫 진입 팝업 ──────────────────────────── */
-  function openEntry() {
-    if (!ENTRY) return;
-    el.entryBody.innerHTML = '<div class="cmp cmp--entry">' +
-      paneHtml(ENTRY, 'current') + paneHtml(ENTRY, 'proposal') + notesHtml(ENTRY) + '</div>';
-    bindZoomShots(el.entryBody);
-    el.entryModal.hidden = false;
-    document.body.classList.add('modal-open');
-    el.entryClose.focus();
-    syncUrl();
+  function goToId(id) {
+    var at = locate(id);
+    if (!at) return;
+    if (at.surface === state.surface && at.index === state.index) return;
+    state.surface = at.surface;
+    state.index = at.index;
+    draw();
   }
 
-  function closeEntry() {
-    el.entryModal.hidden = true;
-    el.entryBody.innerHTML = '';
-    document.body.classList.remove('modal-open');
-    el.entryBtn.focus();
-    syncUrl();
+  function goSurface(si) {
+    if (si === state.surface || si < 0 || si >= SURFACES.length) return;
+    state.surface = si;
+    state.index = 0;
+    draw();
   }
-
-  function entryOpen() { return !el.entryModal.hidden; }
 
   /* ── 이벤트 ────────────────────────────────── */
-  el.tabs2.addEventListener('click', function (e) {
-    var b = e.target.closest('[data-go]');
+  el.surfs.addEventListener('click', function (e) {
+    var b = e.target.closest('[data-surface]');
     if (!b) return;
-    goTo(+b.getAttribute('data-go'));
+    goSurface(+b.getAttribute('data-surface'));
   });
 
-  el.entryBtn.addEventListener('click', openEntry);
-  el.entryClose.addEventListener('click', closeEntry);
-  el.entryModal.addEventListener('click', function (e) {
-    if (e.target === el.entryModal) closeEntry();
+  el.tabs2.addEventListener('click', function (e) {
+    var b = e.target.closest('[data-group]');
+    if (!b) return;
+    goTo(+b.getAttribute('data-group'));
   });
+
   el.prev.addEventListener('click', function () { move(-1); });
   el.next.addEventListener('click', function () { move(1); });
 
   el.modeSeg.addEventListener('click', function (e) {
     var b = e.target.closest('[data-mode]');
     if (!b) return;
-    state.mode = b.getAttribute('data-mode');
-    el.modeSeg.querySelectorAll('button').forEach(function (x) {
-      x.classList.toggle('is-on', x === b);
-      x.setAttribute('aria-pressed', String(x === b));
-    });
+    setMode(b.getAttribute('data-mode'));
     draw();
   });
 
@@ -731,7 +773,6 @@
   document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape') {
       if (el.zoom.classList.contains('is-on')) return closeZoom();
-      if (!el.entryModal.hidden) return closeEntry();
       if (state.active || state.hover) {
         state.active = null;
         state.hover = null;
@@ -742,8 +783,8 @@
     }
     if (e.target.closest('input,textarea')) return;
     if (e.target.closest('.note')) return;      /* 목록 안에서는 좌우키를 넘기지 않는다 */
-    /* 팝업이나 원본 보기가 열려 있으면 뒤 화면을 건드리지 않는다 */
-    if (entryOpen() || el.zoom.classList.contains('is-on')) return;
+    /* 원본 보기가 열려 있으면 뒤 화면을 건드리지 않는다 */
+    if (el.zoom.classList.contains('is-on')) return;
     if (e.key === 'ArrowLeft') move(-1);
     if (e.key === 'ArrowRight') move(1);
   });
@@ -755,18 +796,23 @@
     else syncAnno();
   });
 
-  /* 주소로 들어온 화면·모드 복원 */
-  var want = params.get('screen');
-  var i = SCREENS.findIndex(function (s) { return s.id === want; });
-  if (i >= 0) state.index = i;
-  if (params.get('mode') === 'proto') {
-    state.mode = 'proto';
-    el.modeSeg.querySelectorAll('button').forEach(function (x) {
-      var on = x.getAttribute('data-mode') === 'proto';
-      x.classList.toggle('is-on', on);
-      x.setAttribute('aria-pressed', String(on));
-    });
+  /* 주소로 들어온 영역·화면·모드 복원.
+   * surface 가 없으면 screen 으로 어느 영역인지 알아낸다. 예전 주소도 그대로 열린다. */
+  var wantSurface = params.get('surface');
+  var wantScreen = params.get('screen');
+  var at = wantScreen ? locate(wantScreen) : null;
+
+  if (at) {
+    state.surface = at.surface;
+    state.index = at.index;
+  } else if (wantSurface) {
+    var si = SURFACES.map(function (x) { return x.id; }).indexOf(wantSurface);
+    if (si >= 0) state.surface = si;
   }
+  /* 화면 없이 영역만 왔거나, 영역과 화면이 어긋나면 영역 쪽을 따른다 */
+  if (!at && wantSurface) state.index = 0;
+
+  if (params.get('mode') === 'proto') setMode('proto');
 
   /* 좁은 화면에서만 'PC 화면으로 보기' 를 내놓는다.
    * 켜고 끄는 판단은 <head> 스크립트가 이미 했고, 여기서는 버튼만 맞춘다. */
@@ -780,8 +826,6 @@
   /* 낡은 사본이 섞이면 화면이 통째로 비어 버린다. 그때는 흰 화면 대신 이유를 알린다. */
   try {
     draw();
-    /* 주소에 화면 지정이 없거나 entry=1 이면 첫 진입 팝업으로 시작한다 */
-    if (params.get('entry') === '1' || (!params.get('screen') && params.get('mode') !== 'proto')) openEntry();
   } catch (err) {
     el.stage.innerHTML = '<div class="cmp"><div class="pane"><div class="pane__body">' +
       '<div class="pane__none"><b>화면을 그리지 못했습니다</b>' +

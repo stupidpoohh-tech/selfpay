@@ -24,27 +24,48 @@ window.REVIEW = {
   title: '무인과금 서비스 UI/UX 개선',
   subtitle: 'AS-IS · TO-BE 비교 검토',
 
-  /* 상단에서 고를 수 있는 대표 화면과, 그 아래 딸린 화면들.
-   * 딸린 화면을 보고 있어도 상단에서는 대표 화면이 선택된 것으로 보인다.
-   * 이전·다음 이동도 이 순서를 따른다. */
-  groups: [
-    { id: 'home',          label: '홈',            screens: ['home'] },
-    { id: 'login',         label: '로그인',         screens: ['login', 'guest'] },
-    { id: 'print',         label: '인쇄',           screens: ['print', 'print-flow', 'print-confirm', 'print-options', 'print-amount', 'payment'] },
-    { id: 'work',          label: '복사·스캔·팩스',  screens: ['copy', 'qr', 'scan', 'fax'] },
-    { id: 'settings',      label: '설정',           screens: ['settings', 'cost', 'payments', 'refund', 'troubleshoot'] },
-    { id: 'notifications', label: '알림',           screens: ['notifications'] },
-    { id: 'history',       label: '이력',           screens: ['history'] }
+  /* 화면 선택의 가장 높은 단계. 전체 흐름 · 모바일 · 복합기 셋으로 나눈다.
+   * 그 아래가 대표 화면 묶음이고, 딸린 화면을 보고 있어도 상단에서는
+   * 대표 화면이 선택된 것으로 보인다. 이전·다음도 고른 영역 안에서만 돈다. */
+  surfaces: [
+    {
+      /* 개별 화면이 아니라 서비스 구조와 기기 사이 흐름을 보는 자리 */
+      id: 'flow', label: '전체 흐름', kind: 'flow',
+      groups: [
+        { id: 'entry',       label: '첫 진입',            screens: ['entry'] },
+        { id: 'print-flow',  label: '인쇄 설정·결제 통합', screens: ['print-flow'] },
+        { id: 'device-flow', label: '모바일 ↔ 복합기',     screens: ['device-flow'] }
+      ]
+    },
+    {
+      id: 'mobile', label: '모바일',
+      groups: [
+        { id: 'home',          label: '홈',            screens: ['home'] },
+        { id: 'login',         label: '로그인',         screens: ['login', 'guest'] },
+        { id: 'print',         label: '인쇄',           screens: ['print', 'print-confirm', 'print-options', 'print-amount', 'payment'] },
+        { id: 'work',          label: '복사·스캔·팩스',  screens: ['copy', 'qr', 'scan', 'fax'] },
+        { id: 'settings',      label: '설정',           screens: ['settings', 'cost', 'payments', 'refund', 'troubleshoot'] },
+        { id: 'notifications', label: '알림',           screens: ['notifications'] },
+        { id: 'history',       label: '이력',           screens: ['history'] }
+      ]
+    },
+    {
+      /* 물리 복합기 쪽 화면. 스크린샷이 들어오기 전이라 자리만 잡아 둔다 */
+      id: 'device', label: '복합기',
+      groups: [
+        { id: 'device-home', label: '대기·연결', screens: ['device-home'] },
+        { id: 'device-copy', label: '복사',      screens: ['device-copy'] },
+        { id: 'device-scan', label: '스캔',      screens: ['device-scan'] },
+        { id: 'device-fax',  label: '팩스',      screens: ['device-fax'] }
+      ]
+    }
   ],
-
-  /* 첫 진입은 목록에 끼우지 않고 팝업으로 따로 띄운다 */
-  entry: 'entry',
 
   screens: [
     {
       /* 개별 화면 디자인이 아니라 서비스에 들어오는 순서를 비교하는 항목이다.
        * 로그인·비회원 화면의 디자인 차이는 각각의 항목에서 따로 다룬다. */
-      id: 'entry', label: '첫 진입', primary: true, kind: 'flow',
+      id: 'entry', label: '첫 진입', kind: 'flow',
       current: {
         summary: '4단계',
         title: '로그인 화면에서 시작',
@@ -230,6 +251,30 @@ window.REVIEW = {
         '한 화면에서 설정과 예상 금액을 함께 확인할 수 있습니다',
         '화면 사이를 오가는 횟수가 줄어들 것으로 보입니다',
         '결제 전에 무엇을 확인해야 하는지 한눈에 파악될 가능성이 있습니다'
+      ]
+    },
+    {
+      /* 모바일과 복합기를 오가는 순서만 적어 둔 자리다.
+       * 복합기 쪽 스크린샷이 아직 없어 그 단계는 글로만 둔다.
+       * 세부 개선 문구는 자료가 들어온 뒤에 채운다. */
+      id: 'device-flow', label: '모바일 ↔ 복합기 연결·결제', kind: 'flow',
+      proposal: {
+        summary: '6단계',
+        title: '모바일과 복합기를 오가는 순서',
+        steps: [
+          { where: '모바일', label: '서비스 선택',        img: 'proposal/shots/index.png' },
+          { where: '복합기', label: '기기 QR 확인' },
+          { where: '모바일', label: 'QR 스캔 및 연결 확인', img: 'proposal/shots/qr.png' },
+          { where: '복합기', label: '복사 / 스캔 / 팩스 설정' },
+          { where: '모바일', label: '결제',              img: 'proposal/shots/payment.png' },
+          { where: '복합기', label: '작업 실행' }
+        ],
+        foot: '복합기 단계는 스크린샷이 들어오면 채웁니다.'
+      },
+      notes: [
+        { title: '이 항목의 상태',
+          body: '두 기기를 오가는 순서만 먼저 적어 둔 자리입니다. ' +
+                '복합기 화면 자료가 들어온 뒤에 개선 문구를 채웁니다.' }
       ]
     },
     {
@@ -802,6 +847,28 @@ window.REVIEW = {
     }
   ]
 };
+
+/* 복합기 쪽 비교 화면. 스크린샷이 들어오기 전이라 자리만 만들어 둔다.
+ * 이미지가 없으면 비교 화면에 '찾을 수 없습니다' 안내가 그대로 뜬다.
+ * 개선 문구는 자료가 들어온 뒤에 채운다. */
+(function (R) {
+  [
+    { id: 'device-home', label: '대기·연결', file: 'device-home' },
+    { id: 'device-copy', label: '복사',      file: 'device-copy' },
+    { id: 'device-scan', label: '스캔',      file: 'device-scan' },
+    { id: 'device-fax',  label: '팩스',      file: 'device-fax' }
+  ].forEach(function (d) {
+    R.screens.push({
+      id: d.id, label: d.label,
+      current:  { img: 'shots/' + d.file + '.png' },
+      proposal: { img: 'proposal/shots/' + d.file + '.png' },
+      notes: [
+        { title: '자료 준비 중',
+          body: '복합기 화면 스크린샷이 들어오면 비교와 개선 문구를 채웁니다.' }
+      ]
+    });
+  });
+})(window.REVIEW);
 
 /* 복사·스캔·팩스는 같은 복합기 연결 구조라 같은 개선 원칙을 적용한다.
  * 세 화면의 좌표 구성이 같아 변경점도 그대로 공유한다. */
