@@ -622,7 +622,7 @@
 
     var fig = st.img
       ? '<div class="fxshotbox"><div class="fxshotfit' + (hl ? ' has-hl' : '') + '">' +
-          '<img class="fxshot" src="' + st.img + '" alt="' + st.label + '" data-zoom="' + st.img + '">' +
+          '<img class="fxshot" src="' + st.img + '" alt="' + st.label + '">' +
           hl + '</div></div>'
       : '<div class="fxshotbox"><div class="fxcard">' +
           '<b>' + whereHtml(st, 'fxwhere') + st.label + '</b>' +
@@ -717,15 +717,13 @@
     if (!root) return;
 
     root.addEventListener('click', function (e) {
+      /* 여기서 누를 것은 단계뿐이다. 큰 화면은 이미 크게 보여 주고 있으므로
+       * 눌러도 아무 일이 없다. 눌리지 않는 자리를 눌렀을 때 화면이 바뀌지 않는다. */
       var node = e.target.closest('[data-fstep]');
-      if (node) {
-        var sd = node.getAttribute('data-fside');
-        state.fstep[sd] = +node.getAttribute('data-fstep');
-        return redrawFlow(sd);
-      }
-      /* 크게 본 화면을 누르면 기존 원본 보기를 그대로 쓴다 */
-      var im = e.target.closest('.fxshot[data-zoom]');
-      if (im) openZoom(im.getAttribute('data-zoom'));
+      if (!node) return;
+      var sd = node.getAttribute('data-fside');
+      state.fstep[sd] = +node.getAttribute('data-fstep');
+      redrawFlow(sd);
     });
 
     el.stage.querySelectorAll('.fxshot').forEach(function (img) {

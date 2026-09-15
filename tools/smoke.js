@@ -156,6 +156,13 @@ function ok(cond, name, extra) {
   ok(!f.url.includes('step'), '주소는 영역과 화면만 남는다', f.url);
   ok(!(await d.$('[data-fmove]')), '흐름 안 이전·다음 단계 버튼이 없다');
 
+  /* 눌리지 않는 자리를 눌러도 아무것도 바뀌지 않는다 */
+  const before = JSON.stringify(await fx());
+  await d.click('.fxpane--x, .fxshotfit', { position: { x: 20, y: 40 } }).catch(() => {});
+  await d.waitForTimeout(350);
+  ok(!(await d.$eval('#zoom', e => e.classList.contains('is-on'))) && JSON.stringify(await fx()) === before,
+    '큰 화면을 눌러도 원본 보기가 열리지 않고 그대로 있다');
+
   await d.goto(BASE + '/?surface=flow&screen=print-flow'); await d.waitForTimeout(700);
   f = await fx();
   ok(f.nodes === 4 && f.key === '3개 화면·상태 → 1개 화면', '인쇄는 3 → 1 통합이 한눈에 보인다',
