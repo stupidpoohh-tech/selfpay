@@ -365,11 +365,12 @@ a{color:inherit;text-decoration:none}
 .fxshotbox{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
 /* 강조 영역이 % 로 맞으려면 이 상자가 그림과 딱 같아야 한다.
  * 그래서 원본 비율을 aspect-ratio 로 넣고(board.js) 그림을 가득 채운다. */
+/* 이동 자리의 빨간 표시가 그림 밖으로 조금 나오므로 여기서는 자르지 않는다 */
 .fxshotfit{
   position:relative;height:100%;width:auto;max-width:100%;max-height:100%;
-  border-radius:12px;overflow:hidden;border:1px solid var(--line);background:#fff;
+  border:1px solid var(--line);border-radius:12px;background:#fff;
 }
-.fxshot{width:100%;height:100%;display:block}
+.fxshot{width:100%;height:100%;display:block;border-radius:11px}
 /* 강조 영역 — 바깥을 한 장으로 덮고 짚을 자리만 뚫는다 */
 .fxveil{
   position:absolute;inset:0;width:100%;height:100%;pointer-events:none;

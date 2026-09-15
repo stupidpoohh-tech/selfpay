@@ -547,6 +547,33 @@
         '">' + st.where + '</em>' : '';
   }
 
+  /* 단계 그림이 어느 화면의 어느 쪽인지 찾는다.
+   * 그 화면의 히트박스를 그대로 얹어 눌러서 넘어갈 수 있게 하려는 것이다. */
+  var owners = {};
+  function imgOwner(img) {
+    if (!img) return null;
+    if (owners[img] !== undefined) return owners[img];
+    var got = null;
+    for (var i = 0; i < ALL.length && !got; i++) {
+      ['current', 'proposal'].forEach(function (k) {
+        var d = ALL[i][k];
+        if (!got && d && d.img === img && d.page) got = { id: ALL[i].id, side: k };
+      });
+    }
+    owners[img] = got;
+    return got;
+  }
+
+  /* 눌러서 가는 곳이 이 흐름 안의 단계이면 흐름을 벗어나지 않고 그 단계로 간다 */
+  function flowStepFor(s, side, id) {
+    var steps = (s[side] && s[side].steps) || [];
+    for (var i = 0; i < steps.length; i++) {
+      var o = imgOwner(steps[i].img);
+      if (o && o.id === id) return i;
+    }
+    return -1;
+  }
+
   /* 강조 영역은 새로 만들지 않고, 이미 적어 둔 화면의 변경점 좌표를 그대로 가져온다 */
   function hlBoxes(st) {
     if (!st || !st.hl) return [];
@@ -623,7 +650,7 @@
     var fig = st.img
       ? '<div class="fxshotbox"><div class="fxshotfit' + (hl ? ' has-hl' : '') + '">' +
           '<img class="fxshot" src="' + st.img + '" alt="' + st.label + '">' +
-          hl + '</div></div>'
+          hl + flowHitsHtml(s, side, st) + '</div></div>'
       : '<div class="fxshotbox"><div class="fxcard">' +
           '<b>' + whereHtml(st, 'fxwhere') + st.label + '</b>' +
           (st.note ? '<span>' + st.note + '</span>' : '') + '</div></div>';
@@ -643,6 +670,27 @@
       '<div class="fxpane__fig">' + fig + '</div>' +
       '<div class="fxpane__desc">' + (st.note && st.img ? '<p>' + st.note + '</p>' : '') + items + '</div>' +
     '</section>';
+  }
+
+  /* 그림 위 이동 자리. 좌표는 비교 화면과 같은 shot.js 히트박스를 그대로 쓴다 */
+  function flowHitsHtml(s, side, st) {
+    var o = imgOwner(st.img);
+    if (!o) return '';
+    var html = navHitsHtml(byId(o.id), o.side);
+    if (!html) return '';
+
+    /* 가는 곳이 이 흐름 안의 단계면 흐름에 머문다. 아니면 그 화면 비교로 간다 */
+    var box = document.createElement('div');
+    box.innerHTML = html;
+    box.querySelectorAll('.navhit[data-screen]').forEach(function (b) {
+      var at = flowStepFor(s, side, b.getAttribute('data-screen'));
+      if (at < 0) return;
+      var label = '다음 단계: ' + s[side].steps[at].label;
+      b.setAttribute('data-fgo', side + ':' + at);
+      b.setAttribute('title', label);
+      b.setAttribute('aria-label', label);
+    });
+    return box.innerHTML;
   }
 
   /* 첫 문장만 굵게 둔다. 문구 자체는 그대로다 */
@@ -717,13 +765,27 @@
     if (!root) return;
 
     root.addEventListener('click', function (e) {
-      /* 여기서 누를 것은 단계뿐이다. 큰 화면은 이미 크게 보여 주고 있으므로
-       * 눌러도 아무 일이 없다. 눌리지 않는 자리를 눌렀을 때 화면이 바뀌지 않는다. */
+      /* 단계 */
       var node = e.target.closest('[data-fstep]');
-      if (!node) return;
-      var sd = node.getAttribute('data-fside');
-      state.fstep[sd] = +node.getAttribute('data-fstep');
-      redrawFlow(sd);
+      if (node) {
+        var sd = node.getAttribute('data-fside');
+        state.fstep[sd] = +node.getAttribute('data-fstep');
+        return redrawFlow(sd);
+      }
+
+      /* 그림 안의 이동 자리 */
+      var hit = e.target.closest('.navhit[data-screen]');
+      if (hit) {
+        e.stopPropagation();
+        var go = hit.getAttribute('data-fgo');
+        if (go) {
+          var p = go.split(':');
+          state.fstep[p[0]] = +p[1];
+          return redrawFlow(p[0]);
+        }
+        return goToId(hit.getAttribute('data-screen'));
+      }
+      /* 그 밖의 자리는 눌러도 아무 일이 없다. 화면이 바뀌지 않는다 */
     });
 
     el.stage.querySelectorAll('.fxshot').forEach(function (img) {
