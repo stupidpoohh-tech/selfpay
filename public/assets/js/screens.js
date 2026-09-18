@@ -47,7 +47,7 @@ window.REVIEW = {
         { id: 'home',          label: '홈',            screens: ['home'] },
         { id: 'login',         label: '로그인',         screens: ['login', 'guest'] },
         { id: 'print',         label: '인쇄',           screens: ['print', 'print-confirm', 'print-options', 'print-amount', 'payment'] },
-        { id: 'work',          label: '복사·스캔·팩스',  screens: ['copy', 'qr', 'scan', 'fax'] },
+        { id: 'work',          label: '복사·스캔·팩스',  screens: ['copy', 'scan', 'fax'] },
         { id: 'settings',      label: '설정',           screens: ['settings', 'cost', 'payments', 'refund', 'troubleshoot'] },
         { id: 'notifications', label: '알림',           screens: ['notifications'] },
         { id: 'history',       label: '이력',           screens: ['history'] }
@@ -270,15 +270,13 @@ window.REVIEW = {
        * 세부 개선 문구는 다음 단계에 채운다. */
       id: 'device-flow', label: '모바일 ↔ 복합기 연결·결제', kind: 'flow',
       proposal: {
-        summary: '6단계',
+        summary: '5단계',
         title: '모바일과 복합기를 오가는 순서',
         steps: [
           { where: '모바일', label: '서비스 선택', img: 'proposal/shots/index.png',
             note: '인쇄·복사·스캔·팩스 중에서 할 작업을 고릅니다.', ref: [1] },
           { where: '복합기', label: '기기 QR 스캔', img: 'proposal/shots/device-home.png',
             note: '복합기 화면의 QR을 휴대폰으로 스캔합니다.', ref: [1] },
-          { where: '모바일', label: '연결 확인', img: 'proposal/shots/qr.png',
-            note: '어느 복합기에 연결되었는지 확인합니다.', ref: [1] },
           { where: '복합기', label: '서비스 설정', img: 'proposal/shots/device-copy.png',
             note: '복합기에서 서비스 옵션을 설정하고 예상 결제 금액을 확인합니다.', ref: [0, 1] },
           { where: '모바일', label: '결제', img: 'proposal/shots/payment.png',
@@ -470,36 +468,6 @@ window.REVIEW = {
       current:  { img: 'shots/copy.png',          page: 'copy.html' },
       proposal: { img: 'proposal/shots/copy.png', page: 'proposal/copy.html' },
       notes: []
-    },
-    {
-      /* AS-IS 에는 연결 결과를 보여 주는 화면이 없다. TO-BE 에만 있는 항목이다 */
-      id: 'qr', label: '연결 확인',
-      proposal: { img: 'proposal/shots/qr.png', page: 'proposal/qr.html' },
-      changes: [
-        {
-          id: 'result', type: 'add', shortLabel: '신규',
-          title: '연결 결과 확인 추가',
-          description: 'AS-IS에서는 QR 스캔 후 연결 성공 여부를 별도로 확인하는 단계가 없었습니다. ' +
-            'TO-BE에서는 복합기 연결이 완료되면 연결된 기기를 확인하는 팝업을 표시해, ' +
-            '올바른 기기와 연결되었는지 확인한 뒤 다음 단계로 이동하도록 했습니다.',
-          targets: {
-            proposal: [{ x: 12.0, y: 34.3, w: 72.0, h: 37.0 }]
-          }
-        },
-        {
-          id: 'device', type: 'add', shortLabel: '신규',
-          title: '오연결 방지',
-          description: 'TO-BE에서는 연결된 복합기 번호를 명시하고 사용자가 확인하도록 해, ' +
-            '주변의 다른 기기와 잘못 연결된 상태로 작업을 진행하는 것을 줄일 수 있도록 했습니다.',
-          targets: {
-            proposal: [{ x: 14.0, y: 50.4, w: 68.0, h: 9.0 }]
-          }
-        }
-      ],
-      effects: [
-        '올바른 기기와 연결되었는지 확인한 뒤 넘어갈 수 있습니다',
-        '주변의 다른 복합기와 잘못 연결된 채로 진행하는 경우를 줄일 수 있습니다'
-      ]
     },
     {
       id: 'scan', label: '스캔', primary: true,

@@ -49,9 +49,6 @@ function ok(cond, name, extra) {
   await step('/print-confirm.html?embed=1', '금액 확인', '/print-amount');
   await step('/print-amount.html?embed=1', '모바일로 결제', '/payment');
   await step('/proposal/print-checkout.html?embed=1', '250원 결제하기', '/proposal/payment');
-  await step('/proposal/copy.html?embed=1', 'QR 스캔', '/proposal/qr');
-  await step('/proposal/copy.html?embed=1', '다음 단계로', '/proposal/qr');
-  await step('/proposal/qr.html?embed=1', '확인', '/proposal/copy');
 
   /* 결제 수단은 화면을 옮기지 않고 고른 것만 표시한다 */
   for (const url of ['/payment.html?embed=1', '/proposal/payment.html?embed=1']) {
@@ -62,8 +59,8 @@ function ok(cond, name, extra) {
     ok(picked === 'false,true', `결제 수단 고르기 ${url}`, picked);
   }
 
-  /* 복사는 연결 결과 화면으로 넘어가고, 스캔·팩스는 연결된 상태만 보여 준다 */
-  for (const svc of ['scan', 'fax']) {
+  /* 복사·스캔·팩스 모두 연결된 상태만 그 자리에서 보여 준다 */
+  for (const svc of ['copy', 'scan', 'fax']) {
     await p.goto(`${BASE}/proposal/${svc}.html?embed=1`); await p.waitForTimeout(400);
     await p.click('.hit[data-name="QR 스캔"]'); await p.waitForTimeout(300);
     ok(!!(await p.$('.sheet')), `${svc} · QR 스캔 → 연결됨`);
@@ -192,16 +189,16 @@ function ok(cond, name, extra) {
 
   await d.goto(BASE + '/?surface=flow&screen=device-flow'); await d.waitForTimeout(700);
   f = await fx();
-  ok(f.nodes === 6 && f.panes === 1 && f.none === 0,
-    '모바일 ↔ 복합기는 여섯 단계가 늘 보이고 빈 자리가 없다', `단계 ${f.nodes} · 화면 ${f.panes}`);
+  ok(f.nodes === 5 && f.panes === 1 && f.none === 0,
+    '모바일 ↔ 복합기는 다섯 단계가 늘 보이고 빈 자리가 없다', `단계 ${f.nodes} · 화면 ${f.panes}`);
   const dup = await d.evaluate(() => {
     const st = REVIEW.screens.find(x => x.id === 'device-flow').proposal.steps.map(x => x.img);
     return st.filter((v, i) => v && st.indexOf(v) !== i);
   });
   ok(dup.length === 0, '같은 그림을 두 단계에 쓰지 않는다', dup.join(' · ') || '없음');
-  await d.click('.fnode[data-fside="proposal"][data-fstep="4"]'); await d.waitForTimeout(350);
+  await d.click('.fnode[data-fside="proposal"][data-fstep="3"]'); await d.waitForTimeout(350);
   f = await fx();
-  ok(f.src[0] === 'proposal/shots/payment.png' && f.nodes === 6, '단계를 누르면 그 화면으로 바뀐다',
+  ok(f.src[0] === 'proposal/shots/payment.png' && f.nodes === 5, '단계를 누르면 그 화면으로 바뀐다',
     f.src[0] + ' · 단계 ' + f.nodes);
 
   /* 영역별 화면 수가 데이터와 맞는다 */
