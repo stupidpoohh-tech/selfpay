@@ -286,8 +286,9 @@ window.REVIEW = {
           { where: '모바일', label: '결제', img: 'proposal/shots/payment.png',
             note: '복합기에는 결제 대기 중 상태가 표시되고, 사용자는 휴대폰에서 해당 금액을 결제합니다.',
             ref: [0, 1] },
-          { where: '복합기', label: '결제 완료', img: 'proposal/shots/device-pay.png',
-            note: '모바일 결제가 완료되면 복합기 화면이 결제 완료 상태로 전환됩니다.', ref: [0, 1, 2] }
+          { where: '복합기', label: '결제 완료·작업 시작', img: 'proposal/shots/device-pay.png',
+            note: '모바일 결제가 확인되면 결제 완료 상태를 표시하고 복사가 자동으로 시작됩니다.',
+            ref: [0, 1, 2] }
         ],
         foot: '복합기 단계 그림은 복합기 영역의 화면을 작게 다시 쓴 것입니다.'
       },
@@ -298,8 +299,8 @@ window.REVIEW = {
                 '명확하지 않았습니다.' },
         { title: '변경한 내용',
           body: 'TO-BE에서는 복합기가 서비스 설정과 작업 실행을 담당하고, 휴대폰이 결제를 담당하도록 ' +
-                '역할을 분리했습니다. 복합기에는 결제 대기 상태를 표시하고, 모바일 결제가 확인된 뒤 ' +
-                '작업 시작 버튼이 활성화되는 흐름으로 변경했습니다.' },
+                '역할을 분리했습니다. 복합기에는 결제 대기 상태를 표시하고, 모바일 결제가 확인되면 ' +
+                '별도의 추가 조작 없이 작업이 자동으로 시작되도록 흐름을 변경했습니다.' },
         { title: '적용 범위',
           body: '이 결제 상태 흐름은 복사·스캔·팩스에 공통으로 적용합니다. ' +
                 '서비스별로 동일한 결제 상태 화면을 반복해서 추가하지 않습니다.' }
@@ -585,9 +586,9 @@ window.REVIEW = {
         {
           id: 'purpose', type: 'restructure', shortLabel: '재구성',
           title: '로그인 목적 명확화',
-          description: 'AS-IS는 로그인 입력과 간편 로그인 수단만 바로 제시했습니다. ' +
-            'TO-BE에서는 「로그인하고 작업을 이어가세요」라는 안내와 서비스 맥락을 함께 보여줘 ' +
-            '로그인 이후 무엇을 할 수 있는지 이해하기 쉽게 구성했습니다.',
+          description: 'AS-IS는 로그인 입력과 간편 로그인 수단을 바로 제시했습니다. ' +
+            'TO-BE에서는 로그인 목적과 로그인 이후 이어지는 서비스 이용 맥락을 먼저 안내해, ' +
+            '현재 화면에서 무엇을 위한 로그인을 하는지 이해할 수 있도록 구성했습니다.',
           targets: {
             current:  [{ x: 7.0, y: 3.8, w: 86.0, h: 6.6 }],
             proposal: [{ x: 9.5, y: 15.5, w: 51.0, h: 12.0 }]
@@ -727,28 +728,28 @@ window.REVIEW = {
       proposal: { img: 'proposal/shots/cost.png', page: 'proposal/cost.html' },
       changes: [
         {
-          id: 'rate', type: 'add', shortLabel: '신규',
-          title: '요금 기준 명확화',
-          description: 'AS-IS에서는 인쇄 전 요금 기준을 별도로 확인하기 어려웠습니다. ' +
-            'TO-BE에서는 흑백·컬러 장당 요금과 적용 기준을 한 화면에서 확인할 수 있도록 ' +
-            '구성했습니다.',
+          id: 'services', type: 'merge', shortLabel: '통합',
+          title: '서비스별 요금 통합',
+          description: 'TO-BE에서는 출력·복사·스캔·팩스의 이용 요금을 하나의 요금표에서 확인할 수 ' +
+            '있도록 통합했습니다. 서비스마다 별도로 요금을 찾지 않고 전체 과금 기준을 한 화면에서 ' +
+            '비교할 수 있습니다.',
           targets: {
-            proposal: [{ x: 8.5, y: 41.5, w: 83.0, h: 36.5 }]
+            proposal: [{ x: 10.0, y: 50.5, w: 18.5, h: 27.0 }]
           }
         },
         {
-          id: 'factor', type: 'add', shortLabel: '신규',
-          title: '요금 영향 요소 안내',
-          description: '지원 용지와 인쇄 옵션에 따라 요금이 달라질 수 있다는 정보를 함께 제공해 ' +
-            '실제 결제 금액이 달라지는 기준을 미리 확인할 수 있도록 했습니다.',
+          id: 'conditions', type: 'restructure', shortLabel: '재구성',
+          title: '조건별 요금 비교',
+          description: '컬러·흑백과 A4·A3 등 요금에 영향을 주는 조건을 표의 행과 열로 구분해, ' +
+            '같은 서비스 안에서도 조건에 따른 가격 차이를 빠르게 비교할 수 있도록 구성했습니다.',
           targets: {
-            proposal: [{ x: 8.5, y: 79.3, w: 83.0, h: 15.5 }]
+            proposal: [{ x: 28.3, y: 46.8, w: 63.7, h: 4.5 }]
           }
         }
       ],
       effects: [
-        '인쇄 전에 장당 요금을 확인할 수 있습니다',
-        '옵션에 따라 금액이 달라지는 기준을 미리 알 수 있습니다'
+        '서비스별 요금을 한 화면에서 비교할 수 있습니다',
+        '컬러·흑백과 용지 크기에 따른 가격 차이를 확인할 수 있습니다'
       ]
     },
     {
@@ -794,28 +795,40 @@ window.REVIEW = {
       proposal: { img: 'proposal/shots/refund.png', page: 'proposal/refund.html' },
       changes: [
         {
-          id: 'rule', type: 'add', shortLabel: '신규',
+          id: 'rule', type: 'restructure', shortLabel: '재구성',
           title: '환불 기준 구체화',
-          description: 'AS-IS에서는 어떤 경우에 환불되는지 기준을 확인하기 어려웠습니다. ' +
-            'TO-BE에서는 미출력, 출력 오류, 부분 출력으로 상황을 나누어 환불 기준을 안내합니다.',
+          description: 'TO-BE에서는 결제 후 미출력, 출력 오류 등 환불 가능한 상황과 환불 대상이 ' +
+            '아닌 경우를 구분해 안내해, 자신의 문제가 환불 대상인지 먼저 판단할 수 있도록 했습니다.',
           targets: {
-            proposal: [{ x: 5.5, y: 16.8, w: 89.5, h: 43.5 }]
+            proposal: [{ x: 5.5, y: 16.8, w: 89.5, h: 38.8 },
+                       { x: 5.5, y: 56.0, w: 89.5, h: 4.2 }]
           }
         },
         {
-          id: 'process', type: 'add', shortLabel: '신규',
-          title: '처리 방식 안내',
-          description: '환불 처리 기간과 문의 경로를 함께 제공해 문제가 발생했을 때 ' +
-            '이후 절차를 확인할 수 있도록 했습니다.',
+          id: 'path', type: 'add', shortLabel: '경로 안내',
+          title: '환불 요청 경로 명확화',
+          description: '환불이 필요한 경우 `작업 이력`에서 해당 작업을 선택해 요청하도록 절차를 ' +
+            '안내하고, 여러 작업 중 문제가 발생한 작업만 처리되는 기준도 함께 설명합니다.',
           targets: {
-            proposal: [{ x: 5.5, y: 65.3, w: 89.5, h: 12.0 },
-                       { x: 5.5, y: 79.3, w: 89.5, h: 7.3 }]
+            proposal: [{ x: 5.5, y: 65.3, w: 89.5, h: 12.0 }]
+          }
+        },
+        {
+          id: 'after', type: 'add', shortLabel: '후속 연결',
+          title: '처리 시점과 후속 경로 안내',
+          description: '결제수단에 따른 환불 처리 시점을 안내하고, 바로 `작업 이력 가기` 또는 ' +
+            '`문의하기`로 이어질 수 있도록 관련 행동을 같은 화면에 배치했습니다.',
+          targets: {
+            proposal: [{ x: 5.5, y: 79.3, w: 89.5, h: 7.3 },
+                       { x: 5.5, y: 86.8, w: 89.5, h: 4.0 },
+                       { x: 5.5, y: 94.5, w: 89.5, h: 4.5 }]
           }
         }
       ],
       effects: [
-        '어떤 경우에 환불되는지 미리 확인할 수 있습니다',
-        '처리 기간과 문의 경로를 함께 알 수 있습니다'
+        '환불 가능 여부와 요청 방법을 한 화면에서 확인할 수 있습니다',
+        '문제가 발생한 작업을 기준으로 환불을 요청할 수 있습니다',
+        '환불 이후 처리 과정과 문의 경로를 확인할 수 있습니다'
       ]
     },
     {
@@ -823,28 +836,33 @@ window.REVIEW = {
       proposal: { img: 'proposal/shots/troubleshoot.png', page: 'proposal/troubleshoot.html' },
       changes: [
         {
-          id: 'kinds', type: 'add', shortLabel: '신규',
-          title: '문제 유형별 안내',
-          description: 'AS-IS에서는 출력 중 문제가 발생했을 때 해결 방법을 서비스 안에서 ' +
-            '찾기 어려웠습니다. TO-BE에서는 결제 후 미출력, 용지 걸림·출력 오류, 파일 오류, ' +
-            '기기 연결 문제를 유형별로 구분했습니다.',
+          id: 'kinds', type: 'restructure', shortLabel: '재구성',
+          title: '문제 유형별 해결 절차',
+          description: 'TO-BE에서는 결제 후 미출력, 용지 걸림·출력 오류, 지원되지 않는 파일, ' +
+            '복합기 연결 문제를 유형별로 구분하고 각 상황에서 사용자가 해야 할 해결 절차를 ' +
+            '바로 확인할 수 있도록 구성했습니다.',
           targets: {
             proposal: [{ x: 5.5, y: 24.8, w: 89.0, h: 57.5 }]
           }
         },
         {
-          id: 'ask', type: 'add', shortLabel: '신규',
-          title: '문의 경로 연결',
-          description: '안내만으로 해결되지 않는 경우 같은 화면에서 문의하기로 이어질 수 있도록 ' +
-            '구성했습니다.',
+          id: 'next', type: 'add', shortLabel: '행동 연결',
+          title: '문제별 다음 행동 연결',
+          description: '출력 실패·오류는 `작업 이력`의 환불 요청으로, 파일 문제는 지원 형식과 ' +
+            '변환 안내로, QR 연결 문제는 재스캔 방법과 `진단하기`로 이어지도록 상황에 맞는 ' +
+            '다음 행동을 제공합니다.',
           targets: {
-            proposal: [{ x: 5.5, y: 84.3, w: 89.0, h: 13.5 }]
+            /* 카드마다 오른쪽 끝의 이동 표시가 그 다음 행동으로 가는 자리다 */
+            proposal: [{ x: 86.8, y: 29.5, w: 5.0, h: 2.6 },
+                       { x: 86.8, y: 46.5, w: 5.0, h: 2.6 },
+                       { x: 86.8, y: 61.1, w: 5.0, h: 2.6 },
+                       { x: 86.8, y: 74.8, w: 5.0, h: 2.6 }]
           }
         }
       ],
       effects: [
-        '문제 상황에 맞는 안내를 서비스 안에서 찾을 수 있습니다',
-        '해결되지 않으면 같은 화면에서 문의로 이어갈 수 있습니다'
+        '현재 문제 유형에 맞는 해결 방법을 바로 확인할 수 있습니다',
+        '문제별로 다음에 해야 할 행동을 찾기 쉬워집니다'
       ]
     }
   ]
@@ -889,9 +907,9 @@ window.REVIEW = {
         {
           id: 'order', type: 'restructure', shortLabel: '재구성',
           title: '이용 순서 재구성',
-          description: 'AS-IS에서는 앱 작업 선택, 복합기 조작, 결제의 세 단계 안내와 두 개의 QR이 ' +
-            '동시에 제시되었습니다. TO-BE에서는 `모바일에서 서비스 선택 → QR 스캔 → 연결 후 ' +
-            '복합기에서 설정` 순서로 정리해 모바일과 복합기의 역할을 단계별로 구분했습니다.',
+          description: 'AS-IS에서는 두 개의 QR과 여러 단계의 이용 안내가 한 화면에 함께 제시되었습니다. ' +
+            'TO-BE에서는 `모바일에서 서비스 선택 → 복합기 QR 스캔 → 복합기에서 서비스 설정` ' +
+            '순서로 정리해 모바일과 복합기에서 해야 할 행동을 구분했습니다.',
           targets: {
             current:  [{ x: 4.0, y: 51.5, w: 57.9, h: 36.3 }],
             /* 새 시안에는 하단 3단계 띠가 없다. 순서가 머리말과 서비스 카드로 옮겨졌다 */
@@ -920,11 +938,12 @@ window.REVIEW = {
           }
         },
         {
-          id: 'price', type: 'add', shortLabel: '정보 추가',
-          title: '요금 확인 강화',
-          description: 'AS-IS에서는 복사 설정 화면에서 현재 선택에 따른 결제 금액을 바로 확인하기 ' +
-            '어려웠습니다. TO-BE에서는 장당 요금과 현재 설정 기준의 예상 금액을 함께 표시해 ' +
-            '설정과 비용을 같은 화면에서 확인할 수 있도록 했습니다.',
+          id: 'price', type: 'move', shortLabel: '위치 이동',
+          title: '요금 정보와 설정 연결',
+          description: 'AS-IS에서는 복사 요금 정보와 설정 영역의 관계가 약했습니다. ' +
+            'TO-BE에서는 복사 요금 안내를 옵션 설정과 가까운 위치에 배치해, ' +
+            '컬러·흑백·단면·양면·부수 등을 설정하는 과정에서 비용 기준도 함께 확인할 수 있도록 ' +
+            '구성했습니다.',
           targets: {
             proposal: [{ x: 7.5, y: 63.5, w: 23.0, h: 17.0 }]
           }
@@ -1299,21 +1318,49 @@ window.REVIEW = {
     s.effects = effects.slice();
   });
 
-  /* 복사는 시안이 새로 와서 짚는 자리만 다시 잡았다. 문구는 그대로다 */
+  /* 복사는 최종 시안이 따로 와서 문구와 짚는 자리를 이 화면 기준으로 다시 썼다.
+   * 사진에서 선택과 다음 단계로 버튼이 시안에서 빠졌으므로 그 전제도 지웠다. */
   (function () {
     var s = R.screens.filter(function (x) { return x.id === 'copy'; })[0];
     if (!s) return;
-    var boxes = {
-      frame:    { x: 9.5, y: 41.5, w: 80.5, h: 30.5 },
-      ways:     { x: 9.5, y: 73.0, w: 80.5, h: 6.0 },
-      fallback: { x: 9.5, y: 80.3, w: 80.5, h: 6.2 }
-    };
     delete s.notes;
-    s.changes = connChanges().map(function (c) {
-      c.targets = { current: (c.targets || {}).current, proposal: [boxes[c.id]] };
-      if (!c.targets.current) delete c.targets.current;
-      return c;
-    });
-    s.effects = effects.slice();
+    s.changes = [
+      {
+        id: 'frame', type: 'restructure', shortLabel: '재구성',
+        title: 'QR 스캔 영역 명확화',
+        description: 'AS-IS에서는 카메라 영역과 안내 문구 중심으로 QR 연결을 제공했습니다. ' +
+          'TO-BE에서는 스캔 영역과 연결 안내를 명확하게 구분해 복합기의 QR을 어디에 맞춰야 ' +
+          '하는지 바로 확인할 수 있도록 구성했습니다.',
+        targets: {
+          current:  [{ x: 6.5, y: 35.3, w: 87.0, h: 56.5 }],
+          proposal: [{ x: 9.5, y: 41.5, w: 80.5, h: 30.5 }]
+        }
+      },
+      {
+        id: 'auto', type: 'restructure', shortLabel: '자동 전환',
+        title: '연결 후 자동 전환',
+        description: 'TO-BE에서는 QR이 정상적으로 인식되면 별도의 `다음 단계로` 버튼을 누르지 않고 ' +
+          '자동으로 연결 후 다음 단계로 이동하도록 변경했습니다.',
+        targets: {
+          proposal: [{ x: 8.0, y: 27.0, w: 64.0, h: 3.0 }]
+        }
+      },
+      {
+        id: 'fallback', type: 'restructure', shortLabel: '단순화',
+        title: '대체 연결 경로 단순화',
+        description: 'QR 스캔이 어려운 경우에는 시리얼번호 직접 입력을 보조 경로로 제공하고, ' +
+          '사진에서 QR을 선택하는 별도 행동은 제거해 연결 방식을 단순화했습니다.',
+        targets: {
+          current:  [{ x: 33.0, y: 92.8, w: 34.0, h: 4.6 }],
+          proposal: [{ x: 9.5, y: 73.0, w: 80.5, h: 6.0 },
+                     { x: 9.5, y: 80.3, w: 80.5, h: 6.2 }]
+        }
+      }
+    ];
+    s.effects = [
+      'QR을 어디에 맞춰야 하는지 바로 알 수 있습니다',
+      '인식되면 따로 누르지 않아도 다음 단계로 넘어갑니다',
+      '연결 방법이 둘로 줄어 고를 것이 적어집니다'
+    ];
   })();
 })(window.REVIEW);

@@ -398,6 +398,8 @@
           textContent: img.getAttribute('src') + ' 를 찾을 수 없습니다.'
         }));
       });
+      /* 그림이 들어오면 크기가 정해진다. 그 뒤에 번호·라벨 자리를 다시 잡는다 */
+      if (!img.complete) img.addEventListener('load', syncAnno);
     });
     el.stage.querySelectorAll('.navhit[data-screen]').forEach(function (b) {
       var anno = b.getAttribute('data-anno');
@@ -518,7 +520,7 @@
         var bottom = -1e9;
         shown.forEach(function (b) {
           var r = b.getBoundingClientRect();
-          var push = bottom + 3 - r.top;
+          var push = bottom + 6 - r.top;
           if (push > 0) { b.style.marginTop = Math.round(push) + 'px'; bottom = r.top + push + r.height; }
           else { bottom = r.top + r.height; }
         });
