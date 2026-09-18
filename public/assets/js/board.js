@@ -55,7 +55,11 @@
     /* 전체 흐름 전용. 쪽마다 몇 번째 단계를 크게 보고 있는지.
      * 흐름 막대는 늘 그대로 있고 이 값은 큰 화면만 고른다 */
     fscreen: null,
-    fstep: { current: 0, proposal: 0 }
+    fstep: { current: 0, proposal: 0 },
+
+    /* 결제처럼 여러 단계를 거치는 화면에서 지금 보고 있는 단계.
+     * AS-IS 와 TO-BE 를 같은 번호로 함께 옮긴다 */
+    pstep: 0
   };
 
   var el = {
@@ -112,7 +116,26 @@
   function surf() { return SURFACES[state.surface]; }
   function list() { return surf().screens; }
   function screen() { return list()[state.index]; }
-  function changes() { return screen().changes || []; }
+
+  /* 단계가 있는 화면은 고른 단계의 자료로 갈아 끼워 보여 준다.
+   * 화면 자체 자료를 쓰는 단계(self)는 그대로 돌려준다. */
+  function stepList() { var f = screen().stepflow; return (f && f.steps) || []; }
+  function stepNow() { var l = stepList(); return l.length ? Math.min(state.pstep, l.length - 1) : 0; }
+
+  function view() {
+    var sc = screen();
+    var l = stepList();
+    if (!l.length) return sc;
+    var st = l[stepNow()];
+    if (st.self) return sc;
+    return {
+      id: sc.id, label: sc.label, kind: sc.kind, wide: st.wide || sc.wide,
+      current: st.current || null, proposal: st.proposal || null,
+      changes: st.changes || [], effects: st.effects || [], notes: st.notes || []
+    };
+  }
+
+  function changes() { return view().changes || []; }
   function activeId() { return state.hover || state.active; }
 
   /* 화면별 칩 아이콘 (선택된 칩에만 보인다) */
@@ -374,12 +397,36 @@
     return '<div class="pane pane--' + side + '">' + head + body + '</div>';
   }
 
+  /* 단계 막대. 늘 다섯 칸이 다 보이고 고른 칸만 진하게 선다.
+   * 칸을 누르면 AS-IS 와 TO-BE 가 같은 번호로 함께 바뀐다. */
+  function stepBarHtml() {
+    var l = stepList();
+    if (l.length < 2) return '';
+    var now = stepNow();
+    var f = screen().stepflow;
+    var nodes = l.map(function (st, i) {
+      var on = i === now;
+      return (i ? '<span class="pstep__arrow" aria-hidden="true">→</span>' : '') +
+        '<button type="button" class="pstep' + (on ? ' is-on' : '') + '" data-step="' + i + '"' +
+        ' aria-pressed="' + on + '"><b class="pstep__n">' + (i + 1) + '</b>' +
+        '<span class="pstep__label">' + st.label + '</span>' +
+        (st.same ? '<em class="pstep__same">변경 없음</em>' : '') + '</button>';
+    }).join('');
+    return '<div class="pflow">' +
+      (f.summary ? '<span class="pflow__sum">' + f.summary + '</span>' : '') +
+      '<div class="pflow__steps">' + nodes + '</div></div>';
+  }
+
   function drawCompare() {
-    var s = screen();
+    var s = view();
+    var bar = stepBarHtml();
+    var sameNow = (stepList()[stepNow()] || {}).same;
     el.stage.innerHTML =
       /* 변경점이 많은 화면은 번호·라벨이 그림 위로 몰리므로 표시를 줄인다 */
       '<div class="cmp' + (s.wide ? ' cmp--wide' : '') +
-        (((s.changes || []).length >= 6) ? ' cmp--dense' : '') + '" id="cmp">' +
+        (((s.changes || []).length >= 6) ? ' cmp--dense' : '') +
+        (bar ? ' cmp--stepped' : '') + '" id="cmp">' +
+        bar +
         '<div class="tabrow">' +
           '<div class="tabs" id="tabs">' +
             '<button data-side="current"' + (state.side === 'current' ? ' class="is-on"' : '') + '>AS-IS</button>' +
@@ -391,6 +438,26 @@
         paneHtml(s, 'current') + paneHtml(s, 'proposal') + notesHtml(s) +
         '<svg class="linklayer" aria-hidden="true"></svg>' +
       '</div>';
+
+    if (sameNow) {
+      el.stage.querySelectorAll('.pane .caption').forEach(function (c) {
+        c.insertAdjacentHTML('afterend', '<span class="samemark">AS-IS와 TO-BE 동일</span>');
+      });
+    }
+    /* 좁은 화면에서는 단계 막대가 가로로 밀린다. 고른 칸을 보이게 당겨 둔다 */
+    var onStep = el.stage.querySelector('.pstep.is-on');
+    if (onStep && onStep.scrollIntoView) onStep.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+
+    el.stage.querySelectorAll('.pstep').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var i = Number(b.getAttribute('data-step'));
+        if (i === stepNow()) return;
+        state.pstep = i;
+        state.active = null;
+        state.hover = null;
+        drawCompare();
+      });
+    });
 
     el.stage.querySelectorAll('.shotimg').forEach(function (img) {
       img.addEventListener('error', function () {
@@ -482,7 +549,7 @@
   }
 
   function syncAnno() {
-    var s = screen();
+    var s = view();
     var id = activeId();
     var cmp = document.getElementById('cmp');
     if (!cmp) return;
@@ -498,6 +565,11 @@
     });
 
     spreadBadges(cmp);
+    /* 갓 그린 그림은 아직 자리를 잡는 중이라 재 본 값이 어긋난다.
+     * 자리가 잡힌 다음 한 번 더 재서 번호가 포개지지 않게 한다 */
+    w.requestAnimationFrame(function () {
+      if (document.body.contains(cmp)) spreadBadges(cmp);
+    });
   }
 
   /* 두 변경점의 윗변이 겹치면 번호·라벨도 같은 자리에 포개진다.
@@ -1049,6 +1121,7 @@
     if (i < 0 || i >= list().length || i === state.index) return;
     state.index = i;
     state.fscreen = null;
+    state.pstep = 0;
     draw();
   }
 
@@ -1059,6 +1132,7 @@
     state.surface = at.surface;
     state.index = at.index;
     state.fscreen = null;
+    state.pstep = 0;
     draw();
   }
 
@@ -1067,6 +1141,7 @@
     state.surface = si;
     state.index = 0;
     state.fscreen = null;
+    state.pstep = 0;
     draw();
   }
 

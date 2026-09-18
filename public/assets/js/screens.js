@@ -47,7 +47,7 @@ window.REVIEW = {
         { id: 'home',          label: '홈',            screens: ['home'] },
         { id: 'login',         label: '로그인',         screens: ['login', 'guest'] },
         { id: 'print',         label: '인쇄',           screens: ['print', 'print-confirm', 'print-options', 'print-amount'] },
-        { id: 'pay',           label: '결제',           screens: ['payment', 'pay-auth', 'pay-wait', 'pay-done', 'pay-home'] },
+        { id: 'pay',           label: '결제',           screens: ['payment'] },
         { id: 'work',          label: '복사·스캔·팩스',  screens: ['copy', 'scan', 'fax'] },
         { id: 'settings',      label: '설정',           screens: ['settings', 'cost', 'payments', 'refund', 'troubleshoot'] },
         { id: 'notifications', label: '알림',           screens: ['notifications'] },
@@ -467,47 +467,130 @@ window.REVIEW = {
         '결제 전에 무엇에 얼마를 지불하는지 확인할 수 있습니다',
         '지금 고른 결제 수단을 한눈에 알 수 있습니다',
         '결제 시점에서 남은 과정을 파악하기 쉬워집니다'
-      ]
-    },
-    {
-      /* 결제 수단을 고른 다음 이어지는 네 화면. 올려 준 순서 그대로 둔다.
-       * 앞의 두 장은 토스 결제창이라 AS-IS 와 TO-BE 가 같은 그림이다. */
-      id: 'pay-auth', label: '결제 인증',
-      current:  { img: 'shots/pay-auth.png' },
-      proposal: { img: 'proposal/shots/pay-auth.png' },
-      notes: [
-        { title: '같은 화면',
-          body: '토스 결제창은 외부 결제 수단의 화면이라 이번 개선 대상이 아닙니다. ' +
-            'AS-IS 와 TO-BE 가 같은 화면이며, 비교를 위해 순서에만 넣어 두었습니다.' }
-      ]
-    },
-    {
-      id: 'pay-wait', label: '결제 대기',
-      current:  { img: 'shots/pay-wait.png' },
-      proposal: { img: 'proposal/shots/pay-wait.png' },
-      notes: [
-        { title: '같은 화면',
-          body: '토스 앱 알림을 기다리는 화면도 외부 결제 수단의 화면이라 이번 개선 대상이 아닙니다. ' +
-            'AS-IS 와 TO-BE 가 같은 화면입니다.' }
-      ]
-    },
-    {
-      id: 'pay-done', label: '결제 완료',
-      current:  { img: 'shots/pay-done.png' },
-      proposal: { img: 'proposal/shots/pay-done.png' },
-      notes: [
-        { title: '개선 사항 정리 예정',
-          body: '화면 비교를 먼저 올려 두었습니다. 변경점 표시와 개선 문구는 다음 단계에 채웁니다.' }
-      ]
-    },
-    {
-      id: 'pay-home', label: '결제 후 홈',
-      current:  { img: 'shots/pay-home.png' },
-      proposal: { img: 'proposal/shots/pay-home.png' },
-      notes: [
-        { title: '개선 사항 정리 예정',
-          body: '화면 비교를 먼저 올려 두었습니다. 변경점 표시와 개선 문구는 다음 단계에 채웁니다.' }
-      ]
+      ],
+
+      /* 결제는 화면 한 장이 아니라 다섯 단계를 거친다.
+       * AS-IS 와 TO-BE 가 같은 다섯 단계라 번호를 맞춰 나란히 본다.
+       * 1단계 자료는 이 화면 자신의 것을 그대로 쓴다 (self). */
+      stepflow: {
+        summary: '결제 5단계 비교 · 2·3단계는 변경 없음',
+        steps: [
+          { label: '결제 수단 선택', self: true },
+          {
+            label: '결제 인증', same: true,
+            current:  { img: 'shots/payment-2.png' },
+            proposal: { img: 'proposal/shots/payment-2.png' },
+            notes: [
+              { title: '기존 구조 유지',
+                body: '이 단계는 AS-IS와 TO-BE의 화면 및 이용 방식에 변경이 없습니다. ' +
+                  '이후 단계에서 변경되는 결제 경험과 연결되는 기존 흐름으로 유지했습니다.' },
+              { title: '외부 결제 수단 화면',
+                body: '토스에 가입된 휴대폰 번호와 생년월일을 입력하는 결제사 화면입니다. ' +
+                  'AS-IS와 TO-BE로 올라온 이미지가 같은 파일이며, 이번 개선 범위에 들어가지 않습니다.' }
+            ]
+          },
+          {
+            label: '승인 대기', same: true,
+            current:  { img: 'shots/payment-3.png' },
+            proposal: { img: 'proposal/shots/payment-3.png' },
+            notes: [
+              { title: '기존 구조 유지',
+                body: '이 단계는 AS-IS와 TO-BE의 화면 및 이용 방식에 변경이 없습니다. ' +
+                  '이후 단계에서 변경되는 결제 경험과 연결되는 기존 흐름으로 유지했습니다.' },
+              { title: '외부 결제 수단 화면',
+                body: '토스 앱으로 보낸 알림을 눌러 결제를 승인하도록 기다리는 결제사 화면입니다. ' +
+                  'AS-IS와 TO-BE로 올라온 이미지가 같은 파일이며, 이번 개선 범위에 들어가지 않습니다.' }
+            ]
+          },
+          {
+            label: '결제 완료',
+            current:  { img: 'shots/payment-4.png' },
+            proposal: { img: 'proposal/shots/payment-4.png' },
+            changes: [
+              {
+                id: 'done-state', type: 'restructure', shortLabel: '재구성',
+                title: '완료 상태 표시 강화',
+                description: 'AS-IS에서는 팝업 제목이 `알림`이고 완료 여부는 본문 첫 줄에서 읽어야 했습니다. ' +
+                  'TO-BE에서는 체크 아이콘과 함께 `결제가 완료되었습니다.`를 제목 자리에 두어 ' +
+                  '팝업을 연 순간 결제 결과를 먼저 확인할 수 있게 했습니다.',
+                targets: {
+                  current:  [{ x: 10.5, y: 39.4, w: 8.0, h: 3.0 },
+                             { x: 10.5, y: 43.4, w: 38.0, h: 2.6 }],
+                  /* 번호·라벨은 첫 영역 옆에 선다. 제목을 앞에 두어야
+                   * 라벨이 팝업 오른쪽 빈자리에 서고 글자를 덜 가린다 */
+                  proposal: [{ x: 34.2, y: 45.6, w: 41.0, h: 4.0 },
+                             { x: 22.8, y: 45.2, w: 9.5, h: 5.2 }]
+                }
+              },
+              {
+                id: 'done-next', type: 'restructure', shortLabel: '행동 연결',
+                title: '다음 행동 안내로 전환',
+                description: 'AS-IS에서는 본문이 `복합기 QR 스캔은 모바일에서 진행해 주세요`와 ' +
+                  '`홈으로 이동합니다`로 나뉘고 버튼은 `확인`이었습니다. ' +
+                  'TO-BE에서는 본문을 `복합기의 QR을 스캔하면 바로 출력을 이어갈 수 있습니다`로 모으고 ' +
+                  '버튼 문구를 `홈에서 이어서 출력`으로 바꿔, 누르면 무엇으로 이어지는지 문구에서 드러나게 했습니다.',
+                targets: {
+                  current:  [{ x: 10.5, y: 46.4, w: 76.0, h: 5.4 },
+                             { x: 13.7, y: 53.6, w: 70.8, h: 6.2 }],
+                  proposal: [{ x: 30.3, y: 51.8, w: 38.7, h: 5.5 },
+                             { x: 21.0, y: 58.9, w: 58.5, h: 5.6 }]
+                }
+              }
+            ],
+            effects: [
+              '팝업을 연 순간 결제가 끝났는지 확인할 수 있습니다',
+              '버튼을 누르면 무엇으로 이어지는지 알기 쉬워집니다'
+            ]
+          },
+          {
+            label: '결제 후 홈',
+            current:  { img: 'shots/payment-5.png' },
+            proposal: { img: 'proposal/shots/payment-5.png' },
+            changes: [
+              {
+                id: 'home-state', type: 'add', shortLabel: '상태 추가',
+                title: '작업 상태 표시 구체화',
+                description: 'AS-IS에서는 진행중 작업 카드에 `결제완료` 배지 하나만 있었습니다. ' +
+                  'TO-BE에서는 카드 머리에 `이어서 출력` 배지를 두고 파일명 아래에 ' +
+                  '`결제 완료 · 출력 대기` 상태를 함께 표시해, 결제 상태와 남은 단계를 같이 볼 수 있게 했습니다.',
+                targets: {
+                  current:  [{ x: 77.5, y: 53.7, w: 16.0, h: 3.0 }],
+                  proposal: [{ x: 13.0, y: 66.1, w: 14.5, h: 2.8 },
+                             { x: 23.6, y: 72.2, w: 24.2, h: 2.8 }]
+                }
+              },
+              {
+                id: 'home-guide', type: 'add', shortLabel: '안내 추가',
+                title: '다음 행동 안내 추가',
+                description: 'AS-IS 카드에는 다음에 무엇을 해야 하는지 적힌 문구가 없었습니다. ' +
+                  'TO-BE에서는 `복합기의 QR을 스캔하면 출력을 이어갈 수 있어요.`를 카드 안에 넣어 ' +
+                  '홈으로 돌아온 뒤 이어서 할 일을 카드에서 바로 읽을 수 있게 했습니다.',
+                targets: {
+                  proposal: [{ x: 12.8, y: 79.7, w: 47.5, h: 2.5 }]
+                }
+              },
+              {
+                id: 'home-action', type: 'restructure', shortLabel: '위계 분리',
+                title: '주 행동과 보조 행동 분리',
+                description: 'AS-IS에서는 `환불 요청`과 `복합기 QR로 다시 연결`이 위아래로 놓이고 ' +
+                  '연결 버튼만 가로 전체를 채웠습니다. TO-BE에서는 `환불 요청`을 글자 링크로 낮추고 ' +
+                  '`복합기에 연결`을 오른쪽 버튼으로 두어 두 행동의 위계를 나눴습니다.',
+                targets: {
+                  current:  [{ x: 6.8, y: 61.2, w: 17.0, h: 3.4 },
+                             { x: 6.8, y: 65.5, w: 86.2, h: 3.3 }],
+                  proposal: [{ x: 12.8, y: 83.4, w: 11.0, h: 2.4 },
+                             { x: 61.5, y: 82.1, w: 26.2, h: 4.6 }]
+                }
+              }
+            ],
+            effects: [
+              '결제가 끝났는지와 출력이 남았는지를 함께 볼 수 있습니다',
+              '홈으로 돌아온 뒤 이어서 할 일을 카드에서 바로 읽을 수 있습니다',
+              '지금 눌러야 할 버튼이 무엇인지 고르기 쉬워집니다'
+            ]
+          }
+        ]
+      }
     },
     {
       id: 'copy', label: '복사', primary: true,
