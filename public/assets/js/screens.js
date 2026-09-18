@@ -58,7 +58,7 @@ window.REVIEW = {
       id: 'device', label: '복합기',
       groups: [
         { id: 'device-home', label: '대기·연결', screens: ['device-home'] },
-        { id: 'device-copy', label: '복사',      screens: ['device-copy'] },
+        { id: 'device-copy', label: '복사',      screens: ['device-copy', 'device-copy-done', 'device-payment'] },
         { id: 'device-scan', label: '스캔',      screens: ['device-scan'] },
         { id: 'device-fax',  label: '팩스',      screens: ['device-fax'] }
       ]
@@ -270,7 +270,7 @@ window.REVIEW = {
        * 세부 개선 문구는 다음 단계에 채운다. */
       id: 'device-flow', label: '모바일 ↔ 복합기 연결·결제', kind: 'flow',
       proposal: {
-        summary: '5단계',
+        summary: '7단계',
         title: '모바일과 복합기를 오가는 순서',
         steps: [
           { where: '모바일', label: '서비스 선택', img: 'proposal/shots/index.png',
@@ -279,6 +279,10 @@ window.REVIEW = {
             note: '복합기 화면의 QR을 휴대폰으로 스캔합니다.', ref: [1] },
           { where: '복합기', label: '서비스 설정', img: 'proposal/shots/device-copy.png',
             note: '복합기에서 서비스 옵션을 설정하고 예상 결제 금액을 확인합니다.', ref: [0, 1] },
+          { where: '복합기', label: '작업 완료', img: 'proposal/shots/device-copy-done.png',
+            note: '작업이 끝나면 완료를 알리고, 이어서 더 할지 결제로 갈지 고릅니다.', ref: [0, 1] },
+          { where: '복합기', label: '결제 요청', img: 'proposal/shots/device-payment.png',
+            note: '복합기가 결제 금액을 띄우고 휴대폰에서 결제하기를 기다립니다.', ref: [0, 1] },
           { where: '모바일', label: '결제', img: 'proposal/shots/payment.png',
             note: '복합기에는 결제 대기 중 상태가 표시되고, 사용자는 휴대폰에서 해당 금액을 결제합니다.',
             ref: [0, 1] },
@@ -1038,14 +1042,24 @@ window.REVIEW = {
     }
   ];
 
+  /* 복사 뒤에 이어지는 두 화면. 개선 문구는 아직 없어 자리만 잡아 둔다 */
+  DEVICE.push(
+    { id: 'device-copy-done', label: '작업 완료' },
+    { id: 'device-payment',   label: '결제 요청' }
+  );
+
   DEVICE.forEach(function (d) {
-    R.screens.push({
+    var s = {
       id: d.id, label: d.label, wide: true,
       current:  { img: 'shots/' + d.id + '.png' },
-      proposal: { img: 'proposal/shots/' + d.id + '.png' },
-      changes: d.changes,
-      effects: d.effects
-    });
+      proposal: { img: 'proposal/shots/' + d.id + '.png' }
+    };
+    if (d.changes) { s.changes = d.changes; s.effects = d.effects; }
+    else {
+      s.notes = [{ title: '개선 사항 정리 예정',
+        body: '화면 비교를 먼저 올려 두었습니다. 변경점 표시와 개선 문구는 다음 단계에 채웁니다.' }];
+    }
+    R.screens.push(s);
   });
 })(window.REVIEW);
 
