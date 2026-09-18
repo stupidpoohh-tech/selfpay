@@ -510,6 +510,14 @@ a{color:inherit;text-decoration:none}
 .anno.is-on .anno__label,
 .anno__box.is-active .anno__label{display:inline-flex}
 .anno__box.is-active .anno__label{background:var(--c);color:#fff}
+/* 변경점이 많은 화면은 여백에 다 세울 수가 없다.
+ * 모두 켠 상태에서는 번호만 상자 모서리에 붙이고, 고른 것만 라벨을 내놓는다. */
+.cmp--dense .anno__num{
+  right:auto;left:3px;top:3px;min-width:17px;height:17px;padding:0 4px;font-size:9.5px;
+}
+.cmp--dense .anno__num::after{display:none}
+.cmp--dense .anno.is-on .anno__box:not(.is-active) .anno__label{display:none}
+
 /* 하나를 고르면 나머지 번호·라벨은 아예 감춘다. 반투명하게 두면 다시 글자와 겹친다 */
 .anno.has-active .anno__box:not(.is-active) .anno__num{opacity:0}
 .anno.has-active .anno__box:not(.is-active) .anno__label{display:none}

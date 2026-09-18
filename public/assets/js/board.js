@@ -376,7 +376,9 @@
   function drawCompare() {
     var s = screen();
     el.stage.innerHTML =
-      '<div class="cmp' + (s.wide ? ' cmp--wide' : '') + '" id="cmp">' +
+      /* 변경점이 많은 화면은 번호·라벨이 그림 위로 몰리므로 표시를 줄인다 */
+      '<div class="cmp' + (s.wide ? ' cmp--wide' : '') +
+        (((s.changes || []).length >= 6) ? ' cmp--dense' : '') + '" id="cmp">' +
         '<div class="tabrow">' +
           '<div class="tabs" id="tabs">' +
             '<button data-side="current"' + (state.side === 'current' ? ' class="is-on"' : '') + '>AS-IS</button>' +
@@ -498,6 +500,8 @@
   /* 두 변경점의 윗변이 겹치면 번호·라벨도 같은 자리에 포개진다.
    * 그리고 나서 겹친 것만 아래로 조금씩 밀어 준다. */
   function spreadBadges(cmp) {
+    /* 번호가 상자 모서리 안에 붙는 화면에서는 밀지 않는다 */
+    if (cmp.classList.contains('cmp--dense')) return;
     cmp.querySelectorAll('.anno').forEach(function (layer) {
       ['.anno__num', '.anno__label'].forEach(function (sel) {
         var all = Array.prototype.slice.call(layer.querySelectorAll(sel));
