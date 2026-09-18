@@ -31,6 +31,12 @@ body{
   -webkit-font-smoothing:antialiased;
 }
 button{font:inherit;color:inherit;cursor:pointer}
+/* 키보드로 옮겨 다닐 때 지금 어디에 있는지 보이게 한다 */
+.surf:focus-visible,.tab2:focus-visible,.arrow:focus-visible,.pstep:focus-visible,
+.modes button:focus-visible,.seg button:focus-visible,.linkbtn:focus-visible,
+.notesbtn:focus-visible,.annotoggle:focus-visible,.fnode:focus-visible{
+  outline:2px solid var(--accent);outline-offset:2px;border-radius:8px;
+}
 a{color:inherit;text-decoration:none}
 
 .board{display:flex;flex-direction:column;height:100dvh;overflow:hidden}
@@ -113,6 +119,21 @@ a{color:inherit;text-decoration:none}
   overflow-x:auto;scrollbar-width:none;
 }
 .tabs2::-webkit-scrollbar{display:none}
+
+/* 가로로 밀리는 줄은 잘린 쪽 끝을 흐리게 해서 더 있다는 것을 알린다.
+ * 어느 쪽에 더 있는지는 board.js 가 class 로 알려 준다. */
+.has-more-right{
+  -webkit-mask-image:linear-gradient(to right,#000 calc(100% - 26px),transparent);
+  mask-image:linear-gradient(to right,#000 calc(100% - 26px),transparent);
+}
+.has-more-left{
+  -webkit-mask-image:linear-gradient(to right,transparent,#000 26px);
+  mask-image:linear-gradient(to right,transparent,#000 26px);
+}
+.has-more-left.has-more-right{
+  -webkit-mask-image:linear-gradient(to right,transparent,#000 26px,#000 calc(100% - 26px),transparent);
+  mask-image:linear-gradient(to right,transparent,#000 26px,#000 calc(100% - 26px),transparent);
+}
 .tab2{
   position:relative;flex:none;height:100%;padding:0 13px;border:0;background:none;
   font-size:14px;font-weight:700;color:#6b7688;white-space:nowrap;
@@ -624,7 +645,17 @@ button.note:focus-visible{outline:2px solid rgba(47,109,246,.55);outline-offset:
 .proto{height:100%;min-height:0;display:flex;flex-direction:column;align-items:center;gap:12px}
 .proto__stage{flex:1;min-height:0;width:100%;display:flex;align-items:center;justify-content:center}
 .proto__stage .device{flex:none}
-.proto__hint{flex:none;margin:0;font-size:12.5px;color:var(--muted-2)}
+.proto__hint{flex:none;margin:0;font-size:12.5px;color:var(--muted-2);text-align:center;word-break:keep-all}
+
+/* 눌러 볼 페이지가 없는 복합기 화면은 TO-BE 시안 위에서 눌러 본다 */
+.shotproto{
+  /* 크기는 그림 비율을 알아낸 뒤 자바스크립트가 정한다.
+   * 그 전에도 무대를 넘지 않도록 최대치를 걸어 둔다 */
+  position:relative;flex:none;max-width:100%;max-height:100%;
+  border-radius:12px;overflow:hidden;
+}
+.shotproto img{display:block;width:100%;height:100%;max-width:100%;max-height:100%;object-fit:contain}
+.shotproto .navhits{z-index:2}
 
 /* ── 원본 크기 보기 ────────────────────────────── */
 .zoom{
@@ -661,7 +692,9 @@ button.note:focus-visible{outline:2px solid rgba(47,109,246,.55);outline-offset:
   html:not(.pcview) .tab2 svg{width:15px;height:15px}
   html:not(.pcview) .surfs{padding:2px}
   html:not(.pcview) .surf{height:28px;padding:0 9px;font-size:12px}
-  html:not(.pcview) .tab2__sub{display:none}
+  /* 좁은 화면에서는 `현재: …` 줄을 감추므로, 고른 탭 옆 이름표는 남긴다.
+   * 이것마저 없으면 같은 묶음 안 어느 화면인지 알 길이 없다 */
+  html:not(.pcview) .tab2__sub{font-size:10.5px;padding:2px 6px}
   html:not(.pcview) .arrow{width:30px;height:30px}
   html:not(.pcview) .counter{min-width:40px;font-size:12.5px}
   html:not(.pcview) .stage{padding:10px 14px 12px}

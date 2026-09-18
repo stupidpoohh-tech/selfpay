@@ -1371,6 +1371,53 @@ window.REVIEW = {
     }
   );
 
+  /* 복합기에는 눌러 볼 HTML 페이지가 없다. TO-BE 시안 위에 이동 자리를 얹어
+   * 화면 사이를 옮겨 다니게 한다. 좌표는 시안에서 직접 재었고,
+   * 시안에 실제로 보이는 버튼만 적었다. 눌리지 않는 상태 표시는 뺐다. */
+  var PROTO = {
+    'device-home': {
+      hint: '복합기 화면은 휴대폰에서 서비스를 고른 뒤 이어지는 화면입니다. ' +
+        '여기서는 이용 가능한 서비스에서 각 화면으로 옮겨 가며 볼 수 있게 했습니다.',
+      hits: [
+        { l: 17.8, t: 59.3, w: 11.0, h: 16.5, to: 'device-copy-start', name: '복사', next: true },
+        { l: 29.3, t: 59.3, w: 11.0, h: 16.5, to: 'device-scan',       name: '스캔' },
+        { l: 40.6, t: 59.3, w: 11.0, h: 16.5, to: 'device-fax',        name: '팩스' }
+      ]
+    },
+    'device-copy-start': {
+      hits: [
+        { l: 5.8,  t: 8.0,  w: 11.0, h: 5.8,  to: 'device-home', name: '홈으로' },
+        { l: 73.5, t: 82.4, w: 20.8, h: 10.0, to: 'device-copy', name: '복사 시작', next: true }
+      ]
+    },
+    'device-copy': {
+      /* 결제 대기 중은 눌리지 않는 상태 표시라 이동 자리를 두지 않는다.
+       * 대신 화면이 적어 둔 대로, 결제가 확인되면 복사가 끝나 완료 팝업으로 넘어간다 */
+      hits: [
+        { l: 6.6,  t: 10.4, w: 10.4, h: 5.2, to: 'device-home',      name: '홈으로' },
+        { l: 6.6,  t: 84.6, w: 10.6, h: 7.0, to: 'device-home',      name: '취소' },
+        { l: 30.5, t: 83.6, w: 38.0, h: 9.0, to: 'device-copy-done',
+          name: '결제가 확인되면 복사가 시작됩니다', next: true }
+      ]
+    },
+    'device-copy-done': {
+      hits: [
+        { l: 84.2, t: 26.3, w: 4.5,  h: 4.6,  to: 'device-home',       name: '닫기' },
+        { l: 13.5, t: 64.0, w: 35.5, h: 12.3, to: 'device-copy-start', name: '추가 복사' },
+        { l: 50.8, t: 64.0, w: 36.0, h: 12.7, to: 'device-payment',    name: '결제하기', next: true }
+      ]
+    },
+    'device-payment': {
+      hits: [{ l: 83.0, t: 85.3, w: 10.2, h: 7.2, to: 'device-home', name: '작업 취소' }]
+    },
+    'device-scan': {
+      hits: [{ l: 4.0, t: 5.5, w: 9.0, h: 5.2, to: 'device-home', name: '홈으로' }]
+    },
+    'device-fax': {
+      hits: [{ l: 4.2, t: 3.7, w: 8.5, h: 5.2, to: 'device-home', name: '홈으로' }]
+    }
+  };
+
   DEVICE.forEach(function (d) {
     /* asis 를 적으면 AS-IS 는 그 화면의 그림을 같이 쓴다.
      * 현재 서비스는 설정 화면 하나인데 TO-BE 에서 두 상태로 나뉜 자리다. */
@@ -1379,6 +1426,7 @@ window.REVIEW = {
       current:  { img: 'shots/' + (d.asis || d.id) + '.png' },
       proposal: { img: 'proposal/shots/' + d.id + '.png' }
     };
+    if (PROTO[d.id]) s.proto = PROTO[d.id];
     if (d.changes) { s.changes = d.changes; s.effects = d.effects; }
     else {
       s.notes = [{ title: '개선 사항 정리 예정',
