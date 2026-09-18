@@ -46,7 +46,8 @@ window.REVIEW = {
       groups: [
         { id: 'home',          label: '홈',            screens: ['home'] },
         { id: 'login',         label: '로그인',         screens: ['login', 'guest'] },
-        { id: 'print',         label: '인쇄',           screens: ['print', 'print-confirm', 'print-options', 'print-amount', 'payment'] },
+        { id: 'print',         label: '인쇄',           screens: ['print', 'print-confirm', 'print-options', 'print-amount'] },
+        { id: 'pay',           label: '결제',           screens: ['payment', 'pay-auth', 'pay-wait', 'pay-done', 'pay-home'] },
         { id: 'work',          label: '복사·스캔·팩스',  screens: ['copy', 'scan', 'fax'] },
         { id: 'settings',      label: '설정',           screens: ['settings', 'cost', 'payments', 'refund', 'troubleshoot'] },
         { id: 'notifications', label: '알림',           screens: ['notifications'] },
@@ -466,6 +467,46 @@ window.REVIEW = {
         '결제 전에 무엇에 얼마를 지불하는지 확인할 수 있습니다',
         '지금 고른 결제 수단을 한눈에 알 수 있습니다',
         '결제 시점에서 남은 과정을 파악하기 쉬워집니다'
+      ]
+    },
+    {
+      /* 결제 수단을 고른 다음 이어지는 네 화면. 올려 준 순서 그대로 둔다.
+       * 앞의 두 장은 토스 결제창이라 AS-IS 와 TO-BE 가 같은 그림이다. */
+      id: 'pay-auth', label: '결제 인증',
+      current:  { img: 'shots/pay-auth.png' },
+      proposal: { img: 'proposal/shots/pay-auth.png' },
+      notes: [
+        { title: '같은 화면',
+          body: '토스 결제창은 외부 결제 수단의 화면이라 이번 개선 대상이 아닙니다. ' +
+            'AS-IS 와 TO-BE 가 같은 화면이며, 비교를 위해 순서에만 넣어 두었습니다.' }
+      ]
+    },
+    {
+      id: 'pay-wait', label: '결제 대기',
+      current:  { img: 'shots/pay-wait.png' },
+      proposal: { img: 'proposal/shots/pay-wait.png' },
+      notes: [
+        { title: '같은 화면',
+          body: '토스 앱 알림을 기다리는 화면도 외부 결제 수단의 화면이라 이번 개선 대상이 아닙니다. ' +
+            'AS-IS 와 TO-BE 가 같은 화면입니다.' }
+      ]
+    },
+    {
+      id: 'pay-done', label: '결제 완료',
+      current:  { img: 'shots/pay-done.png' },
+      proposal: { img: 'proposal/shots/pay-done.png' },
+      notes: [
+        { title: '개선 사항 정리 예정',
+          body: '화면 비교를 먼저 올려 두었습니다. 변경점 표시와 개선 문구는 다음 단계에 채웁니다.' }
+      ]
+    },
+    {
+      id: 'pay-home', label: '결제 후 홈',
+      current:  { img: 'shots/pay-home.png' },
+      proposal: { img: 'proposal/shots/pay-home.png' },
+      notes: [
+        { title: '개선 사항 정리 예정',
+          body: '화면 비교를 먼저 올려 두었습니다. 변경점 표시와 개선 문구는 다음 단계에 채웁니다.' }
       ]
     },
     {
