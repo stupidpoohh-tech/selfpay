@@ -175,16 +175,16 @@
     },
     login: {
       img: 'shots/login.png', alt: '로그인',
+      /* 새 시안에는 비회원으로 이용하기 버튼이 없어 그 자리를 두지 않는다 */
       hits: [
-        { l: 78.5, t: 6.0,  w: 17.5, h: 4.0, to: 'help.html',          name: '도움말' },
-        { l: 76.5, t: 39.6, w: 15.0, h: 2.2, to: 'find-password.html', name: '비밀번호 찾기' },
-        { l: 8.8,  t: 49.4, w: 82.2, h: 5.6, to: 'index.html',         name: '로그인' },
-        { l: 7.0,  t: 62.7, w: 86.0, h: 5.5, to: 'index.html',         name: '카카오로 시작하기' },
-        { l: 7.0,  t: 69.1, w: 86.0, h: 5.5, to: 'index.html',         name: '네이버로 시작하기' },
-        { l: 7.0,  t: 75.4, w: 86.0, h: 5.5, to: 'index.html',         name: 'Google로 시작하기' },
-        { l: 7.0,  t: 82.5, w: 86.0, h: 5.5, to: 'index.html',         name: '비회원으로 이용하기' },
-        { l: 47.5, t: 95.4, w: 10.0, h: 2.2, to: 'signup.html',        name: '회원가입' },
-        { l: 62.0, t: 95.4, w: 10.0, h: 2.2, to: 'support.html',       name: '고객센터' }
+        { l: 75.5, t: 8.5,  w: 14.8, h: 3.3, to: 'help.html',          name: '도움말' },
+        { l: 72.0, t: 41.3, w: 16.0, h: 2.7, to: 'find-password.html', name: '비밀번호 찾기' },
+        { l: 12.8, t: 51.0, w: 74.9, h: 5.8, to: 'index.html',         name: '로그인' },
+        { l: 10.7, t: 65.0, w: 78.8, h: 5.0, to: 'index.html',         name: '카카오로 시작하기' },
+        { l: 10.7, t: 71.3, w: 78.8, h: 5.0, to: 'index.html',         name: '네이버로 시작하기' },
+        { l: 10.7, t: 77.7, w: 78.8, h: 5.0, to: 'index.html',         name: 'Google로 시작하기' },
+        { l: 48.8, t: 90.8, w: 10.5, h: 2.4, to: 'signup.html',        name: '회원가입' },
+        { l: 63.4, t: 90.8, w: 9.5,  h: 2.4, to: 'support.html',       name: '고객센터' }
       ]
     },
     settings: {
@@ -226,10 +226,17 @@
     },
     'print-checkout': {
       img: 'shots/print-checkout.png', alt: '파일 확인 및 결제',
-      hits: P_APPBAR.concat([
-        { l: 71.5, t: 33.9, w: 23.0, h: 4.4, to: 'print.html',   name: '다른 파일 선택' },
-        { l: 4.0,  t: 81.5, w: 92.0, h: 6.4, to: 'payment.html', name: '250원 결제하기' }
-      ], taskTab(P_TAB))
+      /* 새 시안은 기기 목업 안에 그려져 있어 상단 아이콘 자리가 공용 좌표와 다르다 */
+      hits: [
+        { l: 67.3, t: 8.3,  w: 6.5,  h: 3.4, to: 'notifications.html', name: '알림' },
+        { l: 76.2, t: 8.3,  w: 6.9,  h: 3.4, to: 'settings.html',      name: '내 정보' },
+        { l: 64.3, t: 29.0, w: 20.5, h: 3.0, to: 'print.html',         name: '다른 파일 선택' },
+        { l: 14.3, t: 84.8, w: 71.8, h: 4.2, to: 'payment.html',       name: '1,250원 결제하기' }
+      ].concat(taskTab([
+        { l: 12.7, t: 89.5, w: 25.0, h: 5.5, to: 'index.html',    name: '홈' },
+        { l: 37.7, t: 89.5, w: 25.0, h: 5.5, to: 'history.html',  name: '이력' },
+        { l: 62.7, t: 89.5, w: 25.0, h: 5.5, to: 'settings.html', name: '설정' }
+      ]))
     },
     payment: {
       img: 'shots/payment.png', alt: '인쇄 · 모바일 결제',
@@ -245,10 +252,10 @@
     copy: {
       img: 'shots/copy.png', alt: '복사 · 복합기 연결',
       connect: '무인과금 복합기 A01',
+      /* 새 시안에는 사진에서 선택이 없다 */
       hits: P_APPBAR.concat([
-        { l: 5.5,  t: 43.3, w: 89.0, h: 22.0, act: 'connect', name: 'QR 스캔' },
-        { l: 8.0,  t: 65.4, w: 40.0, h: 5.6,  act: 'connect', name: '사진에서 선택' },
-        { l: 52.0, t: 65.4, w: 40.5, h: 5.6,  act: 'connect', name: '시리얼번호 직접 입력' }
+        { l: 9.5, t: 48.8, w: 80.5, h: 23.2, act: 'connect', name: 'QR 스캔' },
+        { l: 9.5, t: 73.0, w: 80.5, h: 5.8,  act: 'connect', name: '시리얼번호 직접 입력' }
       ], taskTab(P_TAB))
     },
     scan: {

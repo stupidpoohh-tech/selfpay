@@ -43,12 +43,12 @@ function ok(cond, name, extra) {
   await step('/proposal/settings.html?embed=1', '문제 해결', '/proposal/troubleshoot');
   await step('/proposal/history.html?embed=1', '결제하기', '/proposal/print-checkout');
   await step('/proposal/notifications.html?embed=1', '작업 상세', '/proposal/history');
-  await step('/proposal/login.html?embed=1', '비회원으로 이용하기', '/proposal/');
+  await step('/proposal/login.html?embed=1', '카카오로 시작하기', '/proposal/');
   await step('/home.html?embed=1', '인쇄', '/print');
   await step('/print.html?embed=1', '파일 선택', '/print-confirm');
   await step('/print-confirm.html?embed=1', '금액 확인', '/print-amount');
   await step('/print-amount.html?embed=1', '모바일로 결제', '/payment');
-  await step('/proposal/print-checkout.html?embed=1', '250원 결제하기', '/proposal/payment');
+  await step('/proposal/print-checkout.html?embed=1', '1,250원 결제하기', '/proposal/payment');
 
   /* 결제 수단은 화면을 옮기지 않고 고른 것만 표시한다 */
   for (const url of ['/payment.html?embed=1', '/proposal/payment.html?embed=1']) {
@@ -100,11 +100,11 @@ function ok(cond, name, extra) {
   /* 이전·다음은 고른 영역 안에서만 돈다 */
   const ring = [];
   for (let i = 0; i < 7; i++) { ring.push((await surfState()).n); await d.click('#next'); await d.waitForTimeout(250); }
-  ok(ring.join(' ') === '1 / 6 2 / 6 3 / 6 4 / 6 5 / 6 6 / 6 1 / 6', '복합기 안에서만 순환한다', ring.join(' '));
+  ok(ring.join(' ') === '1 / 7 2 / 7 3 / 7 4 / 7 5 / 7 6 / 7 7 / 7', '복합기 안에서만 순환한다', ring.join(' '));
 
   /* 복합기 네 화면은 AS-IS·TO-BE 이미지가 모두 붙어 있다 */
-  for (const id of ['device-home', 'device-copy', 'device-copy-done', 'device-payment',
-                    'device-scan', 'device-fax']) {
+  for (const id of ['device-home', 'device-copy-start', 'device-copy', 'device-copy-done',
+                    'device-payment', 'device-scan', 'device-fax']) {
     await d.goto(BASE + '/?surface=device&screen=' + id);
     await d.waitForTimeout(500);
     const shots = await d.$$eval('.stage .shotimg', els =>

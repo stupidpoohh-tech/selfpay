@@ -58,7 +58,7 @@ window.REVIEW = {
       id: 'device', label: '복합기',
       groups: [
         { id: 'device-home', label: '대기·연결', screens: ['device-home'] },
-        { id: 'device-copy', label: '복사',      screens: ['device-copy', 'device-copy-done', 'device-payment'] },
+        { id: 'device-copy', label: '복사',      screens: ['device-copy-start', 'device-copy', 'device-copy-done', 'device-payment'] },
         { id: 'device-scan', label: '스캔',      screens: ['device-scan'] },
         { id: 'device-fax',  label: '팩스',      screens: ['device-fax'] }
       ]
@@ -322,7 +322,7 @@ window.REVIEW = {
             '설정·결제·출력 세 단계로 줄였습니다.',
           targets: {
             current:  [{ x: 0, y: 6.3, w: 100, h: 7.5 }],
-            proposal: [{ x: 16, y: 25.1, w: 68, h: 6.0 }]
+            proposal: [{ x: 20.5, y: 21.8, w: 57.5, h: 5.0 }]
           }
         },
         {
@@ -333,7 +333,7 @@ window.REVIEW = {
             '연속해서 확인할 수 있도록 통합했습니다.',
           targets: {
             current:  [{ x: 3.8, y: 14.5, w: 92.5, h: 20.5 }],
-            proposal: [{ x: 3.7, y: 32.6, w: 92.5, h: 56.8 }]
+            proposal: [{ x: 13.8, y: 28.0, w: 72.8, h: 57.0 }]
           }
         },
         {
@@ -343,7 +343,7 @@ window.REVIEW = {
             '선택한 옵션을 카드 안에서 바로 보여 줍니다.',
           targets: {
             current:  [{ x: 3.8, y: 25.1, w: 92.5, h: 9.5 }],
-            proposal: [{ x: 3.7, y: 32.6, w: 92.5, h: 14.1 }]
+            proposal: [{ x: 13.8, y: 28.0, w: 72.8, h: 31.3 }]
           }
         }
       ]
@@ -361,7 +361,7 @@ window.REVIEW = {
             '현재 설정을 보면서 바로 변경할 수 있도록 했습니다.',
           targets: {
             current:  [{ x: 0, y: 46.9, w: 100, h: 53.1 }],
-            proposal: [{ x: 3.7, y: 47.8, w: 92.5, h: 28.4 }]
+            proposal: [{ x: 13.8, y: 60.3, w: 72.8, h: 17.3 }]
           }
         },
         {
@@ -370,7 +370,7 @@ window.REVIEW = {
           description: 'AS-IS 시트에는 금액이 없었습니다. TO-BE는 옵션 바로 아래에 ' +
             '예상 결제 금액과 결제 버튼이 함께 있습니다.',
           targets: {
-            proposal: [{ x: 6.9, y: 77.2, w: 86.0, h: 6.6 }]
+            proposal: [{ x: 14.3, y: 78.0, w: 71.8, h: 6.5 }]
           }
         },
         {
@@ -379,7 +379,7 @@ window.REVIEW = {
           description: '여섯 단계를 모두 표시하던 것을 설정·결제·출력 세 단계로 줄였습니다.',
           targets: {
             current:  [{ x: 0, y: 6.3, w: 100, h: 7.5 }],
-            proposal: [{ x: 16, y: 25.1, w: 68, h: 6.0 }]
+            proposal: [{ x: 20.5, y: 21.8, w: 57.5, h: 5.0 }]
           }
         }
       ]
@@ -398,7 +398,7 @@ window.REVIEW = {
           targets: {
             current:  [{ x: 3.8, y: 15.6, w: 92.5, h: 8.0 },
                        { x: 3.8, y: 27.7, w: 92.5, h: 8.2 }],
-            proposal: [{ x: 6.9, y: 77.2, w: 86.0, h: 6.6 }]
+            proposal: [{ x: 14.3, y: 78.0, w: 71.8, h: 6.5 }]
           }
         },
         {
@@ -408,7 +408,7 @@ window.REVIEW = {
             '금액이 적힌 결제 버튼 하나로 정리했습니다.',
           targets: {
             current:  [{ x: 3.8, y: 84.5, w: 92.5, h: 14.6 }],
-            proposal: [{ x: 6.9, y: 84.9, w: 86.0, h: 4.5 }]
+            proposal: [{ x: 14.3, y: 84.8, w: 71.8, h: 4.2 }]
           }
         },
         {
@@ -417,7 +417,7 @@ window.REVIEW = {
           description: '여섯 단계를 모두 표시하던 것을 설정·결제·출력 세 단계로 줄였습니다.',
           targets: {
             current:  [{ x: 0, y: 6.4, w: 100, h: 7.4 }],
-            proposal: [{ x: 16, y: 25.1, w: 68, h: 6.0 }]
+            proposal: [{ x: 20.5, y: 21.8, w: 57.5, h: 5.0 }]
           }
         }
       ]
@@ -590,7 +590,7 @@ window.REVIEW = {
             '로그인 이후 무엇을 할 수 있는지 이해하기 쉽게 구성했습니다.',
           targets: {
             current:  [{ x: 7.0, y: 3.8, w: 86.0, h: 6.6 }],
-            proposal: [{ x: 5.0, y: 11.3, w: 90.0, h: 12.8 }]
+            proposal: [{ x: 9.5, y: 15.5, w: 51.0, h: 12.0 }]
           }
         },
         {
@@ -602,7 +602,7 @@ window.REVIEW = {
           targets: {
             current:  [{ x: 7.0, y: 44.3, w: 86.0, h: 23.8 },
                        { x: 7.0, y: 87.8, w: 86.0, h: 6.4 }],
-            proposal: [{ x: 5.0, y: 58.8, w: 90.0, h: 23.5 }]
+            proposal: [{ x: 10.0, y: 60.3, w: 80.0, h: 22.7 }]
           }
         },
         {
@@ -613,9 +613,9 @@ window.REVIEW = {
             '별도 경로로 제공해 로그인 문제 발생 시 대응 경로를 쉽게 찾을 수 있도록 했습니다.',
           targets: {
             current:  [{ x: 30.0, y: 94.6, w: 40.0, h: 4.2 }],
-            proposal: [{ x: 71.5, y: 39.2, w: 23.0, h: 4.2 },
-                       { x: 26.0, y: 93.0, w: 48.0, h: 4.4 },
-                       { x: 74.5, y: 4.6, w: 20.5, h: 5.6 }]
+            proposal: [{ x: 72.0, y: 41.3, w: 16.0, h: 2.7 },
+                       { x: 26.5, y: 90.5, w: 46.5, h: 3.0 },
+                       { x: 75.5, y: 8.5, w: 14.8, h: 3.3 }]
           }
         }
       ],
@@ -733,7 +733,7 @@ window.REVIEW = {
             'TO-BE에서는 흑백·컬러 장당 요금과 적용 기준을 한 화면에서 확인할 수 있도록 ' +
             '구성했습니다.',
           targets: {
-            proposal: [{ x: 4.5, y: 32.5, w: 91.0, h: 20.0 }]
+            proposal: [{ x: 8.5, y: 41.5, w: 83.0, h: 36.5 }]
           }
         },
         {
@@ -742,8 +742,7 @@ window.REVIEW = {
           description: '지원 용지와 인쇄 옵션에 따라 요금이 달라질 수 있다는 정보를 함께 제공해 ' +
             '실제 결제 금액이 달라지는 기준을 미리 확인할 수 있도록 했습니다.',
           targets: {
-            proposal: [{ x: 4.5, y: 54.0, w: 91.0, h: 17.0 },
-                       { x: 4.5, y: 72.5, w: 91.0, h: 17.0 }]
+            proposal: [{ x: 8.5, y: 79.3, w: 83.0, h: 15.5 }]
           }
         }
       ],
@@ -800,7 +799,7 @@ window.REVIEW = {
           description: 'AS-IS에서는 어떤 경우에 환불되는지 기준을 확인하기 어려웠습니다. ' +
             'TO-BE에서는 미출력, 출력 오류, 부분 출력으로 상황을 나누어 환불 기준을 안내합니다.',
           targets: {
-            proposal: [{ x: 4.5, y: 23.5, w: 91.0, h: 37.5 }]
+            proposal: [{ x: 5.5, y: 16.8, w: 89.5, h: 43.5 }]
           }
         },
         {
@@ -809,8 +808,8 @@ window.REVIEW = {
           description: '환불 처리 기간과 문의 경로를 함께 제공해 문제가 발생했을 때 ' +
             '이후 절차를 확인할 수 있도록 했습니다.',
           targets: {
-            proposal: [{ x: 4.5, y: 62.5, w: 91.0, h: 11.0 },
-                       { x: 4.5, y: 75.5, w: 91.0, h: 8.5 }]
+            proposal: [{ x: 5.5, y: 65.3, w: 89.5, h: 12.0 },
+                       { x: 5.5, y: 79.3, w: 89.5, h: 7.3 }]
           }
         }
       ],
@@ -830,7 +829,7 @@ window.REVIEW = {
             '찾기 어려웠습니다. TO-BE에서는 결제 후 미출력, 용지 걸림·출력 오류, 파일 오류, ' +
             '기기 연결 문제를 유형별로 구분했습니다.',
           targets: {
-            proposal: [{ x: 4.5, y: 23.0, w: 91.0, h: 46.5 }]
+            proposal: [{ x: 5.5, y: 24.8, w: 89.0, h: 57.5 }]
           }
         },
         {
@@ -839,7 +838,7 @@ window.REVIEW = {
           description: '안내만으로 해결되지 않는 경우 같은 화면에서 문의하기로 이어질 수 있도록 ' +
             '구성했습니다.',
           targets: {
-            proposal: [{ x: 4.5, y: 71.5, w: 91.0, h: 15.5 }]
+            proposal: [{ x: 5.5, y: 84.3, w: 89.0, h: 13.5 }]
           }
         }
       ],
@@ -871,7 +870,7 @@ window.REVIEW = {
               { x: 4.0, y: 30.3, w: 57.9, h: 18.6 },
               { x: 70.0, y: 33.0, w: 22.5, h: 42.5 }
             ],
-            proposal: [{ x: 54.1, y: 17.4, w: 25.2, h: 52.6 }]
+            proposal: [{ x: 53.5, y: 24.5, w: 24.5, h: 51.5 }]
           }
         },
         {
@@ -882,8 +881,8 @@ window.REVIEW = {
             'QR 안내에도 연결될 기기를 명시했습니다.',
           targets: {
             proposal: [
-              { x: 65.7, y: 4.8, w: 16.6, h: 4.5 },
-              { x: 57.5, y: 62.7, w: 18.5, h: 4.0 }
+              { x: 62.3, y: 14.3, w: 17.5, h: 5.0 },
+              { x: 6.3, y: 46.3, w: 37.5, h: 4.5 }
             ]
           }
         },
@@ -895,7 +894,8 @@ window.REVIEW = {
             '복합기에서 설정` 순서로 정리해 모바일과 복합기의 역할을 단계별로 구분했습니다.',
           targets: {
             current:  [{ x: 4.0, y: 51.5, w: 57.9, h: 36.3 }],
-            proposal: [{ x: 4.7, y: 74.5, w: 71.5, h: 13.5 }]
+            /* 새 시안에는 하단 3단계 띠가 없다. 순서가 머리말과 서비스 카드로 옮겨졌다 */
+            proposal: [{ x: 5.8, y: 24.5, w: 46.5, h: 51.5 }]
           }
         }
       ],
@@ -916,7 +916,7 @@ window.REVIEW = {
             '영역으로 구성해 현재 선택값을 한 화면에서 확인할 수 있도록 했습니다.',
           targets: {
             current:  [{ x: 29.8, y: 15.6, w: 67.5, h: 55.9 }],
-            proposal: [{ x: 31.0, y: 13.3, w: 65.4, h: 71.7 }]
+            proposal: [{ x: 31.3, y: 18.5, w: 64.5, h: 62.5 }]
           }
         },
         {
@@ -926,10 +926,7 @@ window.REVIEW = {
             '어려웠습니다. TO-BE에서는 장당 요금과 현재 설정 기준의 예상 금액을 함께 표시해 ' +
             '설정과 비용을 같은 화면에서 확인할 수 있도록 했습니다.',
           targets: {
-            proposal: [
-              { x: 61.9, y: 16.5, w: 34.3, h: 5.3 },
-              { x: 4.5, y: 67.5, w: 23.9, h: 15.0 }
-            ]
+            proposal: [{ x: 7.5, y: 63.5, w: 23.0, h: 17.0 }]
           }
         },
         {
@@ -941,7 +938,7 @@ window.REVIEW = {
             '변경했습니다.',
           targets: {
             current:  [{ x: 69.3, y: 87.8, w: 26.8, h: 8.4 }],
-            proposal: [{ x: 30.5, y: 87.7, w: 66.1, h: 8.5 }]
+            proposal: [{ x: 30.8, y: 83.0, w: 64.0, h: 9.0 }]
           }
         }
       ],
@@ -1041,6 +1038,9 @@ window.REVIEW = {
       ]
     }
   ];
+
+  /* 복사 설정에서 복사 시작을 누르는 단계. 다음이 결제 대기 상태다 */
+  DEVICE.unshift({ id: 'device-copy-start', label: '복사 시작', asis: 'device-copy' });
 
   /* 복사 뒤에 이어지는 두 화면 */
   DEVICE.push(
@@ -1229,9 +1229,11 @@ window.REVIEW = {
   );
 
   DEVICE.forEach(function (d) {
+    /* asis 를 적으면 AS-IS 는 그 화면의 그림을 같이 쓴다.
+     * 현재 서비스는 설정 화면 하나인데 TO-BE 에서 두 상태로 나뉜 자리다. */
     var s = {
       id: d.id, label: d.label, wide: true,
-      current:  { img: 'shots/' + d.id + '.png' },
+      current:  { img: 'shots/' + (d.asis || d.id) + '.png' },
       proposal: { img: 'proposal/shots/' + d.id + '.png' }
     };
     if (d.changes) { s.changes = d.changes; s.effects = d.effects; }
@@ -1288,11 +1290,30 @@ window.REVIEW = {
     '연결 방법을 한 화면에서 모두 확인할 수 있습니다'
   ];
 
-  ['copy', 'scan', 'fax'].forEach(function (id) {
+  /* 스캔·팩스는 예전 시안 그대로라 좌표를 공유한다 */
+  ['scan', 'fax'].forEach(function (id) {
     var s = R.screens.filter(function (x) { return x.id === id; })[0];
     if (!s) return;
     delete s.notes;
     s.changes = connChanges();
     s.effects = effects.slice();
   });
+
+  /* 복사는 시안이 새로 와서 짚는 자리만 다시 잡았다. 문구는 그대로다 */
+  (function () {
+    var s = R.screens.filter(function (x) { return x.id === 'copy'; })[0];
+    if (!s) return;
+    var boxes = {
+      frame:    { x: 9.5, y: 41.5, w: 80.5, h: 30.5 },
+      ways:     { x: 9.5, y: 73.0, w: 80.5, h: 6.0 },
+      fallback: { x: 9.5, y: 80.3, w: 80.5, h: 6.2 }
+    };
+    delete s.notes;
+    s.changes = connChanges().map(function (c) {
+      c.targets = { current: (c.targets || {}).current, proposal: [boxes[c.id]] };
+      if (!c.targets.current) delete c.targets.current;
+      return c;
+    });
+    s.effects = effects.slice();
+  })();
 })(window.REVIEW);
