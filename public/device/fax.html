@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>팩스 | 복합기 TO-BE 목업</title>
+<link rel="icon" href="../assets/img/favicon.svg">
+<link rel="stylesheet" href="../assets/css/font.css?v=2">
+<link rel="stylesheet" href="assets/device.css?v=1">
+</head>
+<body data-svc="fax">
+
+<div class="stage">
+<div class="screen">
+
+  <header class="top top--plain">
+    <div class="top__wrap">
+      <button type="button" class="homebtn" data-go="home.html"><i data-ico="home"></i>홈으로</button>
+      <span class="top__title">팩스</span>
+      <span class="user">김동준님</span>
+    </div>
+  </header>
+
+  <div class="fax">
+    <!-- 1. 수신처 -->
+    <div class="card fax__col">
+      <div class="card__head">
+        <span class="step-n">1</span>
+        <span>
+          <p class="card__title">수신처</p>
+          <p class="card__note" style="margin-top:4px">팩스 번호를 입력하고 + 번호 추가를 눌러주세요.</p>
+        </span>
+      </div>
+
+      <div style="display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:18px;align-items:center">
+        <div>
+          <p style="font-size:24px;font-weight:700;color:var(--muted);margin:0 0 10px">팩스 번호</p>
+          <div class="numin is-empty" id="numin">예) 02-1234-5678</div>
+        </div>
+        <button type="button" class="btn btn--ghost btn--sm" id="add"
+          style="height:86px;margin-top:32px;border-color:var(--accent-line);color:var(--accent-strong)">+ 번호 추가</button>
+      </div>
+
+      <div style="display:grid;grid-template-columns:minmax(0,360px) minmax(0,1fr);gap:22px;flex:1;min-height:0;overflow:hidden;margin-top:20px">
+        <div class="keys" id="keys">
+          <button type="button" class="key" data-k="1">1</button>
+          <button type="button" class="key" data-k="2">2</button>
+          <button type="button" class="key" data-k="3">3</button>
+          <button type="button" class="key" data-k="4">4</button>
+          <button type="button" class="key" data-k="5">5</button>
+          <button type="button" class="key" data-k="6">6</button>
+          <button type="button" class="key" data-k="7">7</button>
+          <button type="button" class="key" data-k="8">8</button>
+          <button type="button" class="key" data-k="9">9</button>
+          <button type="button" class="key" data-k="*">*</button>
+          <button type="button" class="key" data-k="0">0</button>
+          <button type="button" class="key" data-k="#">#</button>
+          <button type="button" class="key key--wide" data-k="clear">C 전체삭제</button>
+          <button type="button" class="key" data-k="back" aria-label="한 글자 지우기"><i data-ico="back" style="display:inline-flex;width:34px;height:34px"></i></button>
+        </div>
+
+        <div style="display:flex;flex-direction:column;min-height:0">
+          <p style="font-size:24px;font-weight:700;color:var(--muted);margin:0 0 12px" id="tolabel">추가된 수신처 2건</p>
+          <div class="tos" id="tos"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. 전송 설정 + 3. 예상 요금 -->
+    <div class="fax__col">
+      <div class="card" style="flex:none">
+        <div class="card__head">
+          <span class="step-n">2</span>
+          <span>
+            <p class="card__title">전송 설정</p>
+            <p class="card__note" style="margin-top:4px">문서에 맞는 설정을 선택해주세요.</p>
+          </span>
+          <span class="spacer"></span>
+          <button type="button" class="reset" id="reset"><i data-ico="reset"></i>초기화</button>
+        </div>
+
+        <p style="font-size:23px;font-weight:700;color:var(--muted);margin:0 0 10px">해상도</p>
+        <div class="res">
+          <button type="button" class="opt" data-set="fax.dpi=200">
+            <span class="reco">추천</span>
+            <span class="opt__name">표준</span>
+            <span class="opt__desc" style="font-size:24px;color:var(--ink-2);font-weight:700">200 dpi</span>
+            <span class="opt__desc">일반 문서 추천</span>
+            <span class="opt__mark"><i data-ico="check"></i></span>
+          </button>
+          <button type="button" class="opt" data-set="fax.dpi=300">
+            <span class="opt__name">선명</span>
+            <span class="opt__desc" style="font-size:24px;color:var(--ink-2);font-weight:700">300 dpi</span>
+            <span class="opt__desc">작은 글씨 문서</span>
+            <span class="opt__mark"><i data-ico="check"></i></span>
+          </button>
+          <button type="button" class="opt" data-set="fax.dpi=400">
+            <span class="opt__name">고화질</span>
+            <span class="opt__desc" style="font-size:24px;color:var(--ink-2);font-weight:700">400 dpi</span>
+            <span class="opt__desc">도면·정밀 문서</span>
+            <span class="opt__mark"><i data-ico="check"></i></span>
+          </button>
+        </div>
+
+        <p style="font-size:23px;font-weight:700;color:var(--muted);margin:16px 0 10px">원고</p>
+        <div class="opts">
+          <button type="button" class="opt" data-set="fax.side=single">
+            <span class="opt__ico" data-ico="single"></span>
+            <span class="opt__txt"><span class="opt__name">단면</span></span>
+            <span class="opt__mark"><i data-ico="check"></i></span>
+          </button>
+          <button type="button" class="opt" data-set="fax.side=double">
+            <span class="opt__ico" data-ico="duplex"></span>
+            <span class="opt__txt"><span class="opt__name">양면</span></span>
+            <span class="opt__mark"><i data-ico="check"></i></span>
+          </button>
+        </div>
+      </div>
+
+      <div class="card" style="flex:1;min-height:0">
+        <div class="card__head">
+          <span class="step-n">3</span>
+          <span>
+            <p class="card__title">원고 상태 및 예상 요금</p>
+            <p class="card__note" style="margin-top:4px">원고 상태를 확인하고 예상 요금을 확인해주세요.</p>
+          </span>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:18px;background:var(--soft);
+          border:1px solid var(--line-2);border-radius:18px;padding:15px 20px">
+          <span style="color:var(--accent);width:42px;height:42px" data-ico="doc"></span>
+          <span>
+            <span style="display:block;font-size:24px;font-weight:800">원고 3장 감지됨</span>
+            <span style="display:block;font-size:20px;color:var(--muted);margin-top:2px">지금 바로 팩스를 보낼 수 있습니다.</span>
+          </span>
+        </div>
+
+        <p style="font-size:21px;color:var(--muted);font-weight:600;margin:12px 0 0" id="meta">
+          수신처 2곳 · 표준 200dpi · 단면 · 원고 3장
+        </p>
+
+        <div class="est" style="margin-top:12px">
+          <span class="est__t">예상 금액<span>수신처 1곳당 500원</span></span>
+          <span class="est__won" id="won">1,000<em>원</em></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="foot">
+    <span class="foot__note">
+      <span style="color:var(--accent);display:inline-flex;width:48px;height:48px" data-ico="phone"></span>
+      <span>
+        <b>설정을 확인한 뒤 휴대폰에서 결제를 진행해 주세요.</b>
+        <span>결제가 완료되면 자동으로 팩스 전송이 시작됩니다.</span>
+      </span>
+    </span>
+    <span class="spacer"></span>
+    <span class="btn is-off" id="send"><i data-ico="clock"></i>결제 대기 중<i data-ico="chevron"></i></span>
+  </footer>
+
+</div>
+</div>
+
+<script src="assets/icons.js?v=1"></script>
+<script src="assets/device.js?v=1"></script>
+<script>
+  SPIco.fill();
+
+  var f = SPDev.state.fax;
+  var numin = document.getElementById('numin');
+  var tos = document.getElementById('tos');
+  var won = document.getElementById('won');
+  var meta = document.getElementById('meta');
+  var send = document.getElementById('send');
+
+  var DPI = { 200: '표준 200dpi', 300: '선명 300dpi', 400: '고화질 400dpi' };
+
+  /* 02-1234-5678 꼴로 보기 좋게 끊는다. 지역번호 · 가운데 · 뒤 네 자리로 나눈다 */
+  function pretty(v) {
+    var d = v.replace(/\D/g, '');
+    if (d.length < 8) return v;
+    var a = d.slice(0, 2) === '02' ? 2 : 3;
+    return d.slice(0, a) + '-' + d.slice(a, -4) + '-' + d.slice(-4);
+  }
+
+  function drawIn() {
+    var v = f.input;
+    numin.textContent = v ? pretty(v) : '예) 02-1234-5678';
+    numin.classList.toggle('is-empty', !v);
+  }
+
+  function drawTos() {
+    document.getElementById('tolabel').textContent = '추가된 수신처 ' + f.to.length + '건';
+    tos.innerHTML = f.to.length
+      ? f.to.map(function (t, i) {
+          return '<div class="to">' + t +
+            '<button type="button" class="to__x" data-i="' + i + '" aria-label="' + t + ' 지우기">' +
+            SPIco.get('x') + '</button></div>';
+        }).join('')
+      : '<p class="tos__empty">받을 팩스 번호를 추가해 주세요.</p>';
+    tos.querySelectorAll('.to__x').forEach(function (b) {
+      b.addEventListener('click', function () {
+        f.to.splice(Number(b.getAttribute('data-i')), 1);
+        SPDev.save();
+        drawTos(); draw();
+      });
+    });
+  }
+
+  function draw() {
+    won.innerHTML = SPDev.won(SPDev.faxPrice()) + '<em>원</em>';
+    meta.textContent = '수신처 ' + f.to.length + '곳 · ' + DPI[f.dpi] + ' · ' +
+      (f.side === 'single' ? '단면' : '양면') + ' · 원고 ' + f.pages + '장';
+    send.classList.toggle('is-off', true);
+  }
+
+  document.getElementById('keys').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-k]');
+    if (!b) return;
+    var k = b.getAttribute('data-k');
+    if (k === 'clear') f.input = '';
+    else if (k === 'back') f.input = f.input.slice(0, -1);
+    else if (f.input.length < 12) f.input += k;
+    SPDev.save();
+    drawIn();
+  });
+
+  document.getElementById('add').addEventListener('click', function () {
+    var v = pretty(f.input);
+    if (!v || f.input.length < 8) return;
+    if (f.to.indexOf(v) < 0) f.to.push(v);
+    f.input = '';
+    SPDev.save();
+    drawIn(); drawTos(); draw();
+  });
+
+  document.getElementById('reset').addEventListener('click', function () {
+    SPDev.reset('fax');
+    f = SPDev.state.fax;
+    SPDev.syncSet();
+    drawIn(); drawTos(); draw();
+  });
+
+  drawIn(); drawTos();
+  SPDev.start({ onChange: draw });
+</script>
+</body>
+</html>

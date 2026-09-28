@@ -1443,6 +1443,18 @@ window.REVIEW = {
     }
   };
 
+  /* 복합기 TO-BE 를 HTML 로 만든 목업. 프로토타입 보기가 이 페이지를 띄운다.
+   * 목업은 모두 1920 x 1080 이라 시안 비율 대신 이 값으로 자리를 잡는다. */
+  var MOCKUP = {
+    'device-home':       'device/home.html',
+    'device-copy-start': 'device/copy-start.html',
+    'device-copy':       'device/copy.html',
+    'device-copy-done':  'device/copy-done.html',
+    'device-payment':    'device/payment.html',
+    'device-scan':       'device/scan.html',
+    'device-fax':        'device/fax.html'
+  };
+
   DEVICE.forEach(function (d) {
     /* asis 를 적으면 AS-IS 는 그 화면의 그림을 같이 쓴다.
      * 현재 서비스는 설정 화면 하나인데 TO-BE 에서 두 상태로 나뉜 자리다. */
@@ -1452,6 +1464,7 @@ window.REVIEW = {
       proposal: { img: 'proposal/shots/' + d.id + '.png' }
     };
     if (PROTO[d.id]) s.proto = PROTO[d.id];
+    if (MOCKUP[d.id]) { s.proposal.page = MOCKUP[d.id]; s.protoRatio = 1920 / 1080; }
     if (d.changes) { s.changes = d.changes; s.effects = d.effects; }
     else {
       s.notes = [{ title: '개선 사항 정리 예정',

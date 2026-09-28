@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>스캔 | 복합기 TO-BE 목업</title>
+<link rel="icon" href="../assets/img/favicon.svg">
+<link rel="stylesheet" href="../assets/css/font.css?v=2">
+<link rel="stylesheet" href="assets/device.css?v=1">
+</head>
+<body data-svc="scan">
+
+<div class="stage">
+<div class="screen">
+
+  <header class="top top--plain">
+    <div class="top__wrap">
+      <button type="button" class="homebtn" data-go="home.html"><i data-ico="home"></i>홈으로</button>
+      <span class="top__title">스캔
+        <span class="top__sub">스캔 설정을 확인하고 이메일로 받아보세요.</span>
+      </span>
+      <span class="user" style="gap:14px"><i data-ico="user" style="width:28px;height:28px;display:inline-flex"></i>김동준님</span>
+    </div>
+  </header>
+
+  <div class="body" style="grid-template-rows:auto minmax(0,1fr)">
+    <div class="mail">
+      <span class="mail__l">전송 이메일</span>
+      <span class="mail__v" id="mail">djkim78@sindoh.com</span>
+      <button type="button" class="btn btn--ghost btn--sm" id="editmail"
+        style="border-color:var(--accent-line);color:var(--accent-strong)">변경</button>
+    </div>
+
+    <div class="body--split" style="display:grid;grid-template-columns:430px minmax(0,1fr);gap:30px;min-height:0">
+      <!-- 왼쪽: 지금 설정으로 무엇이 나오는지 -->
+      <div class="side">
+        <div class="preview">
+          <div class="paper">
+            <div class="paper__band" id="band"></div>
+            <div class="paper__line paper__line--m"></div>
+            <div class="paper__line"></div>
+            <div class="paper__line paper__line--s"></div>
+            <div class="paper__line paper__line--m"></div>
+          </div>
+          <span style="font-size:25px;color:var(--muted);font-weight:600">현재 설정으로 스캔합니다.</span>
+          <span class="qrbox__chip" style="font-size:24px" id="sum">300 dpi · 컬러 · 단면 · PDF</span>
+        </div>
+      </div>
+
+      <!-- 오른쪽: 설정 -->
+      <div class="card" style="overflow:hidden">
+        <div class="card__head">
+          <p class="card__title">스캔 설정</p>
+          <p class="card__note" style="margin:0">원하는 옵션을 선택해 주세요.</p>
+          <span class="spacer"></span>
+          <button type="button" class="reset" id="reset"><i data-ico="reset"></i>초기화</button>
+        </div>
+
+        <div class="grid2">
+          <div class="sub">
+            <p class="sub__t">해상도</p>
+            <div class="opts" style="grid-template-columns:repeat(3,1fr)">
+              <button type="button" class="opt" data-set="scan.dpi=200" style="flex-direction:column;align-items:flex-start;position:relative">
+                <span class="opt__name">200 dpi</span>
+                <span class="opt__desc">빠르게</span>
+                <span class="opt__mark" style="position:absolute;top:14px;right:14px;margin:0;width:34px;height:34px"><i data-ico="check"></i></span>
+              </button>
+              <button type="button" class="opt" data-set="scan.dpi=300" style="flex-direction:column;align-items:flex-start;position:relative">
+                <span class="opt__name">300 dpi<span class="tag">권장</span></span>
+                <span class="opt__desc">문서에 알맞음</span>
+                <span class="opt__mark" style="position:absolute;top:14px;right:14px;margin:0;width:34px;height:34px"><i data-ico="check"></i></span>
+              </button>
+              <button type="button" class="opt" data-set="scan.dpi=600" style="flex-direction:column;align-items:flex-start;position:relative">
+                <span class="opt__name">600 dpi</span>
+                <span class="opt__desc">고화질</span>
+                <span class="opt__mark" style="position:absolute;top:14px;right:14px;margin:0;width:34px;height:34px"><i data-ico="check"></i></span>
+              </button>
+            </div>
+          </div>
+
+          <div class="sub">
+            <p class="sub__t">색상</p>
+            <div class="opts">
+              <button type="button" class="opt" data-set="scan.color=color">
+                <span class="opt__ico"><span class="dot dot--color" style="width:44px;height:44px"></span></span>
+                <span class="opt__txt"><span class="opt__name">컬러</span></span>
+                <span class="opt__mark"><i data-ico="check"></i></span>
+              </button>
+              <button type="button" class="opt" data-set="scan.color=mono">
+                <span class="opt__ico"><span class="dot dot--mono" style="width:44px;height:44px"></span></span>
+                <span class="opt__txt"><span class="opt__name">흑백</span></span>
+                <span class="opt__mark"><i data-ico="check"></i></span>
+              </button>
+            </div>
+          </div>
+
+          <div class="sub">
+            <p class="sub__t">스캔면</p>
+            <div class="opts">
+              <button type="button" class="opt" data-set="scan.side=single">
+                <span class="opt__ico" data-ico="single"></span>
+                <span class="opt__txt"><span class="opt__name">단면</span></span>
+                <span class="opt__mark"><i data-ico="check"></i></span>
+              </button>
+              <button type="button" class="opt" data-set="scan.side=double">
+                <span class="opt__ico" data-ico="duplex"></span>
+                <span class="opt__txt"><span class="opt__name">양면</span></span>
+                <span class="opt__mark"><i data-ico="check"></i></span>
+              </button>
+            </div>
+          </div>
+
+          <div class="sub">
+            <p class="sub__t">파일 형식</p>
+            <div class="opts">
+              <button type="button" class="opt" data-set="scan.fmt=pdf">
+                <span class="opt__ico" style="color:#e5484d" data-ico="doc"></span>
+                <span class="opt__txt"><span class="opt__name">PDF</span></span>
+                <span class="opt__mark"><i data-ico="check"></i></span>
+              </button>
+              <button type="button" class="opt" data-set="scan.fmt=jpeg">
+                <span class="opt__ico" style="color:#16a06a" data-ico="docs"></span>
+                <span class="opt__txt"><span class="opt__name">JPEG</span></span>
+                <span class="opt__mark"><i data-ico="check"></i></span>
+              </button>
+            </div>
+            <p class="card__note" style="font-size:21px;margin-top:14px" id="fmtnote">문서에 적합한 형식입니다.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="foot">
+    <span class="foot__note">
+      <span style="color:var(--accent);display:inline-flex;width:48px;height:48px" data-ico="phone"></span>
+      <span>
+        <b>휴대폰에서 결제를 진행해 주세요.</b>
+        <span>결제가 완료되면 자동으로 스캔이 시작됩니다.</span>
+      </span>
+    </span>
+    <span class="spacer"></span>
+    <span class="est" style="padding:20px 28px">
+      <span class="est__t">예상 결제 금액</span>
+      <span class="est__won" id="won">500<em>원</em></span>
+    </span>
+    <span class="btn is-off"><i data-ico="clock"></i>결제 대기 중</span>
+  </footer>
+
+</div>
+</div>
+
+<script src="assets/icons.js?v=1"></script>
+<script src="assets/device.js?v=1"></script>
+<script>
+  SPIco.fill();
+
+  var sum = document.getElementById('sum');
+  var won = document.getElementById('won');
+  var band = document.getElementById('band');
+  var note = document.getElementById('fmtnote');
+
+  function draw() {
+    var s = SPDev.state.scan;
+    sum.textContent = SPDev.scanSummary();
+    won.innerHTML = SPDev.won(SPDev.scanPrice()) + '<em>원</em>';
+    band.className = 'paper__band' + (s.color === 'mono' ? ' paper__band--mono' : '');
+    note.textContent = s.fmt === 'pdf' ? '문서에 적합한 형식입니다.' : '사진과 이미지에 적합한 형식입니다.';
+  }
+
+  document.getElementById('reset').addEventListener('click', function () {
+    SPDev.reset('scan');
+    SPDev.syncSet();
+    draw();
+  });
+
+  /* 이메일은 목업에서 값만 바꿔 본다 */
+  document.getElementById('editmail').addEventListener('click', function () {
+    var v = prompt('전송 이메일', document.getElementById('mail').textContent);
+    if (v) document.getElementById('mail').textContent = v.trim();
+  });
+
+  SPDev.start({ onChange: draw });
+</script>
+</body>
+</html>

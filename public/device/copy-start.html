@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>복사 시작 | 복합기 TO-BE 목업</title>
+<link rel="icon" href="../assets/img/favicon.svg">
+<link rel="stylesheet" href="../assets/css/font.css?v=2">
+<link rel="stylesheet" href="assets/device.css?v=1">
+</head>
+<body data-svc="copy">
+
+<div class="stage">
+<div class="screen">
+
+  <header class="top">
+    <div class="top__wrap">
+      <button type="button" class="homebtn" data-go="home.html"><i data-ico="home"></i>홈으로</button>
+      <span class="top__title">복사</span>
+      <span class="user">홍길동님</span>
+    </div>
+  </header>
+
+  <div class="body body--split">
+    <!-- 왼쪽: 고른 설정이 그대로 보이는 미리보기 -->
+    <div class="side">
+      <div class="preview">
+        <div class="paper">
+          <div class="paper__band" id="band"></div>
+          <div class="paper__line paper__line--m"></div>
+          <div class="paper__line"></div>
+          <div class="paper__line paper__line--s"></div>
+        </div>
+        <span class="preview__sum" id="sum">컬러 · 단면 · 1부</span>
+      </div>
+    </div>
+
+    <!-- 오른쪽: 설정 -->
+    <div class="card">
+      <div class="group">
+        <p class="group__label">컬러</p>
+        <div class="opts">
+          <button type="button" class="opt" data-set="copy.color=color">
+            <span class="opt__ico"><span class="dot dot--color" style="width:44px;height:44px"></span></span>
+            <span class="opt__txt">
+              <span class="opt__name">컬러</span>
+              <span class="opt__desc">원본 그대로 컬러 출력</span>
+            </span>
+            <span class="opt__mark"><i data-ico="check"></i></span>
+          </button>
+          <button type="button" class="opt" data-set="copy.color=mono">
+            <span class="opt__ico"><span class="dot dot--mono" style="width:44px;height:44px"></span></span>
+            <span class="opt__txt">
+              <span class="opt__name">흑백</span>
+              <span class="opt__desc">흑백으로만 출력</span>
+            </span>
+            <span class="opt__mark"><i data-ico="check"></i></span>
+          </button>
+        </div>
+      </div>
+
+      <div class="group">
+        <p class="group__label">양단면</p>
+        <div class="opts">
+          <button type="button" class="opt" data-set="copy.side=single">
+            <span class="opt__ico" data-ico="single"></span>
+            <span class="opt__txt">
+              <span class="opt__name">단면</span>
+              <span class="opt__desc">한 면만 출력</span>
+            </span>
+            <span class="opt__mark"><i data-ico="check"></i></span>
+          </button>
+          <button type="button" class="opt" data-set="copy.side=double">
+            <span class="opt__ico" data-ico="duplex"></span>
+            <span class="opt__txt">
+              <span class="opt__name">양면</span>
+              <span class="opt__desc">양면으로 출력</span>
+            </span>
+            <span class="opt__mark"><i data-ico="check"></i></span>
+          </button>
+        </div>
+      </div>
+
+      <div class="group">
+        <p class="group__label">부수</p>
+        <div class="count">
+          <button type="button" class="count__btn" id="minus" aria-label="부수 줄이기"><i data-ico="minus"></i></button>
+          <span class="count__n"><span id="n">1</span><em>부</em></span>
+          <button type="button" class="count__btn" id="plus" aria-label="부수 늘리기"><i data-ico="plus"></i></button>
+          <span class="count__div"></span>
+          <button type="button" class="chip" data-set="copy.count=1">1부</button>
+          <button type="button" class="chip" data-set="copy.count=2">2부</button>
+          <button type="button" class="chip" data-set="copy.count=5">5부</button>
+          <button type="button" class="chip" data-set="copy.count=10">10부</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="foot">
+    <span class="foot__note">
+      <span style="color:var(--muted-2);display:inline-flex" data-ico="warn"></span>
+      <b style="font-weight:700;color:var(--ink-2)">원본 문서를 유리판 위에 올려놓고 복사 시작을 누르세요.</b>
+    </span>
+    <span class="spacer"></span>
+    <button type="button" class="btn btn--go" data-go="copy.html">
+      <i data-ico="docs"></i>복사 시작<i data-ico="chevron"></i>
+    </button>
+  </footer>
+
+</div>
+</div>
+
+<script src="assets/icons.js?v=1"></script>
+<script src="assets/device.js?v=1"></script>
+<script>
+  SPIco.fill();
+
+  var n = document.getElementById('n');
+  var sum = document.getElementById('sum');
+  var band = document.getElementById('band');
+
+  function draw() {
+    var c = SPDev.state.copy;
+    n.textContent = c.count;
+    sum.textContent = SPDev.copySummary();
+    band.className = 'paper__band' + (c.color === 'mono' ? ' paper__band--mono' : '');
+  }
+
+  function bump(d) {
+    var c = SPDev.state.copy;
+    c.count = Math.min(99, Math.max(1, c.count + d));
+    SPDev.save();
+    SPDev.syncSet();
+    draw();
+  }
+  document.getElementById('minus').addEventListener('click', function () { bump(-1); });
+  document.getElementById('plus').addEventListener('click', function () { bump(1); });
+
+  SPDev.start({ onChange: draw });
+</script>
+</body>
+</html>

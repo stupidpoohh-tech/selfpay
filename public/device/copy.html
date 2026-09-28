@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>복사 | 복합기 TO-BE 목업</title>
+<link rel="icon" href="../assets/img/favicon.svg">
+<link rel="stylesheet" href="../assets/css/font.css?v=2">
+<link rel="stylesheet" href="assets/device.css?v=1">
+</head>
+<body data-svc="copy">
+
+<div class="stage">
+<div class="screen">
+
+  <header class="top top--plain">
+    <div class="top__wrap">
+      <button type="button" class="homebtn" data-go="home.html"><i data-ico="home"></i>홈으로</button>
+      <span class="top__title">복사</span>
+      <span style="margin-left:auto;width:1px"></span>
+    </div>
+  </header>
+
+  <div class="body body--split">
+    <!-- 왼쪽: 복사할 원본과 요금 기준 -->
+    <div class="side">
+      <div class="card card--soft" style="flex:none;padding:26px 28px">
+        <p class="card__title" style="font-size:27px">복사할 원본 문서</p>
+        <p class="card__note" style="margin-top:6px">아래와 같이 복사됩니다.</p>
+      </div>
+
+      <div class="preview" style="background:var(--panel);border-color:var(--line)">
+        <div class="paper">
+          <div class="paper__band" id="band"></div>
+          <div class="paper__line paper__line--m"></div>
+          <div class="paper__img"></div>
+          <div class="paper__line"></div>
+          <div class="paper__line paper__line--s"></div>
+        </div>
+        <span class="preview__sum" id="sum">컬러 · 단면 · 1부</span>
+      </div>
+
+      <div class="fee">
+        <p class="fee__title">복사 금액 안내</p>
+        <p class="fee__row"><span class="dot dot--color"></span>컬러<b>250<span>원/장</span></b></p>
+        <p class="fee__row"><span class="dot dot--mono"></span>흑백<b>50<span>원/장</span></b></p>
+      </div>
+    </div>
+
+    <!-- 오른쪽: 설정 -->
+    <div class="card">
+      <div style="display:flex;align-items:flex-start;gap:20px">
+        <div style="flex:1;min-width:0">
+          <div class="group">
+            <p class="group__label">컬러 모드를 선택하세요</p>
+            <div class="opts">
+              <button type="button" class="opt" data-set="copy.color=color">
+                <span class="opt__ico"><span class="dot dot--color" style="width:50px;height:50px"></span></span>
+                <span class="opt__txt">
+                  <span class="opt__name">컬러</span>
+                  <span class="opt__desc">원본 그대로 컬러 출력</span>
+                </span>
+                <span class="opt__mark"><i data-ico="check"></i></span>
+              </button>
+              <button type="button" class="opt" data-set="copy.color=mono">
+                <span class="opt__ico"><span class="dot dot--mono" style="width:50px;height:50px"></span></span>
+                <span class="opt__txt">
+                  <span class="opt__name">흑백</span>
+                  <span class="opt__desc">흑백으로만 출력</span>
+                </span>
+                <span class="opt__mark"><i data-ico="check"></i></span>
+              </button>
+            </div>
+          </div>
+        </div>
+        <!-- 고른 설정을 기본값으로 한 번에 되돌린다 -->
+        <button type="button" class="reset" id="reset"><i data-ico="gear"></i>세팅 초기화</button>
+      </div>
+
+      <div class="group">
+        <p class="group__label">출력 방식을 선택하세요</p>
+        <div class="opts">
+          <button type="button" class="opt" data-set="copy.side=single">
+            <span class="opt__ico" data-ico="single"></span>
+            <span class="opt__txt">
+              <span class="opt__name">단면</span>
+              <span class="opt__desc">한 면만 복사</span>
+            </span>
+            <span class="opt__mark"><i data-ico="check"></i></span>
+          </button>
+          <button type="button" class="opt" data-set="copy.side=double">
+            <span class="opt__ico" data-ico="duplex"></span>
+            <span class="opt__txt">
+              <span class="opt__name">양면</span>
+              <span class="opt__desc">양면으로 복사</span>
+            </span>
+            <span class="opt__mark"><i data-ico="check"></i></span>
+          </button>
+        </div>
+      </div>
+
+      <div class="group">
+        <p class="group__label">부수를 설정하세요</p>
+        <div class="count">
+          <button type="button" class="count__btn" id="minus" aria-label="부수 줄이기"><i data-ico="minus"></i></button>
+          <span class="count__n"><span id="n">1</span><em>부</em></span>
+          <button type="button" class="count__btn" id="plus" aria-label="부수 늘리기"><i data-ico="plus"></i></button>
+          <span class="count__div"></span>
+          <button type="button" class="chip" data-set="copy.count=1">1부</button>
+          <button type="button" class="chip" data-set="copy.count=2">2부</button>
+          <button type="button" class="chip" data-set="copy.count=5">5부</button>
+          <button type="button" class="chip" data-set="copy.count=10">10부</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="foot">
+    <span class="foot__note">
+      <span style="color:var(--brand);display:inline-flex;width:44px;height:44px" data-ico="phone"></span>
+      <span>
+        <b>설정을 확인한 뒤 휴대폰에서 결제를 진행해 주세요.</b>
+        <span>결제가 완료되면 자동으로 복사가 시작됩니다.</span>
+      </span>
+    </span>
+    <span class="foot__div"></span>
+    <span style="font-size:25px;font-weight:700;color:var(--muted)">예상 금액
+      <b style="font-size:34px;color:var(--accent-strong);margin-left:12px" id="won">250원</b>
+    </span>
+    <span class="spacer"></span>
+    <button type="button" class="btn btn--go" id="start">
+      <i data-ico="docs"></i>복사 시작<i data-ico="chevron"></i>
+    </button>
+  </footer>
+
+</div>
+</div>
+
+<script src="assets/icons.js?v=1"></script>
+<script src="assets/device.js?v=1"></script>
+<script>
+  SPIco.fill();
+
+  var n = document.getElementById('n');
+  var sum = document.getElementById('sum');
+  var band = document.getElementById('band');
+  var won = document.getElementById('won');
+
+  function draw() {
+    var c = SPDev.state.copy;
+    n.textContent = c.count;
+    sum.textContent = SPDev.copySummary();
+    band.className = 'paper__band' + (c.color === 'mono' ? ' paper__band--mono' : '');
+    won.textContent = SPDev.won(SPDev.copyPrice()) + '원';
+  }
+
+  /* 결제가 확인되면 복사가 시작된다. 목업에서는 이 버튼이 그 자리를 대신한다 */
+  document.getElementById('start').addEventListener('click', function () {
+    SPDev.addJob();
+    SPDev.go('copy-done.html');
+  });
+
+  function bump(d) {
+    var c = SPDev.state.copy;
+    c.count = Math.min(99, Math.max(1, c.count + d));
+    SPDev.save();
+    SPDev.syncSet();
+    draw();
+  }
+  document.getElementById('minus').addEventListener('click', function () { bump(-1); });
+  document.getElementById('plus').addEventListener('click', function () { bump(1); });
+
+  document.getElementById('reset').addEventListener('click', function () {
+    SPDev.reset('copy');
+    SPDev.syncSet();
+    draw();
+  });
+
+  SPDev.start({ onChange: draw });
+</script>
+</body>
+</html>

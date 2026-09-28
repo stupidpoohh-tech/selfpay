@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>대기·연결 | 복합기 TO-BE 목업</title>
+<link rel="icon" href="../assets/img/favicon.svg">
+<link rel="stylesheet" href="../assets/css/font.css?v=2">
+<link rel="stylesheet" href="assets/device.css?v=1">
+</head>
+<body data-svc="copy">
+
+<div class="stage">
+<div class="screen">
+
+  <header class="top top--plain">
+    <div class="top__wrap">
+      <span class="brand">
+        <span class="brand__mark" style="background:linear-gradient(135deg,#00b7ff,#2870ff 55%,#6f36ff)"></span>
+        무인과금출력
+        <span class="brand__sep"></span>
+        <span class="brand__sub">Selfpay</span>
+      </span>
+      <span class="home__clock" id="clock"></span>
+    </div>
+  </header>
+
+  <div class="home">
+    <div>
+      <p class="home__kicker">스마트한 셀프 출력 경험</p>
+      <h1 class="home__h1">휴대폰에서 서비스를 선택한 뒤<br><b>이 QR을 스캔</b>하세요</h1>
+      <p class="home__lead">
+        QR을 스캔하면 휴대폰이 4번 복합기와 연결됩니다.<br>
+        별도의 앱 설치 없이 바로 이용할 수 있습니다.
+      </p>
+
+      <p class="home__label">이용 가능한 서비스</p>
+      <div class="svcs">
+        <!-- 인쇄는 복합기에서 설정하지 않는다. 휴대폰에서 파일을 고르고 결제한다 -->
+        <div class="svc" style="color:#2870ff">
+          <span class="svc__ico" data-ico="print"></span>
+          <span class="svc__name" style="color:var(--ink)">인쇄</span>
+          <span class="svc__desc">문서, 사진 인쇄</span>
+        </div>
+        <button type="button" class="svc" data-go="copy-start.html" style="color:#7c3aed">
+          <span class="svc__ico" data-ico="copy"></span>
+          <span class="svc__name" style="color:var(--ink)">복사</span>
+          <span class="svc__desc">문서 복사</span>
+        </button>
+        <button type="button" class="svc" data-go="scan.html" style="color:#16a06a">
+          <span class="svc__ico" data-ico="scan"></span>
+          <span class="svc__name" style="color:var(--ink)">스캔</span>
+          <span class="svc__desc">문서를 PDF로</span>
+        </button>
+        <button type="button" class="svc" data-go="fax.html" style="color:#f97316">
+          <span class="svc__ico" data-ico="fax"></span>
+          <span class="svc__name" style="color:var(--ink)">팩스</span>
+          <span class="svc__desc">문서 팩스 전송</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="qrbox">
+      <div class="qr" id="qr"></div>
+      <span class="qrbox__chip"><i data-ico="qr"></i>이 QR을 스캔하세요</span>
+    </div>
+  </div>
+
+  <div class="home__foot">
+    <span style="color:#f59e0b;display:inline-flex" data-ico="warn"></span>
+    <span>QR스캔이 안되시나요?</span>
+    <a href="#" onclick="return false">진단하기</a>
+    <span style="display:inline-flex;color:var(--accent-strong)" data-ico="chevron"></span>
+  </div>
+
+</div>
+</div>
+
+<script src="assets/icons.js?v=1"></script>
+<script src="assets/device.js?v=1"></script>
+<script>
+  SPIco.fill();
+  document.getElementById('qr').innerHTML = SPDev.qrSvg(25);
+  SPDev.start();
+</script>
+</body>
+</html>

@@ -350,7 +350,9 @@
 
   function navHitsHtml(s, side) {
     var d = s[side];
-    if (!d) return '';
+    /* 복합기 목업은 device/copy.html 처럼 파일 이름이 모바일과 겹친다.
+     * shot.js 좌표를 끌어다 쓰면 엉뚱한 자리가 생기므로 쓰지 않는다 */
+    if (!d || s.proto) return '';
 
     /* 화면 사이 이동 좌표는 shot.js 히트박스 한 곳에서만 가져온다 */
     var hits = [];
@@ -958,7 +960,10 @@
     return page ? page + '?embed=1' + (DEBUG ? '&debug=hits' : '') : null;
   }
 
-  /* 복합기처럼 눌러 볼 페이지가 없는 화면은 TO-BE 시안 위에서 눌러 본다 */
+  /* 복합기처럼 TO-BE 만 있는 화면. AS-IS / TO-BE 고르개를 두지 않는다 */
+  function toBeOnly(s) { return !!s.proto; }
+
+  /* 목업 페이지가 없으면 TO-BE 시안 위에 이동 자리를 얹어 눌러 본다 */
   function shotProtoOf(s) { return s.proto && s.proposal && s.proposal.img ? s.proto : null; }
 
   function drawShotProto(s, proto) {
@@ -999,9 +1004,15 @@
 
   function drawProto() {
     var s = screen();
-    var shot = shotProtoOf(s);
-    if (shot) return drawShotProto(s, shot);
-    var url = protoUrl(s);
+    var url;
+    if (toBeOnly(s)) {
+      /* 보던 쪽과 상관없이 TO-BE 를 띄운다. AS-IS 시안이 없는 화면이다 */
+      var page = s.proposal && s.proposal.page;
+      if (!page) return drawShotProto(s, s.proto);
+      url = page + '?embed=1' + (DEBUG ? '&debug=hits' : '');
+    } else {
+      url = protoUrl(s);
+    }
     if (!url) {
       var d = protoSideData(s);
       var isCur = state.protoSide === 'current';
@@ -1025,8 +1036,8 @@
     el.stage.innerHTML =
       '<div class="proto">' +
         '<div class="proto__stage" id="protoStage">' +
-          '<div class="device" id="protoDevice">' +
-            '<iframe id="protoFrame" title="' + s.label + ' 프로토타입" src="' + protoUrl(s) + '"></iframe>' +
+          '<div class="device' + (s.protoRatio ? ' device--wide' : '') + '" id="protoDevice">' +
+            '<iframe id="protoFrame" title="' + s.label + ' 프로토타입" src="' + url + '"></iframe>' +
           '</div>' +
         '</div>' +
         '<p class="proto__hint">화면 안의 버튼을 눌러 이동해 보세요.</p>' +
@@ -1049,16 +1060,17 @@
     });
   }
 
-  /* 무대 안에 원본 비율 그대로 담기는 크기를 구한다 */
+  /* 무대 안에 그 비율 그대로 담기는 크기를 구한다 */
+  function fitRatio(stage, r, cb) {
+    var box = stage.getBoundingClientRect();
+    var pad = 18;
+    var h = box.height - pad;
+    var wd = h * r;
+    if (wd + pad > box.width) { wd = box.width - pad; h = wd / r; }
+    cb(Math.floor(wd), Math.floor(h));
+  }
   function fitBox(stage, src, cb) {
-    ratio(src, function (r) {
-      var box = stage.getBoundingClientRect();
-      var pad = 18;
-      var h = box.height - pad;
-      var wd = h * r;
-      if (wd + pad > box.width) { wd = box.width - pad; h = wd / r; }
-      cb(Math.floor(wd), Math.floor(h));
-    });
+    ratio(src, function (r) { fitRatio(stage, r, cb); });
   }
 
   /* 시안 위에서 눌러 보는 화면도 무대에 맞춰 담는다 */
@@ -1080,12 +1092,15 @@
     if (!stage || !frame) return;
     var s = screen();
     var side = protoSideData(s);
-    var src = (side && side.img) || (s.proposal || s.current || {}).img;
-    if (!src) return;
-    fitBox(stage, src, function (wd, h) {
+    var put = function (wd, h) {
       frame.style.width = wd + 'px';
       frame.style.height = h + 'px';
-    });
+    };
+    /* 목업은 1920 x 1080 으로 그려져 시안 비율과 다르다 */
+    if (s.protoRatio) return fitRatio(stage, s.protoRatio, put);
+    var src = (side && side.img) || (s.proposal || s.current || {}).img;
+    if (!src) return;
+    fitBox(stage, src, put);
   }
 
   /* ── 모바일: 개선 사항 시트, AS-IS/TO-BE 탭 ── */
@@ -1167,7 +1182,7 @@
     else if (flowOnly) drawFlow();
     else drawCompare();
     /* 시안 위에서 눌러 보는 화면은 TO-BE 시안만 있다. 고르개를 두지 않는다 */
-    el.protoSeg.hidden = flowOnly || state.mode !== 'proto' || !!shotProtoOf(screen());
+    el.protoSeg.hidden = flowOnly || state.mode !== 'proto' || toBeOnly(screen());
     document.body.setAttribute('data-mode', state.mode);
     document.body.setAttribute('data-side', state.side);
     syncScrollEdges();
