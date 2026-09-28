@@ -27,8 +27,11 @@
     scan: { dpi: 300, color: 'color', side: 'single', fmt: 'pdf' },
     fax:  { dpi: 200, side: 'single', pages: 3,
             to: ['02-1234-5678', '031-9876-5432'], input: '' },
-    /* 이번 세션에 쌓인 복사 작업. 완료 팝업과 결제 대기 화면이 같이 본다 */
-    job:  { list: [] }
+    /* 이번 세션의 작업.
+     *   svc     지금 이용 중인 서비스 (copy | scan | fax)
+     *   pending 결제를 기다리는 한 건. 결제 화면이 이 금액을 그대로 보여 준다
+     *   list    결제가 끝나 실행된 건들. 완료 화면이 누적으로 센다 */
+    job:  { svc: 'copy', pending: null, list: [] }
   };
 
   function clone(o) { return JSON.parse(JSON.stringify(o)); }
@@ -54,23 +57,74 @@
   function scanPrice() { return PRICE.scan[state.scan.dpi] || PRICE.scan[300]; }
   function faxPrice() { return PRICE.fax.perTo * state.fax.to.length; }
 
-  /* 화면 위에 적는 설정 요약 */
+  /* ── 서비스 ────────────────────────────────── */
+  /* 결제 화면과 완료 화면은 복사·스캔·팩스가 같이 쓴다. 문구만 갈아 끼운다. */
+  /* doingI / doingEul 은 조사까지 붙인 꼴이다. 문장에서 그대로 쓴다. */
+  var SVC = {
+    copy: { name: '복사', doing: '복사',      doingI: '복사가',      doingEul: '복사를',
+            done: '복사가 완료되었습니다',      page: 'copy-start.html' },
+    scan: { name: '스캔', doing: '스캔',      doingI: '스캔이',      doingEul: '스캔을',
+            done: '스캔이 완료되었습니다',      page: 'scan.html' },
+    fax:  { name: '팩스', doing: '팩스 전송',  doingI: '팩스 전송이',  doingEul: '팩스 전송을',
+            done: '팩스 전송이 완료되었습니다', page: 'fax.html' }
+  };
+  function svc(k) { return SVC[k] || SVC.copy; }
+  function svcKey() { return SVC[state.job.svc] ? state.job.svc : 'copy'; }
+
   /* ── 작업 목록 ─────────────────────────────── */
-  function addJob() {
+  /* 지금 설정으로 한 건을 만든다. 금액은 설정 화면에 보이던 그 값이다. */
+  function buildJob(kind) {
+    var seq = state.job.list.length + 1;
+    if (kind === 'scan') {
+      var s = state.scan;
+      return { svc: 'scan', label: '스캔 ' + seq + '번째',
+        meta: s.dpi + ' dpi · ' + (s.color === 'color' ? '컬러' : '흑백') + ' · ' +
+              (s.side === 'single' ? '단면' : '양면') + ' · ' + s.fmt.toUpperCase(),
+        won: scanPrice() };
+    }
+    if (kind === 'fax') {
+      var f = state.fax;
+      return { svc: 'fax', label: '팩스 ' + seq + '번째',
+        meta: '수신처 ' + f.to.length + '곳 · ' + f.dpi + ' dpi · ' +
+              (f.side === 'single' ? '단면' : '양면') + ' · 원고 ' + f.pages + '장',
+        won: faxPrice() };
+    }
     var c = state.copy;
-    state.job.list.push({
-      label: '복사 ' + (state.job.list.length + 1) + '번째',
+    return { svc: 'copy', label: '복사 ' + seq + '번째',
       meta: '1쪽 × ' + c.count + '부 · ' +
-        (c.color === 'color' ? '컬러' : '흑백') + ' · ' +
-        (c.side === 'single' ? '단면' : '양면'),
-      won: copyPrice()
-    });
-    save();
+            (c.color === 'color' ? '컬러' : '흑백') + ' · ' +
+            (c.side === 'single' ? '단면' : '양면'),
+      won: copyPrice() };
   }
+
+  /* 설정 화면에서 「결제 요청」을 누른 시점. 결제를 기다리는 한 건이 생긴다 */
+  function requestPay(kind) {
+    state.job.svc = SVC[kind] ? kind : 'copy';
+    state.job.pending = buildJob(state.job.svc);
+    save();
+    return state.job.pending;
+  }
+  function pending() { return state.job.pending; }
+  /* 결제 화면을 바로 열었을 때를 위해 한 건을 채워 둔다 */
+  function ensurePending(kind) {
+    if (!state.job.pending) requestPay(kind || svcKey());
+    return state.job.pending;
+  }
+  /* 결제가 확인된 시점. 기다리던 건이 실행된 건으로 넘어간다 */
+  function confirmPay() {
+    if (!state.job.pending) return null;
+    var j = state.job.pending;
+    state.job.list.push(j);
+    state.job.pending = null;
+    save();
+    return j;
+  }
+  function lastJob() { return state.job.list[state.job.list.length - 1] || null; }
+  function payTotal() { return state.job.pending ? state.job.pending.won : 0; }
   function jobTotal() {
     return state.job.list.reduce(function (a, j) { return a + j.won; }, 0);
   }
-  function clearJobs() { state.job.list = []; save(); }
+  function clearJobs() { state.job.list = []; state.job.pending = null; save(); }
 
   function copySummary() {
     return [state.copy.color === 'color' ? '컬러' : '흑백',
@@ -192,7 +246,10 @@
     state: state, save: save, reset: reset, start: start, fit: fit, go: go,
     syncSet: syncSet, won: won,
     copyUnit: copyUnit, copyPrice: copyPrice, scanPrice: scanPrice, faxPrice: faxPrice,
-    addJob: addJob, jobTotal: jobTotal, clearJobs: clearJobs,
+    buildJob: buildJob, requestPay: requestPay, pending: pending,
+    ensurePending: ensurePending, confirmPay: confirmPay, lastJob: lastJob,
+    payTotal: payTotal, jobTotal: jobTotal, clearJobs: clearJobs,
+    svc: svc, svcKey: svcKey,
     copySummary: copySummary, scanSummary: scanSummary,
     qrSvg: qrSvg, PRICE: PRICE
   };

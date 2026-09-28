@@ -6,7 +6,7 @@
 <title>작업 완료 | 복합기 TO-BE 목업</title>
 <link rel="icon" href="../assets/img/favicon.svg">
 <link rel="stylesheet" href="../assets/css/font.css?v=2">
-<link rel="stylesheet" href="assets/device.css?v=2">
+<link rel="stylesheet" href="assets/device.css?v=3">
 </head>
 <body data-svc="copy">
 
@@ -17,7 +17,7 @@
   <header class="top top--plain">
     <div class="top__wrap">
       <span class="homebtn" aria-hidden="true"><i data-ico="home"></i>홈으로</span>
-      <span class="top__title">복사</span>
+      <span class="top__title" id="title">복사</span>
       <span style="margin-left:auto;width:1px"></span>
     </div>
   </header>
@@ -25,8 +25,8 @@
   <div class="body body--split" aria-hidden="true">
     <div class="side">
       <div class="card card--soft" style="flex:none;padding:26px 28px">
-        <p class="card__title" style="font-size:27px">복사할 원본 문서</p>
-        <p class="card__note" style="margin-top:6px">아래와 같이 복사됩니다.</p>
+        <p class="card__title" style="font-size:27px" id="srcttl">복사한 원본 문서</p>
+        <p class="card__note" style="margin-top:6px" id="srcnote">아래 설정으로 복사했습니다.</p>
       </div>
       <div class="preview" style="background:var(--panel);border-color:var(--line)">
         <div class="paper">
@@ -37,7 +37,7 @@
         </div>
         <span class="preview__sum" id="sum">컬러 · 단면 · 1부</span>
       </div>
-      <div class="fee">
+      <div class="fee" id="fee">
         <p class="fee__title">복사 금액 안내</p>
         <p class="fee__row"><span class="dot dot--color"></span>컬러<b>250<span>원/장</span></b></p>
         <p class="fee__row"><span class="dot dot--mono"></span>흑백<b>50<span>원/장</span></b></p>
@@ -50,12 +50,12 @@
     <span class="foot__note">
       <span style="color:var(--brand);display:inline-flex;width:44px;height:44px" data-ico="phone"></span>
       <span>
-        <b>설정을 확인한 뒤 휴대폰에서 결제를 진행해 주세요.</b>
-        <span>결제가 완료되면 자동으로 복사가 시작됩니다.</span>
+        <b id="footb">결제가 확인되어 복사를 진행했습니다.</b>
+        <span>추가 작업이 없으면 이용 종료를 눌러 주세요.</span>
       </span>
     </span>
     <span class="spacer"></span>
-    <span class="btn is-off"><i data-ico="docs"></i>복사 시작</span>
+    <span class="btn is-off" id="footbtn"><i data-ico="check"></i>복사 완료</span>
   </footer>
 
   <!-- 완료 팝업 -->
@@ -69,14 +69,14 @@
       </div>
 
       <p class="modal__p">
-        <span id="nth">1번째</span> 복사가 완료되었습니다.<br>
-        현재 누적 금액 <b id="total">250원</b><br>
-        추가로 복사할 문서가 있으면 계속 진행할 수 있습니다.
+        <span id="line1">결제가 확인되어 1번째 복사를 마쳤습니다.</span><br>
+        결제 금액 <b id="total">250원</b><span id="sumline"></span><br>
+        추가로 이용할 작업이 있으면 계속 진행할 수 있습니다.
       </p>
 
       <div class="modal__btns">
-        <button type="button" class="btn btn--ghost" data-go="copy-start.html">추가 복사</button>
-        <button type="button" class="btn btn--go" data-go="payment.html">결제하기</button>
+        <button type="button" class="btn btn--ghost" id="more">추가 복사</button>
+        <button type="button" class="btn btn--go" id="end">이용 종료</button>
       </div>
     </div>
   </div>
@@ -84,27 +84,56 @@
 </div>
 </div>
 
-<script src="assets/icons.js?v=2"></script>
-<script src="assets/device.js?v=2"></script>
+<script src="assets/icons.js?v=3"></script>
+<script src="assets/device.js?v=3"></script>
 <script>
   SPIco.fill();
 
-  var list = SPDev.state.job.list;
-  /* 복사 화면을 거치지 않고 바로 열었으면 한 건 있는 것으로 둔다 */
-  if (!list.length) { SPDev.addJob(); list = SPDev.state.job.list; }
+  /* 결제가 확인된 뒤 작업까지 끝난 화면이다.
+   * 방금 결제·실행된 한 건을 그대로 보여 준다. */
+  var key = SPDev.svcKey();
+  var svc = SPDev.svc(key);
+  document.body.setAttribute('data-svc', key);
 
-  document.getElementById('nth').textContent = list.length + '번째';
-  document.getElementById('total').textContent = SPDev.won(SPDev.jobTotal()) + '원';
-  document.getElementById('sum').textContent = SPDev.copySummary();
+  /* 결제 화면을 거치지 않고 바로 열었으면 한 건 결제된 것으로 둔다 */
+  if (!SPDev.lastJob()) { SPDev.ensurePending(key); SPDev.confirmPay(); }
+  var list = SPDev.state.job.list;
+  var job = SPDev.lastJob();
+
+  document.getElementById('title').textContent = svc.name;
+  document.getElementById('done-h').textContent = svc.done;
+  document.getElementById('line1').textContent =
+    '결제가 확인되어 ' + list.length + '번째 ' + svc.doingEul + ' 마쳤습니다.';
+  document.getElementById('total').textContent = SPDev.won(job.won) + '원';
+  document.getElementById('sumline').textContent =
+    list.length > 1 ? '  ·  누적 ' + SPDev.won(SPDev.jobTotal()) + '원' : '';
+  document.getElementById('more').textContent = '추가 ' + svc.name;
+  document.getElementById('footb').textContent = '결제가 확인되어 ' + svc.doingEul + ' 진행했습니다.';
+  document.getElementById('footbtn').lastChild.textContent = svc.doing + ' 완료';
+
+  /* 뒤에 남는 화면도 방금 이용한 서비스에 맞춘다 */
+  document.getElementById('srcttl').textContent =
+    key === 'fax' ? '전송한 원고' : (key === 'scan' ? '스캔한 원본 문서' : '복사한 원본 문서');
+  document.getElementById('srcnote').textContent = '아래 설정으로 ' + svc.doing + '했습니다.';
+  document.getElementById('sum').textContent = job.meta;
+  if (key !== 'copy') {
+    document.getElementById('fee').innerHTML =
+      '<p class="fee__title">' + svc.name + ' 금액</p>' +
+      '<p class="fee__row">' + job.label + '<b>' + SPDev.won(job.won) + '<span>원</span></b></p>';
+  }
   if (SPDev.state.copy.color === 'mono') {
     document.getElementById('band').className = 'paper__band paper__band--mono';
   }
 
-  /* 닫으면 이번 세션의 작업을 비우고 대기 화면으로 돌아간다 */
-  document.getElementById('close').addEventListener('click', function () {
-    SPDev.clearJobs();
-    SPDev.go('home.html');
+  /* 추가 작업은 그 서비스의 설정 화면부터 다시 */
+  document.getElementById('more').addEventListener('click', function () {
+    SPDev.go(svc.page);
   });
+
+  /* 이용을 끝내면 이번 세션의 작업을 비우고 대기 화면으로 돌아간다 */
+  function finish() { SPDev.clearJobs(); SPDev.go('home.html'); }
+  document.getElementById('end').addEventListener('click', finish);
+  document.getElementById('close').addEventListener('click', finish);
 
   SPDev.start();
 </script>

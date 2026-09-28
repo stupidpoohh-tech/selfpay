@@ -3,82 +3,96 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>복합기 TO-BE HTML 목업 | 무인과금출력</title>
+<title>무인과금 복합기 UI/UX 개선안</title>
 <link rel="icon" href="../assets/img/favicon.svg">
 <link rel="stylesheet" href="../assets/css/font.css?v=2">
-<link rel="stylesheet" href="assets/device.css?v=2">
+<link rel="stylesheet" href="assets/device.css?v=3">
 </head>
 <body class="doc">
 
 <div class="wrap">
-  <p style="font-size:14px;font-weight:800;letter-spacing:.06em;color:var(--brand);margin:0 0 10px">
-    무인과금출력 UI/UX 개선 · 복합기 TO-BE</p>
-  <h1>복합기 화면 HTML 목업</h1>
+  <p class="kicker">무인과금출력 UI/UX 개선 · 복합기 TO-BE</p>
+  <h1>무인과금 복합기 UI/UX 개선안</h1>
   <p class="lead">
-    복합기 TO-BE 시안을 HTML·CSS로 만든 목업입니다. 그림이 아니라 실제 화면이라
-    눌러서 설정을 바꾸고, 미리보기와 금액이 다시 계산되는 것까지 확인할 수 있습니다.
-  </p>
-  <p class="lead">
-    아래 카드는 그 목업을 그대로 줄여 띄운 것입니다. 카드를 누르면 전체 화면으로 열립니다.
+    실제 복합기 사용 환경을 가정한 인터랙티브 TO-BE 목업입니다.
+    각 화면을 선택하면 화면 전환과 주요 설정 인터랙션을 직접 확인할 수 있습니다.
   </p>
 
-  <h2>화면 7개</h2>
+  <h2>전체 이용 흐름</h2>
+  <div class="flow">
+    <span class="flow__s"><span class="flow__n">1</span>대기 · QR 연결</span>
+    <span class="flow__a">→</span>
+    <span class="flow__s"><span class="flow__n">2</span>서비스 선택</span>
+    <span class="flow__a">→</span>
+    <span class="flow__s"><span class="flow__n">3</span>설정</span>
+    <span class="flow__a">→</span>
+    <span class="flow__s"><span class="flow__n">4</span>결제</span>
+    <span class="flow__a">→</span>
+    <span class="flow__s"><span class="flow__n">5</span>작업</span>
+    <span class="flow__a">→</span>
+    <span class="flow__s"><span class="flow__n">6</span>완료</span>
+  </div>
+  <p class="flow__note">
+    결제가 먼저입니다. 복합기에서 설정을 마치고 결제를 요청하면 휴대폰에서 결제하고,
+    결제가 확인되면 복합기에서 따로 누르는 것 없이 작업이 자동으로 시작됩니다.
+  </p>
+
+  <h2>화면</h2>
   <div class="shots">
     <a class="shot" href="home.html">
       <span class="shot__frame"><iframe src="home.html?embed=1" title="" tabindex="-1" scrolling="no" loading="lazy"></iframe></span>
       <span class="shot__b">
-        <b class="shot__n">대기·연결</b>
-        <span class="shot__d">QR과 이용 가능한 서비스. 복사·스캔·팩스를 누르면 그 화면으로 갑니다.</span>
-        <span class="shot__u">device/home.html</span>
+        <b class="shot__n">대기 · QR 연결</b>
+        <span class="shot__d">휴대폰을 QR로 연결하고 이용할 서비스를 고릅니다.</span>
+        <span class="shot__go">화면 바로가기 →</span>
       </span>
     </a>
     <a class="shot" href="copy-start.html">
       <span class="shot__frame"><iframe src="copy-start.html?embed=1" title="" tabindex="-1" scrolling="no" loading="lazy"></iframe></span>
       <span class="shot__b">
-        <b class="shot__n">복사 시작</b>
-        <span class="shot__d">컬러·양단면·부수를 고르면 왼쪽 미리보기가 따라 바뀝니다.</span>
-        <span class="shot__u">device/copy-start.html</span>
+        <b class="shot__n">복사 설정</b>
+        <span class="shot__d">컬러·양단면·부수를 고르면 미리보기가 따라 바뀝니다.</span>
+        <span class="shot__go">화면 바로가기 →</span>
       </span>
     </a>
     <a class="shot" href="copy.html">
       <span class="shot__frame"><iframe src="copy.html?embed=1" title="" tabindex="-1" scrolling="no" loading="lazy"></iframe></span>
       <span class="shot__b">
-        <b class="shot__n">복사</b>
-        <span class="shot__d">요금 안내와 함께 설정. <b>세팅 초기화</b>가 실제로 기본값으로 되돌립니다.</span>
-        <span class="shot__u">device/copy.html</span>
-      </span>
-    </a>
-    <a class="shot" href="copy-done.html">
-      <span class="shot__frame"><iframe src="copy-done.html?embed=1" title="" tabindex="-1" scrolling="no" loading="lazy"></iframe></span>
-      <span class="shot__b">
-        <b class="shot__n">작업 완료</b>
-        <span class="shot__d">완료 팝업. 누적 금액은 지금까지 쌓인 복사 작업에서 계산합니다.</span>
-        <span class="shot__u">device/copy-done.html</span>
-      </span>
-    </a>
-    <a class="shot" href="payment.html">
-      <span class="shot__frame"><iframe src="payment.html?embed=1" title="" tabindex="-1" scrolling="no" loading="lazy"></iframe></span>
-      <span class="shot__b">
-        <b class="shot__n">결제 요청</b>
-        <span class="shot__d">결제 대기. 잠시 두면 결제가 확인된 것으로 보고
-          <b>복합기에서 아무것도 누르지 않아도</b> 복사가 시작되는 상태로 넘어갑니다.</span>
-        <span class="shot__u">device/payment.html</span>
+        <b class="shot__n">복사 진행</b>
+        <span class="shot__d">설정과 예상 금액을 확인하고 결제를 요청합니다.</span>
+        <span class="shot__go">화면 바로가기 →</span>
       </span>
     </a>
     <a class="shot" href="scan.html">
       <span class="shot__frame"><iframe src="scan.html?embed=1" title="" tabindex="-1" scrolling="no" loading="lazy"></iframe></span>
       <span class="shot__b">
         <b class="shot__n">스캔</b>
-        <span class="shot__d">해상도·색상·스캔면·파일 형식. 해상도를 바꾸면 예상 금액이 바뀝니다.</span>
-        <span class="shot__u">device/scan.html</span>
+        <span class="shot__d">해상도·색상·파일 형식을 고르고 결제를 요청합니다.</span>
+        <span class="shot__go">화면 바로가기 →</span>
       </span>
     </a>
     <a class="shot" href="fax.html">
       <span class="shot__frame"><iframe src="fax.html?embed=1" title="" tabindex="-1" scrolling="no" loading="lazy"></iframe></span>
       <span class="shot__b">
         <b class="shot__n">팩스</b>
-        <span class="shot__d">키패드로 번호를 눌러 수신처를 넣고 빼면 예상 금액이 따라 바뀝니다.</span>
-        <span class="shot__u">device/fax.html</span>
+        <span class="shot__d">수신처와 전송 설정을 고르고 결제를 요청합니다.</span>
+        <span class="shot__go">화면 바로가기 →</span>
+      </span>
+    </a>
+    <a class="shot" href="payment.html">
+      <span class="shot__frame"><iframe src="payment.html?embed=1" title="" tabindex="-1" scrolling="no" loading="lazy"></iframe></span>
+      <span class="shot__b">
+        <b class="shot__n">결제</b>
+        <span class="shot__d">휴대폰 결제를 기다리고, 확인되면 작업이 자동으로 시작됩니다.</span>
+        <span class="shot__go">화면 바로가기 →</span>
+      </span>
+    </a>
+    <a class="shot" href="copy-done.html">
+      <span class="shot__frame"><iframe src="copy-done.html?embed=1" title="" tabindex="-1" scrolling="no" loading="lazy"></iframe></span>
+      <span class="shot__b">
+        <b class="shot__n">작업 완료</b>
+        <span class="shot__d">끝난 작업과 결제 금액을 확인하고 추가 이용 여부를 고릅니다.</span>
+        <span class="shot__go">화면 바로가기 →</span>
       </span>
     </a>
   </div>
@@ -86,67 +100,82 @@
   <div class="tip">
     <b>인쇄는 복합기 화면이 없습니다</b>
     인쇄는 휴대폰에서 파일을 고르고 결제까지 마칩니다. 복합기는 출력만 합니다.
-    그래서 대기·연결 화면의 인쇄 카드는 안내이고, 눌러서 넘어가는 화면이 없습니다.
+    그래서 대기 · QR 연결 화면의 인쇄 카드는 안내이고, 눌러서 넘어가는 화면이 없습니다.
   </div>
 
-  <h2>이어지는 순서</h2>
-  <p>
-    대기·연결 → 복사 시작 → 복사 → 작업 완료 → 결제 요청 → 대기·연결<br>
-    대기·연결 → 스캔 / 팩스 → 대기·연결
-  </p>
-  <div class="tip">
-    <b>결제와 실행의 역할</b>
-    복합기는 서비스 설정과 작업 실행을, 휴대폰은 결제를 맡습니다.
-    결제가 확인되면 복합기에서 따로 누르는 것 없이 작업이 자동으로 시작됩니다.
-    결제 요청 화면에서 그 전환을 볼 수 있습니다.
-  </div>
+  <details class="devnote">
+    <summary>개발 참고사항 보기</summary>
+    <div class="devnote__in">
 
-  <h2>화면 크기</h2>
-  <p>
-    <b>1920 × 1080</b>으로 그려 놓고 브라우저 크기에 맞춰 비율 그대로 줄입니다.
-    복합기는 해상도가 정해진 기기라 반응형으로 늘이지 않습니다.
-    실제 기기 해상도가 다르면 <code>assets/device.js</code>의 <code>BASE</code> 한 곳만 고치면 됩니다.
-  </p>
+      <h3>화면 크기</h3>
+      <p>
+        <b>1920 × 1080</b>으로 그려 놓고 브라우저 크기에 맞춰 비율 그대로 줄입니다.
+        복합기는 해상도가 정해진 기기라 반응형으로 늘이지 않습니다.
+        실제 기기 해상도가 다르면 <code>assets/device.js</code>의 <code>BASE</code> 한 곳만 고치면 됩니다.
+      </p>
 
-  <h2>요금 단가</h2>
-  <p>화면에서 금액이 다시 계산되도록 아래 단가를 썼습니다.</p>
-  <table>
-    <thead><tr><th>서비스</th><th>단가</th><th>근거</th></tr></thead>
-    <tbody>
-      <tr><td>복사</td><td>컬러 250원/장 · 흑백 50원/장</td><td>복사 화면의 「복사 금액 안내」</td></tr>
-      <tr><td>스캔</td><td>300 dpi 500원</td><td>스캔 화면의 「예상 결제 금액」</td></tr>
-      <tr><td>스캔</td><td>200 dpi 300원 · 600 dpi 800원</td><td>시안에 없음. 목업이 정한 값</td></tr>
-      <tr><td>팩스</td><td>수신처 1곳당 500원</td><td>팩스 화면의 수신처 2곳 = 1,000원</td></tr>
-    </tbody>
-  </table>
-  <div class="tip">
-    <b>숫자는 예시입니다</b>
-    금액·작업 수·남은 시간은 화면을 보여 주기 위한 값입니다. 고정값으로 쓰지 마십시오.
-    단가 규칙이 정해지면 <code>assets/device.js</code>의 <code>PRICE</code> 한 곳만 고치면 됩니다.
-  </div>
+      <h3>화면 전환</h3>
+      <table>
+        <thead><tr><th>화면</th><th>파일</th><th>다음 화면</th></tr></thead>
+        <tbody>
+          <tr><td>대기 · QR 연결</td><td><code>home.html</code></td><td>복사 설정 / 스캔 / 팩스</td></tr>
+          <tr><td>복사 설정</td><td><code>copy-start.html</code></td><td>복사 진행</td></tr>
+          <tr><td>복사 진행</td><td><code>copy.html</code></td><td>결제</td></tr>
+          <tr><td>스캔</td><td><code>scan.html</code></td><td>결제</td></tr>
+          <tr><td>팩스</td><td><code>fax.html</code></td><td>결제</td></tr>
+          <tr><td>결제</td><td><code>payment.html</code></td><td>작업 완료 (결제 취소 시 직전 설정 화면)</td></tr>
+          <tr><td>작업 완료</td><td><code>copy-done.html</code></td><td>직전 설정 화면 / 대기 · QR 연결</td></tr>
+        </tbody>
+      </table>
 
-  <h2>파일</h2>
-  <table>
-    <thead><tr><th>파일</th><th>내용</th></tr></thead>
-    <tbody>
-      <tr><td><code>assets/device.css</code></td><td>색·간격·부품 스타일. 색은 <code>:root</code> 변수로 빼 두었고
-        <code>body[data-svc]</code>로 복사(초록)·스캔(보라)·팩스(주황)를 바꿉니다.</td></tr>
-      <tr><td><code>assets/device.js</code></td><td>화면 크기 맞추기, 고른 설정 들고 다니기, 요금 계산</td></tr>
-      <tr><td><code>assets/icons.js</code></td><td>그림 조각. <code>&lt;i data-ico="home"&gt;</code>로 씁니다</td></tr>
-      <tr><td>각 화면 <code>.html</code></td><td>화면 하나당 파일 하나. 빌드 과정이 없어 그대로 열립니다</td></tr>
-    </tbody>
-  </table>
-  <p>
-    설정을 고르는 버튼은 <code>data-set="copy.color=color"</code>처럼 적어 두면
-    같은 무리끼리 하나만 켜지고 값이 저장됩니다. 화면을 옮겨도 고른 설정이 이어집니다.
-  </p>
+      <h3>요금 단가</h3>
+      <table>
+        <thead><tr><th>서비스</th><th>단가</th><th>근거</th></tr></thead>
+        <tbody>
+          <tr><td>복사</td><td>컬러 250원/장 · 흑백 50원/장</td><td>복사 화면의 「복사 금액 안내」</td></tr>
+          <tr><td>스캔</td><td>300 dpi 500원</td><td>스캔 화면의 「예상 결제 금액」</td></tr>
+          <tr><td>스캔</td><td>200 dpi 300원 · 600 dpi 800원</td><td>시안에 없음. 목업이 정한 값</td></tr>
+          <tr><td>팩스</td><td>수신처 1곳당 500원</td><td>팩스 화면의 수신처 2곳 = 1,000원</td></tr>
+        </tbody>
+      </table>
+      <p>
+        단가 규칙이 정해지면 <code>assets/device.js</code>의 <code>PRICE</code> 한 곳만 고치면 됩니다.
+        설정 화면에서 계산한 금액은 <code>requestPay()</code>가 그대로 들고 가므로
+        결제 화면과 완료 화면에 같은 값이 나옵니다.
+      </p>
 
-  <h2>AS-IS와 비교하려면</h2>
-  <p>
-    나란히 놓고 보거나 개선 항목을 확인하려면
-    <a href="../?surface=device" style="color:var(--brand);font-weight:700">검토 보드의 복합기 영역</a>에서 보십시오.
-    보드의 <b>프로토타입 보기</b>가 이 목업을 그대로 띄웁니다.
-  </p>
+      <h3>파일</h3>
+      <table>
+        <thead><tr><th>파일</th><th>내용</th></tr></thead>
+        <tbody>
+          <tr><td><code>assets/device.css</code></td><td>색·간격·부품 스타일. 색은 <code>:root</code> 변수로 빼 두었고
+            <code>body[data-svc]</code>로 복사·스캔·팩스를 바꿉니다.</td></tr>
+          <tr><td><code>assets/device.js</code></td><td>화면 크기 맞추기, 고른 설정 들고 다니기, 요금 계산, 결제 요청·확인</td></tr>
+          <tr><td><code>assets/icons.js</code></td><td>그림 조각. <code>&lt;i data-ico="home"&gt;</code>로 씁니다</td></tr>
+          <tr><td>각 화면 <code>.html</code></td><td>화면 하나당 파일 하나. 빌드 과정이 없어 그대로 열립니다</td></tr>
+        </tbody>
+      </table>
+      <p>
+        설정을 고르는 버튼은 <code>data-set="copy.color=color"</code>처럼 적어 두면
+        같은 무리끼리 하나만 켜지고 값이 저장됩니다. 화면을 옮겨도 고른 설정이 이어집니다.
+        화면 이동은 <code>data-go="copy.html"</code>로 답니다.
+      </p>
+      <p>
+        상태는 <code>sessionStorage</code>에 둡니다.
+        <code>job.pending</code>은 결제를 기다리는 한 건, <code>job.list</code>는 결제가 끝나 실행된 건입니다.
+      </p>
+
+      <h3>AS-IS와 비교하려면</h3>
+      <p>
+        나란히 놓고 보거나 개선 항목을 확인하려면
+        <a href="../?surface=device" style="color:var(--brand);font-weight:700">검토 보드의 복합기 영역</a>에서 보십시오.
+        보드의 <b>프로토타입 보기</b>가 이 목업을 그대로 띄웁니다.
+      </p>
+
+    </div>
+  </details>
+
+  <p class="foot-note">※ 사용자명, 금액, 작업 건수 등은 목업 확인을 위한 예시값입니다.</p>
 </div>
 
 </body>
